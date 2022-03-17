@@ -46,7 +46,7 @@ export default {
         addItem() {
             let id = this.$store.getters.getLastId;
             let fromDate = this.$store.state.Inventory.filters.fromDate;
-            console.log(fromDate);
+            
             let dateNow = new Date();
             this.$store.commit("pushItem", { 
                 id: id + 1, 
@@ -74,8 +74,8 @@ export default {
         "readOnly": Boolean,
         "items": Array
     },
-    created() {
-        this.loadItems();
+    async created() {
+        await this.loadItems();
     }
 }
 </script>

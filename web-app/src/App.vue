@@ -1,23 +1,19 @@
 <template>
   <div id="app">
     <date-navigation />
-    <ScrollPanel style="height:100%">
-      <inventory :items="items" />
-    </ScrollPanel>
-    
+    <inventory :items="items" />
   </div>
 </template>
 
 <script>
 import Inventory from "./components/Inventory.vue"
 import DateNavigation from "./components/Date-navigation.vue";
-import ScrollPanel from 'primevue/scrollpanel';
+
 export default {
   name: 'App',
   components: {
     DateNavigation,
-    Inventory,
-    ScrollPanel
+    Inventory
   },
   computed: {
     items() { 
