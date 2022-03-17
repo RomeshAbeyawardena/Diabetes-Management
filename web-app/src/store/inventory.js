@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 let isBetween = require('dayjs/plugin/isBetween');
 dayjs.extend(isBetween);
 
-import inventoryDb from '../db';
+import inventoryDb from '../db/inventory';
 
 export default {
     state: {
@@ -75,10 +75,6 @@ export default {
             
             context.commit("setItems", JSON.parse(items));
 
-            if(!inventoryDb.isInitialised){
-                await inventoryDb.init();
-            }
-
             let state = context.state;
 
             if (!state.filters.fromDate && !state.filters.toDate) {
@@ -88,17 +84,7 @@ export default {
             let fromDate = state.filters.fromDate;
             let toDate = state.filters.toDate;
 
-            let results = await inventoryDb.connection.select({
-                from: "items",
-                where: {
-                    consumedDate: {
-                        '-': {
-                            low: fromDate,
-                            high: toDate
-                        }
-                    }
-                }
-            });
+            let results = await inventoryDb.getItems(fromDate, toDate);
 
             console.log(results);
         },
@@ -106,15 +92,7 @@ export default {
             let items = context.state.items;
             localStorage.setItem(key, JSON.stringify(items));
             
-            let connection = inventoryDb.connection
-            
-            for (let item of items) {
-                await connection.insert({
-                    into: "items",
-                    upsert: true,
-                    values: [item]
-                });
-            }
+            await inventoryDb.setItems(items);
         }
     }
 }

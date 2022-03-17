@@ -15,7 +15,6 @@ const itemsDb = {
 export default {
     isInitialised: false,
     async init() {
-        
         this.connection = new Connection();
         
         this.connection.addPlugin(workerInjector);
