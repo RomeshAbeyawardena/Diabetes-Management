@@ -36,6 +36,19 @@ export default {
             }
         });
     },
+    async getLastIndex() {
+        let connection = await this.getDbConnection();
+
+        let v=  await connection.select({
+            from: "items",
+            aggregate: {
+                max: "id"    
+            },
+        });
+
+        let maxId = v[0]["max(id)"];
+        return maxId;
+    },
     async getItems(fromDate, toDate) {
         let connection = await this.getDbConnection();
         

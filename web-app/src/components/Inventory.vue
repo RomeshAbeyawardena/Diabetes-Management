@@ -43,8 +43,8 @@ export default {
         setItem(item) {
             this.$store.commit("updateItem", item)
         },
-        addItem() {
-            let id = this.$store.getters.getLastId;
+        async addItem() {
+            let id = await this.$store.dispatch("getLastId");
             let fromDate = this.$store.state.Inventory.filters.fromDate;
             
             let dateNow = new Date();

@@ -8,6 +8,7 @@ import inventoryDb from '../db/inventory';
 
 export default {
     state: {
+        lastId: 0,
         filters: {
             fromDate: null,
             toDate: null
@@ -15,6 +16,9 @@ export default {
         items: []
     },
     mutations: {
+        setLastId(state, value) {
+            Vue.set(state, "lastId", value);
+        },
         setFilters(state, value) {
             Vue.set(state, "filters", value);
         },
@@ -70,6 +74,11 @@ export default {
         }
     },
     actions: {
+        async getLastId(context) {
+            let result = await inventoryDb.getLastIndex();
+            context.commit("setLastId", result);
+            return result;
+        },
         async getItems(context, key) {
             let items = localStorage.getItem(key)
             
