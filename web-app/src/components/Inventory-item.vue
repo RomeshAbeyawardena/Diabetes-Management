@@ -1,25 +1,25 @@
 <template>
     <div class="grid">
-        <div class="col-3 align-centre" v-if="showHeader">
+        <div class=".d-none col-3 align-centre" v-if="showHeader">
             <label for="unit-value">Consumed Date</label>
         </div>
-        <div class="col-5 align-centre" v-if="showHeader">
+        <div class="col-6 align-centre" v-if="showHeader">
             <label for="inventory-description">Description</label>
         </div>
-        <div class="col-2 align-centre" v-if="showHeader">
+        <div class="col-1 align-centre" v-if="showHeader">
             <label for="unit-value">Units</label>
         </div>
         <div class="col-2 align-centre" v-if="showHeader">
             <label for="actions">Actions</label>
         </div>
-        <div class="col-3">
+        <div class=".d-none col-3">
             <InputMask  v-model="item.consumedDate" 
                         mask="99/99/9999 99:99"
                         class="full-width"
                         slotChar="dd/mm/yyyy HH:MM"
                         v-on:blur="updateParent" />
         </div>
-        <div class="col-5">
+        <div class="col-6">
             <auto-complete id="inventory-description" 
                             v-model="item.description" 
                             v-on:item-select="itemSelected"
@@ -28,7 +28,7 @@
                             field="description"
                             class="w-full" />
         </div>
-        <div class="col-2">
+        <div class="col-1">
             <input-number id="unit-value" 
                             v-model="item.unitValue" 
                             v-on:blur="updateParent" 

@@ -3,6 +3,10 @@ import dayjs from "dayjs";
 let isBetween = require('dayjs/plugin/isBetween');
 dayjs.extend(isBetween);
 
+import inventory from '../db/inventory';
+
+const dbConnection = inventory.database.schemaBuilder.connect();
+
 export default {
     state: {
         filters: {
@@ -74,7 +78,19 @@ export default {
         },
         commitItems(context, key) {
             let items = context.state.items;
+            console.log(inventory.database);
+            dbConnection.then(db => {
+                
+                let itemTable = db.getSchema().table("items");
+                let rows = [];
+                for(let item of items) {
+                    let row = itemTable.createRow(item);
+                    rows.push(row);
+                }
 
+                return db.insertOrReplace()
+                    .into(itemTable).values(rows).exec();
+            });
             localStorage.setItem(key, JSON.stringify(items));
         }
     }

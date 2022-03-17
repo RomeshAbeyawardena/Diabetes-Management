@@ -1,6 +1,6 @@
 <template>
     <div>
-        <ScrollPanel style="height:200px">
+        <ScrollPanel style="height:180px">
             <inventory-item 
                 v-for="item in items" 
                 v-bind:key="item.id" 
