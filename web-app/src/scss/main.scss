@@ -1,0 +1,35 @@
+body {
+    background-color: var(--surface-b);
+    color: var(--text-color);
+    font-family: var(--font-family);
+    height:100%;
+}
+
+.action-buttons {
+    margin-top: 0rem;
+}
+
+.full-width {
+    width:100% !important;
+    input{
+        width:100% !important;
+    }
+}
+
+.w-full {
+    input{
+        width:100% !important;
+    }
+}
+
+.align-right {
+    text-align: right;
+}
+
+.align-centre {
+    text-align: center;
+}
+
+.date-navigation {
+    background-color: var(--surface-a);
+}
