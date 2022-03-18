@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <toast position="center" />
     <date-navigation />
     <inventory-vue :items="items" />
   </div>
@@ -9,12 +10,15 @@
 import { Inventory } from "./store/inventory";
 import InventoryVue from "./components/Inventory.vue"
 import DateNavigation from "./components/Date-navigation.vue";
+import Toast from 'primevue/toast';
+
 import dayjs from "dayjs";
 export default {
   name: 'App',
   components: {
     DateNavigation,
-    InventoryVue
+    InventoryVue,
+    Toast
   },
   computed: {
     items() { 

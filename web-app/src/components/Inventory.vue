@@ -58,10 +58,12 @@ export default {
       this.$store.commit(Inventory.mutations.setCurrentId, newId);
     },
     async loadItems() {
-      await this.$store.dispatch(Inventory.actions.getItems);
+        await this.$store.dispatch(Inventory.actions.getItems);
+        this.$toast.add({severity:'success', summary: 'Items loaded', detail:'Items loaded', life: 3000});
     },
     async saveItems() {
-      this.$store.dispatch(Inventory.actions.commitItems, this.items);
+        await this.$store.dispatch(Inventory.actions.commitItems, this.items);
+        this.$toast.add({severity:'success', summary: 'Items saved', detail:'Items successfully saved', life: 3000});
     },
     removeItem(id) {
       this.$store.commit(Inventory.mutations.removeItem, id);
