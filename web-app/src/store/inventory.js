@@ -58,6 +58,11 @@ export default {
         removeItem(state, id) {
             let index = state.items.findIndex(i => i.id === id);
             state.items.splice(index, 1);
+
+            if(state.currentId > state.lastId) {
+                Vue.set(state, "currentId", state.currentId - 1);
+            }
+
         }
     },
     getters: {

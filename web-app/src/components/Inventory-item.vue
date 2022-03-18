@@ -1,25 +1,25 @@
 <template>
     <div class="grid">
         <div class=".d-none col-3 align-centre" v-if="showHeader">
-            <label for="unit-value">Consumed Date</label>
+            <label for="unit-value">Consumed</label>
         </div>
-        <div class="col-6 align-centre" v-if="showHeader">
+        <div class="col-5 align-centre" v-if="showHeader">
             <label for="inventory-description">Description</label>
         </div>
-        <div class="col-1 align-centre" v-if="showHeader">
+        <div class="col-2 align-centre" v-if="showHeader">
             <label for="unit-value">Units</label>
         </div>
         <div class="col-2 align-centre" v-if="showHeader">
             <label for="actions">Actions</label>
         </div>
         <div class=".d-none col-3">
-            <InputMask  v-model="item.consumedDate" 
-                        mask="99/99/9999 99:99"
+            <Calendar  v-model="item.consumedDate" 
+                        :touchUI="false"
+                        :timeOnly="true"
                         class="full-width"
-                        slotChar="dd/mm/yyyy HH:MM"
                         v-on:blur="updateParent" />
         </div>
-        <div class="col-6">
+        <div class="col-5">
             <auto-complete id="inventory-description" 
                             v-model="item.description" 
                             v-on:item-select="itemSelected"
@@ -28,7 +28,7 @@
                             field="description"
                             class="w-full" />
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <input-number id="unit-value" 
                             v-model="item.unitValue" 
                             v-on:blur="updateParent" 
@@ -46,11 +46,10 @@
 <script>
 import AutoComplete from 'primevue/autocomplete';
 import Button from 'primevue/button/Button';
-import InputMask from 'primevue/inputmask';
 import InputNumber from 'primevue/inputnumber';
 import dayjs from "dayjs";
 import Inventory from "../db/inventory";
-
+import Calendar from 'primevue/calendar';
 let customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat)
 
@@ -59,8 +58,8 @@ const dateTimeFormat = "DD-MM-YYYY HH:mm";
 export default {
     components: {
         AutoComplete,
+        Calendar,
         Button,
-        InputMask,
         InputNumber
     },
     name: "inventory-item",
@@ -80,7 +79,7 @@ export default {
                 id: this.inventoryId,
                 description: this.description,
                 unitValue: this.unitValue,
-                consumedDate: ""
+                consumedDate: this.consumedDate
             }
         }
     },
@@ -92,12 +91,11 @@ export default {
             return this.date.format(dateTimeFormat)
         },
         updateParent() {
-            this.date = dayjs(this.item.consumedDate, dateTimeFormat);
             this.$emit("item:updated", {
                 id: this.item.id,
                 description: this.item.description,
                 unitValue: this.item.unitValue,
-                consumedDate: this.getDate(this.date)
+                consumedDate: this.item.consumedDate
             });
         },
         async searchItems(event) {
@@ -111,9 +109,6 @@ export default {
         deleteItem() {
             this.$emit("item:deleted", this.item.id);
         }
-    },
-    created() {
-        this.item.consumedDate = this.getDateString();
     }
 }
 </script>

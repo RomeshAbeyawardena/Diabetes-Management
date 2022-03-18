@@ -39,12 +39,16 @@ export default {
     async getLastIndex() {
         let connection = await this.getDbConnection();
 
-        let v=  await connection.select({
+        let v =  await connection.select({
             from: "items",
             aggregate: {
                 max: "id"    
             },
         });
+        
+        if(!v.length){
+            return 0;
+        }
 
         let maxId = v[0]["max(id)"];
         return maxId;
