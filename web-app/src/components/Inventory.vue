@@ -63,7 +63,7 @@ export default {
       this.$toast.add({
         severity: "success",
         summary: "Items loaded",
-        detail: "Items loaded",
+        detail: "Items successfully loaded",
         life: 3000,
       });
     },

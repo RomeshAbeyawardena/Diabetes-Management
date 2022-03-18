@@ -4,6 +4,7 @@ import inventoryDb from '../db/inventory';
 
 export const Inventory = {
     mutations: {
+        setIsDirty: "setIsDirty",
         setCurrentId: "setCurrentId",
         setLastId: "setLastId",
         setFilters: "setFilters",
@@ -21,6 +22,7 @@ export const Inventory = {
 
 export default {
     state: {
+        isDirty: false,
         currentId: 0,
         lastId: 0,
         filters: {
@@ -30,7 +32,10 @@ export default {
         items: []
     },
     mutations: {
-        setCurrentId(state, value){
+        setIsDirty(state, isDirty) {
+            state.isDirty = isDirty;
+        },
+        setCurrentId(state, value) {
             Vue.set(state, "currentId", value);
         },
         setLastId(state, value) {
