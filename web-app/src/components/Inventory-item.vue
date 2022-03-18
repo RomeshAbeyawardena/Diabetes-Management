@@ -109,6 +109,7 @@ export default {
             });
         },
         async searchItems(event) {
+            this.item.description = event.query;
             this.searchResults = await Inventory.searchItems(event.query);
         },
         itemSelected(event) {

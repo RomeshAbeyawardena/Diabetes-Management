@@ -26,14 +26,19 @@ export default {
       return this.$store.state.Inventory.items;
     }
   },
-  created() {
-    this.clientWidth = window.innerWidth;
-    let store = this.$store;
-    window.onresize = () => {
-      store.commit(Store.mutations.setClientSize, { 
-        width: window.innerWidth,
-        height: window.innerHeight
+  methods: {
+    setClientSize(width, height) {
+      this.$store.commit(Store.mutations.setClientSize, { 
+        width: width,
+        height: height
       });
+    }
+  },
+  created() {
+    this.setClientSize(window.innerWidth, window.innerHeight);
+    let context = this;
+    window.onresize = () => {
+      context.setClientSize(window.innerWidth, window.innerHeight);
     };
 
     return this.$store.commit(Inventory.mutations.setFilters, {
