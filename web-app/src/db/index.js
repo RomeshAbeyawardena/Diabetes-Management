@@ -8,7 +8,8 @@ const itemsDb = {
         id: { primaryKey: true, autoIncrement: false },
         description: { dataType: "string" },
         unitValue: { dataType: "number" },
-        consumedDate: { dataType: "date_time" }
+        consumedDate: { dataType: "date_time" },
+        state: { dataType: "string" }
     }
 };
 
