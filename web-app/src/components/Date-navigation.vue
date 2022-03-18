@@ -18,6 +18,7 @@
 <script>
 import Button from "primevue/button/Button"
 import dayjs from "dayjs";
+import { Inventory } from "../store/inventory";
 
 export default {
     components: {
@@ -30,22 +31,26 @@ export default {
         }
     },
     methods: {
-        nextDay() {
+        async nextDay() {
             let fromDate = dayjs(this.$store.state.Inventory.filters.fromDate);
             let toDate = dayjs(this.$store.state.Inventory.filters.toDate);
-            this.$store.commit("setFilters", { 
+            this.$store.commit(Inventory.mutations.setFilters, { 
                 fromDate: fromDate.add(1, 'day').toDate(),
                 toDate: toDate.add(1, 'day').toDate()
             });
+
+            await this.$store.dispatch(Inventory.actions.getItems);
         },
 
-        previousDay() {
+        async previousDay() {
             let fromDate = dayjs(this.$store.state.Inventory.filters.fromDate);
             let toDate = dayjs(this.$store.state.Inventory.filters.toDate);
-            this.$store.commit("setFilters", { 
+            this.$store.commit(Inventory.mutations.setFilters, { 
                 fromDate: fromDate.subtract(1, 'day').toDate(),
                 toDate: toDate.subtract(1, 'day').toDate()
             });
+
+            await this.$store.dispatch(Inventory.actions.getItems, "inventory");
         }
     },
     name: "date-navigation"

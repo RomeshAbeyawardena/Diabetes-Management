@@ -1,29 +1,30 @@
 <template>
   <div id="app">
     <date-navigation />
-    <inventory :items="items" />
+    <inventory-vue :items="items" />
   </div>
 </template>
 
 <script>
-import Inventory from "./components/Inventory.vue"
+import { Inventory } from "./store/inventory";
+import InventoryVue from "./components/Inventory.vue"
 import DateNavigation from "./components/Date-navigation.vue";
-
+import dayjs from "dayjs";
 export default {
   name: 'App',
   components: {
     DateNavigation,
-    Inventory
+    InventoryVue
   },
   computed: {
     items() { 
-      return this.$store.getters.filteredItems;
+      return this.$store.state.Inventory.items;
     }
   },
   created(){
-    return this.$store.commit("setFilters", {
-      fromDate: new Date("2022-03-17T00:00:00"),
-      toDate: new Date("2022-03-17T23:59:59")
+    return this.$store.commit(Inventory.mutations.setFilters, {
+      fromDate: dayjs().startOf("day").toDate(),
+      toDate: dayjs().endOf("day").toDate()
     });
   }
 }

@@ -1,13 +1,28 @@
 import Vue from 'vue';
-import dayjs from "dayjs";
 
-let isBetween = require('dayjs/plugin/isBetween');
-dayjs.extend(isBetween);
 
 import inventoryDb from '../db/inventory';
 
+export const Inventory = {
+    mutations: {
+        setCurrentId: "setCurrentId",
+        setLastId: "setLastId",
+        setFilters: "setFilters",
+        setItems: "setItems",
+        pushItem: "pushItem",
+        updateItem: "updateItem",
+        removeItem: "removeItem"
+    },
+    actions: {
+        getLastId: "getLastId",
+        getItems: "getItems",
+        commitItems: "commitItems"
+    }
+}
+
 export default {
     state: {
+        currentId: 0,
         lastId: 0,
         filters: {
             fromDate: null,
@@ -16,8 +31,13 @@ export default {
         items: []
     },
     mutations: {
+        setCurrentId(state, value){
+            Vue.set(state, "currentId", value);
+        },
         setLastId(state, value) {
             Vue.set(state, "lastId", value);
+            //reset current id
+            Vue.set(state, "currentId", value);
         },
         setFilters(state, value) {
             Vue.set(state, "filters", value);
@@ -25,8 +45,9 @@ export default {
         setItems(state, value) {
             if (value && value.length) {
                 value.forEach(v => v.consumedDate = new Date(v.consumedDate));
-                Vue.set(state, "items", value);
             }
+
+            Vue.set(state, "items", value);
         },
         pushItem(state, value) {
             state.items.push(value);
@@ -41,30 +62,17 @@ export default {
         }
     },
     getters: {
-        filteredItems(state) {
-            
-            if (!state.filters.fromDate && !state.filters.toDate) {
-                return state.items;
+        lastId(state) {
+            if(state.currentId > state.lastId) {
+                return state.currentId;
             }
 
-            let fromDate = dayjs(state.filters.fromDate);
-            let toDate = dayjs(state.filters.toDate);
-
-            return state.items.filter(i => dayjs(i.consumedDate)
-                .isBetween(fromDate, toDate));
+            return state.lastId;
         },
-        getLastId(state) {
-            let length = state.items ? state.items.length : 0;
-
-            if (!length)
-                return 0;
-
-            return state.items[length - 1].id;
-        },
-        totalUnits(state, getters) {
+        totalUnits(state) {
             let sum = 0;
 
-            let items = getters.filteredItems;
+            let items = state.items;
 
             if (items && items) {
                 items.forEach(i => sum += i.unitValue);
@@ -79,11 +87,7 @@ export default {
             context.commit("setLastId", result);
             return result;
         },
-        async getItems(context, key) {
-            let items = localStorage.getItem(key)
-            
-            context.commit("setItems", JSON.parse(items));
-
+        async getItems(context) {
             let state = context.state;
 
             if (!state.filters.fromDate && !state.filters.toDate) {
@@ -94,14 +98,13 @@ export default {
             let toDate = state.filters.toDate;
 
             let results = await inventoryDb.getItems(fromDate, toDate);
-
             console.log(results);
+            context.commit("setItems", results);
+            await context.dispatch("getLastId");
         },
-        async commitItems(context, key) {
-            let items = context.state.items;
-            localStorage.setItem(key, JSON.stringify(items));
-            
+        async commitItems(context, items) {
             await inventoryDb.setItems(items);
+            await context.dispatch("getLastId");
         }
     }
 }

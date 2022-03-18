@@ -22,6 +22,8 @@
 import Button from 'primevue/button';
 import InventoryItem from "./Inventory-item.vue"
 import ScrollPanel from 'primevue/scrollpanel';
+import DateHelper from "../helpers/date-helper";
+import { Inventory } from "../store/inventory";
 
 export default {
     name: "inventory",
@@ -33,41 +35,40 @@ export default {
     computed: {
         totalUnits() {
             return this.$store.getters.totalUnits;
+        },
+        lastId() {
+            return this.$store.getters.lastId;
         }
-        
     },
     methods: {
         shouldShowHeader(item) {
             return this.items.indexOf(item) < 1;
         },
         setItem(item) {
-            this.$store.commit("updateItem", item)
+            this.$store.commit(Inventory.mutations.updateItem, item)
         },
         async addItem() {
-            let id = await this.$store.dispatch("getLastId");
-            let fromDate = this.$store.state.Inventory.filters.fromDate;
             
+            let fromDate = this.$store.state.Inventory.filters.fromDate;
+            let newId = this.lastId + 1;
             let dateNow = new Date();
-            this.$store.commit("pushItem", { 
-                id: id + 1, 
+            this.$store.commit(Inventory.mutations.pushItem, { 
+                id: newId,
                 description: "", 
                 unitValue: 0,
-                consumedDate: new Date(fromDate.getFullYear(), 
-                    fromDate.getMonth(), 
-                    fromDate.getDate(),
-                    dateNow.getHours(),
-                    dateNow.getMinutes(),
-                    dateNow.getSeconds())
+                consumedDate: DateHelper.getDate(fromDate, dateNow)
             });
+
+            this.$store.commit(Inventory.mutations.setCurrentId, newId);
         },
-        loadItems() {
-            this.$store.dispatch("getItems", "inventory");
+        async loadItems() {
+            await this.$store.dispatch(Inventory.actions.getItems);
         },
-        saveItems() {
-            this.$store.dispatch("commitItems", "inventory");
+        async saveItems() {
+            this.$store.dispatch(Inventory.actions.commitItems);
         },
         removeItem(id) {
-            this.$store.commit("removeItem", id);
+            this.$store.commit(Inventory.mutations.removeItem, id);
         }
     },
     props: {
