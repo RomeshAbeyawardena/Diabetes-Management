@@ -49,6 +49,8 @@ import Button from 'primevue/button/Button';
 import InputMask from 'primevue/inputmask';
 import InputNumber from 'primevue/inputnumber';
 import dayjs from "dayjs";
+import Inventory from "../db/inventory";
+
 let customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat)
 
@@ -98,9 +100,8 @@ export default {
                 consumedDate: this.getDate(this.date)
             });
         },
-        searchItems(event) {
-            console.log(event);
-            this.searchResults = this.$store.state.Inventory.items;
+        async searchItems(event) {
+            this.searchResults = await Inventory.searchItems(event.query);
         },
         itemSelected(event) {
             this.item.description = event.value.description;

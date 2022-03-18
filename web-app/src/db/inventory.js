@@ -17,7 +17,7 @@ export default {
     },
     async setItems(items) {
         let connection = await this.getDbConnection();
-
+        
         await connection.insert({
             into: "items",
             upsert: true,
@@ -26,7 +26,7 @@ export default {
     },
     async searchItems(query) {
         let connection = await this.getDbConnection();
-
+        
         return await connection.select({
             from: "items",
             where: {

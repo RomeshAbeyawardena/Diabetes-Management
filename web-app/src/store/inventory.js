@@ -97,7 +97,7 @@ export default {
             let toDate = state.filters.toDate;
 
             let results = await inventoryDb.getItems(fromDate, toDate);
-            console.log(results);
+            
             context.commit("setItems", results);
             await context.dispatch("getLastId");
         },
