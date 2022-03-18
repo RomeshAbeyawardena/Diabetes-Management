@@ -15,7 +15,9 @@
         <div class=".d-none col-3">
             <Calendar  v-model="item.consumedDate" 
                         :touchUI="false"
-                        :timeOnly="true"
+                        :timeOnly="isTimeOnly"
+                        :showTime="!isTimeOnly"
+                        dateFormat="dd/mm/yy"
                         class="full-width"
                         v-on:blur="updateParent" />
         </div>
@@ -58,9 +60,17 @@ const dateTimeFormat = "DD-MM-YYYY HH:mm";
 export default {
     components: {
         AutoComplete,
-        Calendar,
         Button,
+        Calendar,
         InputNumber
+    },
+    computed: {
+        clientSize() {
+            return this.$store.state.clientSize;
+        },
+        isTimeOnly() {
+            return this.clientSize.width < 400;
+        }
     },
     name: "inventory-item",
     props: {
