@@ -109,7 +109,6 @@ export default {
             });
         },
         async searchItems(event) {
-            this.item.description = event.query;
             this.searchResults = await Inventory.searchItems(event.query);
         },
         itemSelected(event) {
@@ -117,8 +116,8 @@ export default {
             this.item.unitValue = event.value.unitValue;
             this.updateParent();
         },
-        deleteItem() {
-            this.$emit("item:deleted", this.item.id);
+        deleteItem(event) {
+            this.$emit("item:deleted", event, this.item.id);
         }
     }
 }

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <confirm-popup />
     <toast position="center" />
     <date-navigation />
     <inventory-vue :items="items" />
@@ -7,6 +8,7 @@
 </template>
 
 <script>
+import ConfirmPopup from 'primevue/confirmpopup';
 import { Inventory } from "./store/inventory";
 import InventoryVue from "./components/Inventory.vue"
 import DateNavigation from "./components/Date-navigation.vue";
@@ -17,6 +19,7 @@ import dayjs from "dayjs";
 export default {
   name: 'App',
   components: {
+    ConfirmPopup,
     DateNavigation,
     InventoryVue,
     Toast

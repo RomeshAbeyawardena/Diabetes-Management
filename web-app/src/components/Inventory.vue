@@ -10,7 +10,8 @@
       :consumed-date="item.consumedDate"
       :description="item.description"
       :unit-value="item.unitValue"
-      :read-only="readOnly" />
+      :read-only="readOnly"
+    />
 
     <h3>Total: {{ totalUnits }} units</h3>
     <Button class="mr-2" v-on:click="addItem">Add new</Button>
@@ -58,15 +59,35 @@ export default {
       this.$store.commit(Inventory.mutations.setCurrentId, newId);
     },
     async loadItems() {
-        await this.$store.dispatch(Inventory.actions.getItems);
-        this.$toast.add({severity:'success', summary: 'Items loaded', detail:'Items loaded', life: 3000});
+      await this.$store.dispatch(Inventory.actions.getItems);
+      this.$toast.add({
+        severity: "success",
+        summary: "Items loaded",
+        detail: "Items loaded",
+        life: 3000,
+      });
     },
     async saveItems() {
-        await this.$store.dispatch(Inventory.actions.commitItems, this.items);
-        this.$toast.add({severity:'success', summary: 'Items saved', detail:'Items successfully saved', life: 3000});
+      await this.$store.dispatch(Inventory.actions.commitItems, this.items);
+      this.$toast.add({
+        severity: "success",
+        summary: "Items saved",
+        detail: "Items successfully saved",
+        life: 3000,
+      });
     },
-    removeItem(id) {
-      this.$store.commit(Inventory.mutations.removeItem, id);
+    removeItem(event, id) {
+      this.$confirm.require({
+        target: event.currentTarget,
+        message: "Are you sure you want to proceed?",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+          this.$store.commit(Inventory.mutations.removeItem, id);
+        },
+        reject: () => {
+          //callback to execute when user rejects the action
+        },
+      });
     },
   },
   props: {
