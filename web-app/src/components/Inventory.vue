@@ -65,7 +65,7 @@ export default {
             await this.$store.dispatch(Inventory.actions.getItems);
         },
         async saveItems() {
-            this.$store.dispatch(Inventory.actions.commitItems);
+            this.$store.dispatch(Inventory.actions.commitItems, this.items);
         },
         removeItem(id) {
             this.$store.commit(Inventory.mutations.removeItem, id);

@@ -1,6 +1,5 @@
 import Vue from 'vue';
 
-
 import inventoryDb from '../db/inventory';
 
 export const Inventory = {
