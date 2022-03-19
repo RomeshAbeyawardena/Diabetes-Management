@@ -13,16 +13,18 @@
             <label for="actions">Actions</label>
         </div>
         <div class="col-3 xs-show">
-            <p>Show me</p>
+            <InputMask  v-model="formattedTime" 
+                        mask="99:99" 
+                        slotChar="hh:mm"
+                        class="full-width"
+                        v-on:click="showCalendar" />
         </div>
         <div class="col-3 xs-hide">
-            <Calendar  v-model="item.consumedDate" 
-                        :touchUI="false"
-                        :timeOnly="isTimeOnly"
-                        :showTime="!isTimeOnly"
-                        dateFormat="dd/mm/yy"
+            <InputMask  v-model="formattedDateTime" 
+                        mask="99/99/9999 99:99" 
+                        slotChar="dd/mm/yyyy hh:mm"
                         class="full-width"
-                        v-on:blur="updateParent" />
+                        v-on:click="showCalendar" />
         </div>
         <div class="col-5">
             <auto-complete id="inventory-description" 
@@ -52,25 +54,42 @@
 <script>
 import AutoComplete from 'primevue/autocomplete';
 import Button from 'primevue/button/Button';
+import InputMask from 'primevue/inputmask';
 import InputNumber from 'primevue/inputnumber';
 import dayjs from "dayjs";
 import InventoryDb from "../db/inventory";
-import Calendar from 'primevue/calendar';
+import { Store } from "../store";
+
 let customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat)
 
-const dateTimeFormat = "DD-MM-YYYY HH:mm";
-
+const dateTimeFormat = "DD/MM/YYYY HH:mm";
+const timeFormat = "HH:mm"
 export default {
     components: {
         AutoComplete,
         Button,
-        Calendar,
+        InputMask,
         InputNumber
     },
     computed: {
         isTimeOnly() {
             return false;
+        }
+    },
+    data() {
+        return {
+            searchResults: [],
+            date: dayjs(this.consumedDate),
+            formattedTime: "",
+            formattedDateTime: "",
+            item: {
+                id: this.inventoryId,
+                description: this.description,
+                unitValue: this.unitValue,
+                consumedDate: this.consumedDate,
+                state: this.state
+            }
         }
     },
     name: "inventory-item",
@@ -83,24 +102,24 @@ export default {
         "readOnly": Boolean,
         "unitValue": Number
     },
-    data() {
-        return {
-            searchResults: [],
-            date: dayjs(this.consumedDate),
-            item: {
-                id: this.inventoryId,
-                description: this.description,
-                unitValue: this.unitValue,
-                consumedDate: this.consumedDate,
-                state: this.state
-            }
-        }
-    },
+    
     methods: {
+        showCalendar() {
+            let dialog = this.$store.state.dialog;
+            dialog.subject = this.inventoryId;
+            dialog.display = true;
+            dialog.value = this.item.consumedDate;
+            this.$store.commit(Store.mutations.setDialogOptions, dialog);
+        },
         getDate(date) {
             return date.toDate();
         },
-        getDateString() {
+        getDateString(timeOnly) {
+    
+            if(timeOnly) {
+                return this.date.format(timeFormat)
+            }
+
             return this.date.format(dateTimeFormat)
         },
         updateParent() {
@@ -123,6 +142,19 @@ export default {
         deleteItem(event) {
             this.$emit("item:deleted", event, this.item.id);
         }
-    }
+    }, created() {
+        this.formattedTime = this.getDateString(true);
+        this.formattedDateTime = this.getDateString();
+        let context = this;
+        this.$root.$on("dialog:optionSelected", e => { 
+            if(e.subject == this.item.id) { 
+                context.item.consumedDate = e.value;
+                context.date = dayjs(e.value);
+                context.updateParent();
+                context.formattedTime = this.getDateString(true);
+                context.formattedDateTime = this.getDateString();
+            }
+        });
+    },
 }
 </script>

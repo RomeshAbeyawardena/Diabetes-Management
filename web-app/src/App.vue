@@ -1,5 +1,14 @@
 <template>
   <div id="app">
+    <Dialog :header="dialog.header" 
+            :visible.sync="dialog.display"
+            :modal="dialog.modal"
+            :showHeader="dialog.header"
+            v-on:hide="dialogHide"> 
+      <Calendar v-model="value" 
+                :inline="true"
+                v-on:input="dialogOptionSelected" />
+    </Dialog>
     <confirm-popup />
     <toast position="center" />
     <date-navigation />
@@ -8,30 +17,57 @@
 </template>
 
 <script>
-import ConfirmPopup from 'primevue/confirmpopup';
+import Calendar from 'primevue/calendar';
+import ConfirmPopup from "primevue/confirmpopup";
 import { Inventory } from "./store/inventory";
-import InventoryVue from "./components/Inventory.vue"
+import { Store } from "./store";
+import InventoryVue from "./components/Inventory.vue";
 import DateNavigation from "./components/Date-navigation.vue";
-import Toast from 'primevue/toast';
-import { mapGetters } from 'vuex';
+import Toast from "primevue/toast";
+import { mapGetters } from "vuex";
+import Dialog from "primevue/dialog";
 
 import dayjs from "dayjs";
 export default {
-  name: 'App',
+  name: "App",
   components: {
+    Calendar,
     ConfirmPopup,
     DateNavigation,
+    Dialog,
     InventoryVue,
-    Toast
+    Toast,
+  },
+  data() {
+    return {
+      value: null
+    }
   },
   computed: {
-    ...mapGetters([Inventory.getters.filteredItems])
+    dialog() {
+      return this.$store.state.dialog;
+    },
+    ...mapGetters([Inventory.getters.filteredItems]),
+  },
+  methods: {
+    dialogOptionSelected(e) {
+      let dialog = this.dialog;
+      dialog.value = e;
+      dialog.display = false;
+      this.$store.commit(Store.mutations.setDialogOptions, dialog);
+      this.$root.$emit("dialog:optionSelected", dialog);
+    },
+    dialogHide() {
+      let dialog = this.dialog;
+      dialog.display = false;
+      this.$store.commit(Store.mutations.setDialogOptions, dialog);
+    }
   },
   created() {
     return this.$store.commit(Inventory.mutations.setFilters, {
       fromDate: dayjs().startOf("day").toDate(),
-      toDate: dayjs().endOf("day").toDate()
+      toDate: dayjs().endOf("day").toDate(),
     });
-  }
-}
+  },
+};
 </script>

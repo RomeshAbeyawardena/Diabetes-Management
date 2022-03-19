@@ -5,16 +5,24 @@ Vue.use(Vuex)
 
 export const Store = {
   mutations: {
-    setClientSize: "setClientSize"
+    setDialogOptions: "setDialogOptions"
   }
 }
 
 export default new Vuex.Store({
   state: {
-    
+    dialog: {
+      header: null,
+      display: false,
+      value: null,
+      modal: true,
+      subject: null
+    }
   },
   mutations: {
-    
+    setDialogOptions(state, dialogOptions) {
+      Vue.set(state, "dialog", dialogOptions);
+    }
   },
   actions: {
     
