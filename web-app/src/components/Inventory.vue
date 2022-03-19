@@ -15,8 +15,23 @@
     />
 
     <h3>Total: {{ totalUnits }} units</h3>
-    <Button class="mr-2" v-on:click="addItem">Add new</Button>
-    <Button v-on:click="saveItems">Save</Button>
+    <div class="grid">
+      <div class="col">
+        <Button icon="pi pi-plus-circle" 
+                label="Add new" 
+                v-on:click="addItem" />
+      </div>
+      <div class="col align-right">
+        <Button icon="pi pi-undo" 
+                class="mr-2 p-button-danger" 
+                :label="toggleResponsiveLabel('Reset app')" 
+                v-on:click="resetApp" />
+        <Button icon="pi pi-save" 
+                class="p-button-success" 
+                :label="toggleResponsiveLabel('Save changes', 'Save')" 
+                v-on:click="saveItems" />
+      </div>
+    </div>
   </div>
 </template>
 <script type="text/javascript">
@@ -33,17 +48,30 @@ export default {
     InventoryItem,
   },
   computed: {
+    clientSize() {
+      return this.$store.state.clientSize;
+    },
     ...mapGetters([
       Inventory.getters.totalUnits, 
       Inventory.getters.lastId])
   },
   methods: {
+    toggleResponsiveLabel(label, shortName) {
+      if(this.clientSize.width < 400) {
+        return shortName ?? null;
+      }
+      
+      return label;
+    },
     shouldShowHeader(item) {
       return this.items.indexOf(item) < 1;
     },
     setItem(item) {
       this.$store.commit(Inventory.mutations.updateItem, item);
       this.$store.commit(Inventory.mutations.setIsDirty, true);
+    },
+    resetApp() {
+
     },
     async addItem() {
       let fromDate = this.$store.state.Inventory.filters.fromDate;
