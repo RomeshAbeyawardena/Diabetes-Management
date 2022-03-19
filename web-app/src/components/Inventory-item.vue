@@ -10,7 +10,7 @@
             <label for="unit-value">Units</label>
         </div>
         <div class="col-2 align-centre" v-if="showHeader">
-            <label for="actions">Actions</label>
+            <label for="actions"></label>
         </div>
         <div class="col-3 xs-show">
             <InputMask  v-model="formattedTime" 
