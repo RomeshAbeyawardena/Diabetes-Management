@@ -72,7 +72,7 @@ export default {
       });
     },
     async saveItems() {
-      await this.$store.dispatch(Inventory.actions.commitItems, this.items);
+      await this.$store.dispatch(Inventory.actions.commitItems, this.$store.state.Inventory.items);
       this.$toast.add({
         severity: "success",
         summary: "Items saved",
