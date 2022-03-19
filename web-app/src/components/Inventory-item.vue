@@ -12,7 +12,10 @@
         <div class="col-2 align-centre" v-if="showHeader">
             <label for="actions">Actions</label>
         </div>
-        <div class=".d-none col-3">
+        <div class="col-3 xs-show">
+            <p>Show me</p>
+        </div>
+        <div class="col-3 xs-hide">
             <Calendar  v-model="item.consumedDate" 
                         :touchUI="false"
                         :timeOnly="isTimeOnly"

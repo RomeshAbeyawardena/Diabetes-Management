@@ -48,3 +48,16 @@ body {
         }
     }
 }
+
+.grid {
+    @media (min-width: 577px) {
+        .xs-show {
+            display:none;
+        }
+    }
+    @media (max-width: 577px) {
+        .xs-hide {
+            display:none;
+        }
+    }
+}

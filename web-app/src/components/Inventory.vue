@@ -1,6 +1,6 @@
 <template>
 <div>
-  <ScrollPanel style="width:inherit; height:calc(100vh - 190px)">
+  <ScrollPanel style="width:inherit; height:calc(100vh - 195px)">
     <inventory-item
       v-for="item in items"
       v-bind:key="item.id"
@@ -63,13 +63,6 @@ export default {
     'tooltip': Tooltip
   },
   methods: {
-    toggleResponsiveLabel(label, shortName) {
-      if(this.clientSize.width < 578) {
-        return shortName ?? null;
-      }
-      
-      return label;
-    },
     shouldShowHeader(item) {
       return this.items.indexOf(item) < 1;
     },
