@@ -18,6 +18,11 @@ export const Inventory = {
         getLastId: "getLastId",
         getItems: "getItems",
         commitItems: "commitItems"
+    },
+    getters: {
+        filteredItems: "filteredItems",
+        lastId: "lastId",
+        totalUnits: "totalUnits",
     }
 }
 

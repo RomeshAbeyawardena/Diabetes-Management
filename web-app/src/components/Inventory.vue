@@ -25,7 +25,7 @@ import InventoryItem from "./Inventory-item.vue";
 import DateHelper from "../helpers/date-helper";
 import { Inventory } from "../store/inventory";
 import { State } from "../db/inventory";
-
+import { mapGetters } from "vuex";
 export default {
   name: "inventory",
   components: {
@@ -33,12 +33,9 @@ export default {
     InventoryItem,
   },
   computed: {
-    totalUnits() {
-      return this.$store.getters.totalUnits;
-    },
-    lastId() {
-      return this.$store.getters.lastId;
-    },
+    ...mapGetters([
+      Inventory.getters.totalUnits, 
+      Inventory.getters.lastId])
   },
   methods: {
     shouldShowHeader(item) {
