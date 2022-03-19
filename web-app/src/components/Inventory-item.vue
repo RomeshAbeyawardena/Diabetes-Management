@@ -10,7 +10,9 @@
             <label for="unit-value">Units</label>
         </div>
         <div class="col-2 align-centre" v-if="showHeader">
-            <label for="actions"></label>
+            <label for="actions">
+                <i class="pi pi-user-edit"></i>
+            </label>
         </div>
         <div class="col-3 xs-show">
             <InputMask  v-model="formattedTime" 
