@@ -109,6 +109,8 @@ export default {
             dialog.subject = this.inventoryId;
             dialog.display = true;
             dialog.value = this.item.consumedDate;
+            dialog.showTime = true;
+            dialog.header = "Select date/time";
             this.$store.commit(Store.mutations.setDialogOptions, dialog);
         },
         getDate(date) {
