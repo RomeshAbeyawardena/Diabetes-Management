@@ -3,11 +3,13 @@
     <Dialog :header="dialog.header" 
             :visible.sync="dialog.display"
             :modal="dialog.modal"
-            :showHeader="dialog.header"
+            :showHeader="dialog.header != null || dialog.header != undefined"
+            v-on:show="dialogShow"
             v-on:hide="dialogHide"> 
       <Calendar v-model="value" 
                 :inline="true"
-                v-on:input="dialogOptionSelected" />
+                :show-time="dialog.showTime"
+                v-on:date-select="dialogOptionSelected" />
     </Dialog>
     <confirm-popup />
     <toast position="center" />
@@ -56,6 +58,9 @@ export default {
       dialog.display = false;
       this.$store.commit(Store.mutations.setDialogOptions, dialog);
       this.$root.$emit("dialog:optionSelected", dialog);
+    },
+    dialogShow() {
+      this.value = this.dialog.value;
     },
     dialogHide() {
       let dialog = this.dialog;
