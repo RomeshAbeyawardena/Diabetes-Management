@@ -24,10 +24,12 @@
       <div class="col align-right">
         <Button icon="pi pi-undo" 
                 class="mr-2 p-button-danger" 
+                v-tooltip.top="'Reset app'"
                 :label="toggleResponsiveLabel('Reset app')" 
                 v-on:click="resetApp" />
         <Button icon="pi pi-save" 
                 class="p-button-success" 
+                v-tooltip.top="'Save changes'"
                 :label="toggleResponsiveLabel('Save changes', 'Save')" 
                 v-on:click="saveItems" />
       </div>
@@ -41,6 +43,8 @@ import DateHelper from "../helpers/date-helper";
 import { Inventory } from "../store/inventory";
 import { State } from "../db/inventory";
 import { mapGetters } from "vuex";
+import Tooltip from 'primevue/tooltip';
+
 export default {
   name: "inventory",
   components: {
@@ -54,6 +58,9 @@ export default {
     ...mapGetters([
       Inventory.getters.totalUnits, 
       Inventory.getters.lastId])
+  },
+  directives: {
+    'tooltip': Tooltip
   },
   methods: {
     toggleResponsiveLabel(label, shortName) {
@@ -70,8 +77,18 @@ export default {
       this.$store.commit(Inventory.mutations.updateItem, item);
       this.$store.commit(Inventory.mutations.setIsDirty, true);
     },
-    resetApp() {
-
+    resetApp(event) {
+       this.$confirm.require({
+        target: event.currentTarget,
+        message: "Are you sure you want to proceed? This will remove all data.",
+        icon: "pi pi-exclamation-triangle",
+        accept: () => {
+          
+        },
+        reject: () => {
+          //callback to execute when user rejects the action
+        },
+      });
     },
     async addItem() {
       let fromDate = this.$store.state.Inventory.filters.fromDate;

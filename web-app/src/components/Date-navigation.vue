@@ -4,7 +4,7 @@
       <Button
         v-on:click="navigate()"
         icon="pi pi-angle-double-left"
-        class="p-button-rounded p-button-success"
+        class="p-button-rounded p-button-secondary"
       />
     </div>
     <div
@@ -16,7 +16,7 @@
       <Button
         v-on:click="navigate('forward')"
         icon="pi pi-angle-double-right"
-        class="p-button-rounded p-button-success"
+        class="p-button-rounded p-button-secondary"
       />
     </div>
   </div>
