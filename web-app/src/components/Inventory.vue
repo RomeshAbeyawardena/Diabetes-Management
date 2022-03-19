@@ -19,19 +19,20 @@
     <div class="grid controls">
       <div class="col">
         <Button icon="pi pi-plus-circle" 
+                class="p-button-raised"
                 label="Add new" 
                 v-on:click="addItem" />
       </div>
       <div class="col align-right">
         <Button icon="pi pi-undo" 
-                class="hide-label mr-2 p-button-danger" 
+                class="hide-label mr-2 p-button-raised p-button-danger" 
                 v-tooltip.top="'Reset app'"
                 label="Reset app" 
                 v-on:click="resetApp" />
         <Button icon="pi pi-save" 
-                class="hide-label p-button-success" 
+                class="p-button-raised p-button-success" 
                 v-tooltip.top="'Save changes'"
-                label="Save changes" 
+                label="Save" 
                 v-on:click="saveItems" />
       </div>
     </div>
@@ -73,10 +74,10 @@ export default {
     resetApp(event) {
        this.$confirm.require({
         target: event.currentTarget,
-        message: "Are you sure you want to proceed? This will remove all data.",
+        message: "Are you sure you want to proceed? This will remove all data and reload the page once completed.",
         icon: "pi pi-exclamation-triangle",
         accept: () => {
-          
+          this.$store.dispatch(Inventory.actions.rebuild);
         },
         reject: () => {
           //callback to execute when user rejects the action

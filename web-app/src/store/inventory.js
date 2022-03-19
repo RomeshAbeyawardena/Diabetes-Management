@@ -17,7 +17,8 @@ export const Inventory = {
     actions: {
         getLastId: "getLastId",
         getItems: "getItems",
-        commitItems: "commitItems"
+        commitItems: "commitItems",
+        rebuild: "rebuild"
     },
     getters: {
         filteredItems: "filteredItems",
@@ -129,6 +130,10 @@ export default {
         async commitItems(context, items) {
             await inventoryDb.setItems(items);
             await context.dispatch(Inventory.actions.getLastId);
+            await context.commit(Inventory.mutations.setIsDirty, false);
+        },
+        async rebuild(context) {
+            await inventoryDb.rebuild(context);
         }
     }
 }

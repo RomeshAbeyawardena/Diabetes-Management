@@ -39,7 +39,11 @@ export default {
     },
     async destroy() {
         this.isInitialised = false;
-        await this.connection.dropDb();
+        console.log("destroy", "dropping db");
+        let result = await this.connection.dropDb();
+        await this.connection.terminate();
+        console.log("connection terminated");
+        console.log("destroy", "dropped db", result);
     },
     isInitialised: false,
     connection: null,
