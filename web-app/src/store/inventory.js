@@ -77,6 +77,9 @@ export default {
         }
     },
     getters: {
+        filteredItems(state) {
+            return state.items.filter(i => i.state !== State.deleted);
+        },
         lastId(state) {
             if(state.currentId > state.lastId) {
                 return state.currentId;
@@ -90,7 +93,7 @@ export default {
             let items = state.items;
 
             if (items && items) {
-                items.forEach(i => sum += i.unitValue);
+                items.forEach(i => sum += i.state !== State.deleted ? i.unitValue : 0);
             }
 
             return sum;
@@ -99,7 +102,7 @@ export default {
     actions: {
         async getLastId(context) {
             let result = await inventoryDb.getLastIndex();
-            context.commit("setLastId", result);
+            context.commit(Inventory.mutations.setLastId, result);
             return result;
         },
         async getItems(context) {
@@ -114,13 +117,13 @@ export default {
 
             let results = await inventoryDb.getItems(fromDate, toDate);
             
-            context.commit("setItems", results);
-            await context.commit("setIsDirty", false);
-            await context.dispatch("getLastId");
+            context.commit(Inventory.mutations.setItems, results);
+            await context.commit(Inventory.mutations.setIsDirty, false);
+            await context.dispatch(Inventory.actions.getLastId);
         },
         async commitItems(context, items) {
             await inventoryDb.setItems(items);
-            await context.dispatch("getLastId");
+            await context.dispatch(Inventory.actions.getLastId);
         }
     }
 }

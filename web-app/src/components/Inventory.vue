@@ -10,6 +10,7 @@
       :consumed-date="item.consumedDate"
       :description="item.description"
       :unit-value="item.unitValue"
+      :state="item.state"
       :read-only="readOnly"
     />
 
