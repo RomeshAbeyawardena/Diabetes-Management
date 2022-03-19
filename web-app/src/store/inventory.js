@@ -1,6 +1,7 @@
 import Vue from 'vue';
 
 import inventoryDb from '../db/inventory';
+import { State } from '../db/inventory';
 
 export const Inventory = {
     mutations: {
@@ -62,12 +63,17 @@ export default {
         },
         removeItem(state, id) {
             let index = state.items.findIndex(i => i.id === id);
-            state.items.splice(index, 1);
+            let item = state.items[index];
+            if(item.state === State.added) {   
+                state.items.splice(index, 1);
 
-            if(state.currentId > state.lastId) {
-                Vue.set(state, "currentId", state.currentId - 1);
+                if(state.currentId > state.lastId) {
+                    Vue.set(state, "currentId", state.currentId - 1);
+                }
             }
-
+            else {
+                item.state = State.deleted;
+            }
         }
     },
     getters: {
@@ -109,6 +115,7 @@ export default {
             let results = await inventoryDb.getItems(fromDate, toDate);
             
             context.commit("setItems", results);
+            await context.commit("setIsDirty", false);
             await context.dispatch("getLastId");
         },
         async commitItems(context, items) {

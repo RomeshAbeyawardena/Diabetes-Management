@@ -39,7 +39,10 @@ export default {
   },
   methods: {
     async saveItems() {
-      await this.$store.dispatch(Inventory.actions.commitItems, this.$store.state.Inventory.items);
+      await this.$store.dispatch(
+        Inventory.actions.commitItems,
+        this.$store.state.Inventory.items
+      );
       this.$toast.add({
         severity: "success",
         summary: "Items automatically saved",
@@ -51,18 +54,24 @@ export default {
       let fromDate = dayjs(this.$store.state.Inventory.filters.fromDate);
       let toDate = dayjs(this.$store.state.Inventory.filters.toDate);
 
-      let filter = direction === "forward" ? {
+      let filter =
+        direction === "forward"
+          ? {
               fromDate: fromDate.add(1, "day").toDate(),
               toDate: toDate.add(1, "day").toDate(),
-            } : {
+            }
+          : {
               fromDate: fromDate.subtract(1, "day").toDate(),
               toDate: toDate.subtract(1, "day").toDate(),
             };
-    
-    await this.saveItems();
+      
+      if(this.$store.state.Inventory.isDirty) {
+        await this.saveItems();
+      }
+
       this.$store.commit(Inventory.mutations.setFilters, filter);
       await this.$store.dispatch(Inventory.actions.getItems);
-    }
+    },
   },
   name: "date-navigation",
 };

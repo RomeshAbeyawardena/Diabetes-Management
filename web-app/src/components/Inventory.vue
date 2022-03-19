@@ -23,6 +23,7 @@ import Button from "primevue/button";
 import InventoryItem from "./Inventory-item.vue";
 import DateHelper from "../helpers/date-helper";
 import { Inventory } from "../store/inventory";
+import { State } from "../db/inventory";
 
 export default {
   name: "inventory",
@@ -44,6 +45,7 @@ export default {
     },
     setItem(item) {
       this.$store.commit(Inventory.mutations.updateItem, item);
+      this.$store.commit(Inventory.mutations.setIsDirty, true);
     },
     async addItem() {
       let fromDate = this.$store.state.Inventory.filters.fromDate;
@@ -54,8 +56,9 @@ export default {
         description: "",
         unitValue: 0,
         consumedDate: DateHelper.getDate(fromDate, dateNow),
+        state: State.added
       });
-
+      this.$store.commit(Inventory.mutations.setIsDirty, true);
       this.$store.commit(Inventory.mutations.setCurrentId, newId);
     },
     async loadItems() {

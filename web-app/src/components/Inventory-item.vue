@@ -50,7 +50,7 @@ import AutoComplete from 'primevue/autocomplete';
 import Button from 'primevue/button/Button';
 import InputNumber from 'primevue/inputnumber';
 import dayjs from "dayjs";
-import Inventory from "../db/inventory";
+import InventoryDb from "../db/inventory";
 import Calendar from 'primevue/calendar';
 let customParseFormat = require('dayjs/plugin/customParseFormat');
 dayjs.extend(customParseFormat)
@@ -75,6 +75,7 @@ export default {
     name: "inventory-item",
     props: {
         "consumedDate": Date,
+        "state": String,
         "description": String,
         "inventoryId": Number,
         "showHeader": Boolean,
@@ -89,7 +90,8 @@ export default {
                 id: this.inventoryId,
                 description: this.description,
                 unitValue: this.unitValue,
-                consumedDate: this.consumedDate
+                consumedDate: this.consumedDate,
+                state: this.state
             }
         }
     },
@@ -105,11 +107,12 @@ export default {
                 id: this.item.id,
                 description: this.item.description,
                 unitValue: this.item.unitValue,
-                consumedDate: this.item.consumedDate
+                consumedDate: this.item.consumedDate,
+                state: this.item.state
             });
         },
         async searchItems(event) {
-            this.searchResults = await Inventory.searchItems(event.query);
+            this.searchResults = await InventoryDb.searchItems(event.query);
         },
         itemSelected(event) {
             this.item.description = event.value.description;
