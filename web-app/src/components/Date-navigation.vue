@@ -7,9 +7,7 @@
         class="p-button-rounded p-button-secondary"
       />
     </div>
-    <div
-      class="col-8 align-centre flex align-items-center justify-content-center"
-    >
+    <div class="col-8 align-centre flex align-items-center justify-content-center">
       <h4 class="mt-0 mb-0">{{ fromDate }}</h4>
     </div>
     <div class="col-2 align-right">

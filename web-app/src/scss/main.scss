@@ -2,7 +2,6 @@ body {
     background-color: var(--surface-b);
     color: var(--text-color);
     font-family: var(--font-family);
-    height:100%;
 }
 
 .action-buttons {
@@ -32,4 +31,20 @@ body {
 
 .date-navigation {
     background-color: var(--surface-a);
+}
+
+.controls {
+    button.p-button {
+        @media (max-width: 577px) {
+            &.hide-label {
+                .p-button-icon-left {
+                    margin: 0;
+                }
+
+                .p-button-label {
+                    display:none;
+                }
+            }
+        }
+    }
 }

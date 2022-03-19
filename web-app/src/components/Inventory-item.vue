@@ -66,11 +66,8 @@ export default {
         InputNumber
     },
     computed: {
-        clientSize() {
-            return this.$store.state.clientSize;
-        },
         isTimeOnly() {
-            return this.clientSize.width < 400;
+            return false;
         }
     },
     name: "inventory-item",

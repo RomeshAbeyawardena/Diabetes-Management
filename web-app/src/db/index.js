@@ -14,7 +14,6 @@ const itemsDb = {
 };
 
 export default {
-    isInitialised: false,
     async init() {
         this.connection = new Connection();
         
@@ -38,6 +37,11 @@ export default {
 
         return isDbCreated;
     },
+    async destroy() {
+        this.isInitialised = false;
+        await this.connection.dropDb();
+    },
+    isInitialised: false,
     connection: null,
     database: {
         name: "inventory",

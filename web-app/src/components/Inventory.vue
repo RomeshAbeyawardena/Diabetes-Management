@@ -1,5 +1,6 @@
 <template>
-  <div>
+<div>
+  <ScrollPanel style="width:inherit; height:calc(100vh - 190px)">
     <inventory-item
       v-for="item in items"
       v-bind:key="item.id"
@@ -13,9 +14,9 @@
       :state="item.state"
       :read-only="readOnly"
     />
-
+  </ScrollPanel >
     <h3>Total: {{ totalUnits }} units</h3>
-    <div class="grid">
+    <div class="grid controls">
       <div class="col">
         <Button icon="pi pi-plus-circle" 
                 label="Add new" 
@@ -23,14 +24,14 @@
       </div>
       <div class="col align-right">
         <Button icon="pi pi-undo" 
-                class="mr-2 p-button-danger" 
+                class="hide-label mr-2 p-button-danger" 
                 v-tooltip.top="'Reset app'"
-                :label="toggleResponsiveLabel('Reset app')" 
+                label="Reset app" 
                 v-on:click="resetApp" />
         <Button icon="pi pi-save" 
-                class="p-button-success" 
+                class="hide-label p-button-success" 
                 v-tooltip.top="'Save changes'"
-                :label="toggleResponsiveLabel('Save changes', 'Save')" 
+                label="Save changes" 
                 v-on:click="saveItems" />
       </div>
     </div>
@@ -43,6 +44,7 @@ import DateHelper from "../helpers/date-helper";
 import { Inventory } from "../store/inventory";
 import { State } from "../db/inventory";
 import { mapGetters } from "vuex";
+import ScrollPanel from 'primevue/scrollpanel';
 import Tooltip from 'primevue/tooltip';
 
 export default {
@@ -50,11 +52,9 @@ export default {
   components: {
     Button,
     InventoryItem,
+    ScrollPanel
   },
   computed: {
-    clientSize() {
-      return this.$store.state.clientSize;
-    },
     ...mapGetters([
       Inventory.getters.totalUnits, 
       Inventory.getters.lastId])
@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     toggleResponsiveLabel(label, shortName) {
-      if(this.clientSize.width < 400) {
+      if(this.clientSize.width < 578) {
         return shortName ?? null;
       }
       

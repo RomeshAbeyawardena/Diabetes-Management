@@ -22,6 +22,11 @@ export default {
 
         return inventoryDb.connection;
     },
+    async reCreate() {
+        await inventoryDb.destroy();
+        this.dbConnection = null;
+        this.getDbConnection();
+    },
     async setItems(items) {
         let connection = await this.getDbConnection();
         
