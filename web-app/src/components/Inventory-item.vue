@@ -26,6 +26,7 @@
                             v-model="item.description" 
                             v-on:item-select="itemSelected"
                             v-on:complete="searchItems"
+                            v-on:input="updateParent"
                             :suggestions="searchResults"
                             field="description"
                             class="w-full" />

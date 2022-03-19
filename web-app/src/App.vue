@@ -3,7 +3,7 @@
     <confirm-popup />
     <toast position="center" />
     <date-navigation />
-    <inventory-vue :items="items" />
+    <inventory-vue :items="filteredItems" />
   </div>
 </template>
 
@@ -14,6 +14,7 @@ import InventoryVue from "./components/Inventory.vue"
 import DateNavigation from "./components/Date-navigation.vue";
 import Toast from 'primevue/toast';
 import { Store } from "./store"; 
+import { mapGetters } from 'vuex';
 
 import dayjs from "dayjs";
 export default {
@@ -25,9 +26,7 @@ export default {
     Toast
   },
   computed: {
-    items() { 
-      return this.$store.getters.filteredItems;
-    }
+    ...mapGetters([Inventory.getters.filteredItems])
   },
   methods: {
     setClientSize(width, height) {
