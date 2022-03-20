@@ -15,7 +15,12 @@
       "ProjectGuid": "f40a37aa-27be-48ec-ba7b-3fdb367d00d3",
       "DisplayName": "DiabetesManagement.App.Shared",
       "ColorIndex": 2
+    },
+    "1d49045a-6f87-4df3-ba98-5c1c8a2ccbd3": {
+      "ProjectGuid": "1d49045a-6f87-4df3-ba98-5c1c8a2ccbd3",
+      "DisplayName": "DiabetesManagement.App.iOS",
+      "ColorIndex": 3
     }
   },
-  "NextColorIndex": 3
+  "NextColorIndex": 4
 }

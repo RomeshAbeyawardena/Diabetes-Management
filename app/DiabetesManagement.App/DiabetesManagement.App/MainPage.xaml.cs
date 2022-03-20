@@ -13,14 +13,6 @@ namespace DiabetesManagement.App
 
         protected override void OnAppearing()
         {
-            //Source = "file:///android_asset/Content/index.html"
-            var localWebView = (WebView)FindByName("localWebView");
-            var htmlSource = new HtmlWebViewSource
-            {
-                Html = indexHtml
-            };
-
-            localWebView.Source = htmlSource;
             base.OnAppearing();
         }
     }

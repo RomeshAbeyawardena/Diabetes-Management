@@ -20,10 +20,10 @@ namespace DiabetesManagement.App.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
-            var indexHtml = assetStreamService.GetAsset(IndexHtmlAsset, r => Assets.Open(r));
-            var resources = assetStreamService.ParseRequiredResources(indexHtml);
-            var assets = assetStreamService.GetResources(resources, r => Assets.Open(r));
-            indexHtml = assetStreamService.ReplaceResources(indexHtml, assets, r => Assets.Open(r));
+            var indexHtml = "s";//assetStreamService.GetAsset(IndexHtmlAsset, r => Assets.Open(r));
+            //var resources = assetStreamService.ParseRequiredResources(indexHtml);
+            //var assets = assetStreamService.GetResources(resources, r => Assets.Open(r));
+            //indexHtml = assetStreamService.ReplaceResources(indexHtml, assets, r => Assets.Open(r));
 
             LoadApplication(new App(indexHtml));
         }
