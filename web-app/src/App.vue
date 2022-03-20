@@ -9,11 +9,8 @@
       :showHeader="dialog.header != null || dialog.header != undefined"
       v-on:show="dialogShow"
       v-on:hide="dialogHide">
-      <Calendar
-        v-model="value"
-        :inline="true"
-        :show-time="dialog.showTime"
-        v-on:date-select="dialogOptionSelected"
+      <DialogCalendar :dialog="dialog"
+        v-on:dialog-calendar:accepted="dialogOptionSelected"
       />
     </Dialog>
     
@@ -24,7 +21,7 @@
 </template>
 
 <script>
-import Calendar from "primevue/calendar";
+import DialogCalendar from "./components/Dialog-calendar.vue";
 import ConfirmPopup from "primevue/confirmpopup";
 import TitleNavigation from "./components/Title-navigation.vue";
 import { Inventory } from "./store/inventory";
@@ -39,10 +36,10 @@ import dayjs from "dayjs";
 export default {
   name: "App",
   components: {
-    Calendar,
     ConfirmPopup,
     DateNavigation,
     Dialog,
+    DialogCalendar,
     InventoryVue,
     TitleNavigation,
     Toast,
@@ -50,48 +47,6 @@ export default {
   data() {
     return {
       value: null,
-      items: [
-        {
-          label: "Finder",
-          icon: () => (
-            <img
-              alt="Finder"
-              src="demo/images/dock/finder.svg"
-              style="width: 100%"
-            />
-          ),
-        },
-        {
-          label: "App Store",
-          icon: () => (
-            <img
-              alt="App Store"
-              src="demo/images/dock/appstore.svg"
-              style="width: 100%"
-            />
-          ),
-        },
-        {
-          label: "Photos",
-          icon: () => (
-            <img
-              alt="Photos"
-              src="demo/images/dock/photos.svg"
-              style="width: 100%"
-            />
-          ),
-        },
-        {
-          label: "Trash",
-          icon: () => (
-            <img
-              alt="trash"
-              src="demo/images/dock/trash.png"
-              style="width: 100%"
-            />
-          ),
-        },
-      ],
     };
   },
   computed: {
@@ -102,11 +57,7 @@ export default {
   },
   methods: {
     dialogOptionSelected(e) {
-      let dialog = this.dialog;
-      dialog.value = e;
-      dialog.display = false;
-      this.$store.commit(Store.mutations.setDialogOptions, dialog);
-      this.$root.$emit("dialog:optionSelected", dialog);
+      this.$root.$emit("dialog:optionSelected", e);
     },
     dialogShow() {
       this.value = this.dialog.value;

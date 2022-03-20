@@ -31,7 +31,7 @@
                 v-on:click="resetApp" />
         <Button icon="pi pi-save" 
                 class="p-button-raised p-button-success" 
-                v-tooltip.top="'Save changes'"
+                v-tooltip.left="'Save changes'"
                 label="Save" 
                 v-on:click="saveItems" />
       </div>
