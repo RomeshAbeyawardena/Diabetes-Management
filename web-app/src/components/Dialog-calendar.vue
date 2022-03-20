@@ -41,18 +41,19 @@ export default {
                 dialog.display = visible;
             }
             this.$store.commit(Store.mutations.setDialogOptions, dialog);
+            return dialog;
         },
         accept() {
-            this.setDialogValue(this.value, false);
-            this.$emit("dialog-calendar:accepted", this.value);
+            let dialog = this.setDialogValue(this.value, false);
+            this.$emit("dialog-calendar:accepted", dialog);
         },
         reject() {
             this.setDialogValue(this.oldValue, false);
             this.$emit("dialog-calendar:rejected", this.oldValue);
         },
         dialogOptionSelected(e) {
-            this.setDialogValue(e);
-            this.$emit("dialog-calendar:selected", this.value);
+            let dialog = this.setDialogValue(e, true);
+            this.$emit("dialog-calendar:selected", dialog);
         }
     },
     name: "dialog-calendar",
