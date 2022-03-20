@@ -15,8 +15,8 @@ Vue.config.productionTip = false;
 Vue.use(PrimeVue, {ripple: true});
 Vue.use(ConfirmationService);
 Vue.use(ToastService);
-Vue.directive('tooltip', Tooltip);
 
+Vue.directive('tooltip', Tooltip);
 new Vue({
   store,
   render: h => h(App)

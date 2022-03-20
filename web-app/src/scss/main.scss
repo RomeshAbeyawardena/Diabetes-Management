@@ -62,6 +62,10 @@ body {
     }
 }
 
+.p-confirm-popup {
+    z-index: 1000;
+}
+
 .title-navigation {
     background-color: var(--surface-b);
     h3 {

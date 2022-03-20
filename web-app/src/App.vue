@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <confirm-popup />
     <TitleNavigation />
     <Dialog
       :header="dialog.header"
@@ -7,8 +8,7 @@
       :modal="dialog.modal"
       :showHeader="dialog.header != null || dialog.header != undefined"
       v-on:show="dialogShow"
-      v-on:hide="dialogHide"
-    >
+      v-on:hide="dialogHide">
       <Calendar
         v-model="value"
         :inline="true"
@@ -16,7 +16,7 @@
         v-on:date-select="dialogOptionSelected"
       />
     </Dialog>
-    <confirm-popup />
+    
     <toast position="center" />
     <date-navigation />
     <inventory-vue :items="filteredItems" />

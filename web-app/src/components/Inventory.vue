@@ -117,14 +117,17 @@ export default {
       });
     },
     removeItem(event, id) {
+      let context = this;
       this.$confirm.require({
         target: event.currentTarget,
-        message: "Are you sure you want to proceed?",
+        message: "Are you sure you want to delete this entry?",
         icon: "pi pi-exclamation-triangle",
         accept: () => {
-          this.$store.commit(Inventory.mutations.removeItem, id);
+          console.log("Accept");
+          context.$store.commit(Inventory.mutations.removeItem, id);
         },
         reject: () => {
+          console.log("Reject");
           //callback to execute when user rejects the action
         },
       });

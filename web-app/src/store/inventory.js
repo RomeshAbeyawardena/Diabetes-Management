@@ -79,6 +79,7 @@ export default {
             }
             else {
                 item.state = State.deleted;
+                state.items.splice(index, 1, item);
             }
         }
     },
