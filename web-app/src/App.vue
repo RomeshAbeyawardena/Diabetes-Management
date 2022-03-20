@@ -1,15 +1,20 @@
 <template>
   <div id="app">
-    <Dialog :header="dialog.header" 
-            :visible.sync="dialog.display"
-            :modal="dialog.modal"
-            :showHeader="dialog.header != null || dialog.header != undefined"
-            v-on:show="dialogShow"
-            v-on:hide="dialogHide"> 
-      <Calendar v-model="value" 
-                :inline="true"
-                :show-time="dialog.showTime"
-                v-on:date-select="dialogOptionSelected" />
+    <TitleNavigation />
+    <Dialog
+      :header="dialog.header"
+      :visible.sync="dialog.display"
+      :modal="dialog.modal"
+      :showHeader="dialog.header != null || dialog.header != undefined"
+      v-on:show="dialogShow"
+      v-on:hide="dialogHide"
+    >
+      <Calendar
+        v-model="value"
+        :inline="true"
+        :show-time="dialog.showTime"
+        v-on:date-select="dialogOptionSelected"
+      />
     </Dialog>
     <confirm-popup />
     <toast position="center" />
@@ -19,8 +24,9 @@
 </template>
 
 <script>
-import Calendar from 'primevue/calendar';
+import Calendar from "primevue/calendar";
 import ConfirmPopup from "primevue/confirmpopup";
+import TitleNavigation from "./components/Title-navigation.vue";
 import { Inventory } from "./store/inventory";
 import { Store } from "./store";
 import InventoryVue from "./components/Inventory.vue";
@@ -38,12 +44,55 @@ export default {
     DateNavigation,
     Dialog,
     InventoryVue,
+    TitleNavigation,
     Toast,
   },
   data() {
     return {
-      value: null
-    }
+      value: null,
+      items: [
+        {
+          label: "Finder",
+          icon: () => (
+            <img
+              alt="Finder"
+              src="demo/images/dock/finder.svg"
+              style="width: 100%"
+            />
+          ),
+        },
+        {
+          label: "App Store",
+          icon: () => (
+            <img
+              alt="App Store"
+              src="demo/images/dock/appstore.svg"
+              style="width: 100%"
+            />
+          ),
+        },
+        {
+          label: "Photos",
+          icon: () => (
+            <img
+              alt="Photos"
+              src="demo/images/dock/photos.svg"
+              style="width: 100%"
+            />
+          ),
+        },
+        {
+          label: "Trash",
+          icon: () => (
+            <img
+              alt="trash"
+              src="demo/images/dock/trash.png"
+              style="width: 100%"
+            />
+          ),
+        },
+      ],
+    };
   },
   computed: {
     dialog() {
@@ -66,7 +115,7 @@ export default {
       let dialog = this.dialog;
       dialog.display = false;
       this.$store.commit(Store.mutations.setDialogOptions, dialog);
-    }
+    },
   },
   created() {
     return this.$store.commit(Inventory.mutations.setFilters, {

@@ -61,3 +61,11 @@ body {
         }
     }
 }
+
+.title-navigation {
+    background-color: var(--surface-b);
+    h3 {
+        margin: 0;
+    }
+    margin-bottom: 1rem;
+}
