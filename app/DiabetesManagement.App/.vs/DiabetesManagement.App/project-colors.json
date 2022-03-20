@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "0ca84c54-24af-4689-92bd-41641806908c": {
+      "ProjectGuid": "0ca84c54-24af-4689-92bd-41641806908c",
+      "DisplayName": "DiabetesManagement.App",
+      "ColorIndex": 0
+    },
+    "d7b99c1c-f9d0-422b-a99a-20142b37b37c": {
+      "ProjectGuid": "d7b99c1c-f9d0-422b-a99a-20142b37b37c",
+      "DisplayName": "DiabetesManagement.App.Android",
+      "ColorIndex": 1
+    },
+    "f40a37aa-27be-48ec-ba7b-3fdb367d00d3": {
+      "ProjectGuid": "f40a37aa-27be-48ec-ba7b-3fdb367d00d3",
+      "DisplayName": "DiabetesManagement.App.Shared",
+      "ColorIndex": 2
+    }
+  },
+  "NextColorIndex": 3
+}

@@ -6,7 +6,7 @@
         <div class="col align-centre flex align-items-center justify-content-center">
             <h3>Diabetic unit's manager</h3>
         </div>
-        <div class="col-2">
+        <div class="col-2 align-right">
             <Button icon="pi pi-chart-line" class="p-button-rounded p-button-help" />
         </div>
     </div>
