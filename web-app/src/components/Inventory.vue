@@ -1,6 +1,6 @@
 <template>
 <div>
-  <ScrollPanel style="width:inherit; height:calc(100vh - 265px)">
+  <ScrollPanel style="width:inherit; height:calc(100vh - 243px)">
     <inventory-item
       v-for="item in items"
       v-bind:key="item.id"
@@ -15,12 +15,12 @@
       :read-only="readOnly"
     />
   </ScrollPanel >
-    <div class="grid">
+    <div class="grid status">
       <div class="col-6">
-        <h3>Total: {{ totalUnits }} units</h3>
+        <h3 v-if="previousUnitsCount" class="mt-0 mb-0">Prior: {{ previousUnitsCount }} units</h3>
       </div>
       <div class="col-6 align-right">
-        <h3>Prior: {{ previousUnitsCount }} units</h3>
+        <h3 class="mt-0 mb-0">Total: {{ totalUnits }} units</h3>
       </div>
     </div>
     <div class="grid controls">
