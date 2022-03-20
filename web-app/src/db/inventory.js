@@ -56,6 +56,34 @@ export default {
             }
         });
     },
+    async getPreviousUnitsCount(fromDate, toDate) {
+        let connection = await this.getDbConnection();
+
+        let items =  await connection.select({
+            from: "items",
+            aggregate: {
+                sum: "unitValue"    
+            },
+            where: {
+                state: {
+                    in: [State.unchanged, State.modified]
+                },
+                consumedDate: {
+                    '-': {
+                        low: fromDate,
+                        high: toDate
+                    }
+                }
+            }
+        });
+
+        if(!items.length){
+            return 0;
+        }
+
+        let maxId = items[0]["sum(unitValue)"];
+        return maxId;
+    },
     async getLastIndex() {
         let connection = await this.getDbConnection();
 

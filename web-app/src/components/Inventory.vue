@@ -15,7 +15,14 @@
       :read-only="readOnly"
     />
   </ScrollPanel >
-    <h3>Total: {{ totalUnits }} units</h3>
+    <div class="grid">
+      <div class="col-6">
+        <h3>Total: {{ totalUnits }} units</h3>
+      </div>
+      <div class="col-6 align-right">
+        <h3>Prior: {{ previousUnitsCount }} units</h3>
+      </div>
+    </div>
     <div class="grid controls">
       <div class="col">
         <Button icon="pi pi-plus-circle" 
@@ -56,6 +63,9 @@ export default {
     ScrollPanel
   },
   computed: {
+    previousUnitsCount() {
+      return this.$store.state.Inventory.previousUnitsCount;
+    },
     ...mapGetters([
       Inventory.getters.totalUnits, 
       Inventory.getters.lastId])

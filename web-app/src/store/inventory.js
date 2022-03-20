@@ -2,9 +2,10 @@ import Vue from 'vue';
 
 import inventoryDb from '../db/inventory';
 import { State } from '../db/inventory';
-
+import dayjs from "dayjs";
 export const Inventory = {
     mutations: {
+        setPreviousUnitsCount: "setPreviousUnitsCount",
         setIsDirty: "setIsDirty",
         setCurrentId: "setCurrentId",
         setLastId: "setLastId",
@@ -15,6 +16,7 @@ export const Inventory = {
         removeItem: "removeItem"
     },
     actions: {
+        getPreviousUnitsCount: "getPreviousUnitsCount",
         getLastId: "getLastId",
         getItems: "getItems",
         commitItems: "commitItems",
@@ -36,9 +38,13 @@ export default {
             fromDate: null,
             toDate: null
         },
+        previousUnitsCount: 0,
         items: []
     },
     mutations: {
+        setPreviousUnitsCount(state, previousUnitsCount){
+            Vue.set(state, "previousUnitsCount", previousUnitsCount);
+        },
         setIsDirty(state, isDirty) {
             state.isDirty = isDirty;
         },
@@ -108,6 +114,10 @@ export default {
         }
     },
     actions: {
+        async getPreviousUnitsCount(context, payload) {
+            let result = await inventoryDb.getPreviousUnitsCount(payload.fromDate, payload.toDate);
+            context.commit(Inventory.mutations.setPreviousUnitsCount, result);
+        },
         async getLastId(context) {
             let result = await inventoryDb.getLastIndex();
             context.commit(Inventory.mutations.setLastId, result);
@@ -128,6 +138,10 @@ export default {
             context.commit(Inventory.mutations.setItems, results);
             await context.commit(Inventory.mutations.setIsDirty, false);
             await context.dispatch(Inventory.actions.getLastId);
+            await context.dispatch(Inventory.actions.getPreviousUnitsCount, { 
+                fromDate: dayjs(fromDate).subtract(1, "day").toDate(),
+                toDate: dayjs(toDate).subtract(1, "day").toDate()
+            });
         },
         async commitItems(context, items) {
             await inventoryDb.setItems(items);
