@@ -64,7 +64,7 @@ body {
 
 .status {
     background-color: var(--surface-f);
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
 }
 
 .p-confirm-popup {
@@ -77,4 +77,19 @@ body {
         margin: 0;
     }
     margin-bottom: 0.5rem;
+}
+
+.p-inputgroup {
+    button {
+        background: var(--surface-d);
+        color: var(--text-color-secondary);
+        border-color: var(--surface-d);
+    }
+}
+
+.dialog-calendar {
+    textarea {
+        width:40vh;
+        height: 50vh;
+    }
 }

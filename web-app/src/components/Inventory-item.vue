@@ -29,14 +29,17 @@
                         v-on:click="showCalendar" />
         </div>
         <div class="col-5">
-            <auto-complete id="inventory-description" 
-                            v-model="item.description" 
-                            v-on:item-select="itemSelected"
-                            v-on:complete="searchItems"
-                            v-on:input="updateParent"
-                            :suggestions="searchResults"
-                            field="description"
-                            class="w-full" />
+            <div class="p-inputgroup">
+                <auto-complete id="inventory-description" 
+                                v-model="item.description" 
+                                v-on:item-select="itemSelected"
+                                v-on:complete="searchItems"
+                                v-on:input="updateParent"
+                                :suggestions="searchResults"
+                                field="description"
+                                class="w-full" />
+                <Button v-on:click="showDescriptionEntry" icon="pi pi-pencil" class="p-button-primary"/>
+            </div>
         </div>
         <div class="col-2">
             <input-number id="unit-value" 
@@ -112,14 +115,23 @@ export default {
             dialog.display = true;
             dialog.value = this.item.consumedDate;
             dialog.showTime = true;
+            dialog.type = "date";
             dialog.header = "Select date/time";
+            this.$store.commit(Store.mutations.setDialogOptions, dialog);
+        },
+        showDescriptionEntry() {
+            let dialog = this.$store.state.dialog;
+            dialog.subject = this.inventoryId;
+            dialog.display = true;
+            dialog.value = this.item.description;
+            dialog.type = "text";
+            dialog.header = "Description";
             this.$store.commit(Store.mutations.setDialogOptions, dialog);
         },
         getDate(date) {
             return date.toDate();
         },
         getDateString(timeOnly) {
-    
             if(timeOnly) {
                 return this.date.format(timeFormat)
             }
@@ -152,11 +164,18 @@ export default {
         let context = this;
         this.$root.$on("dialog:optionSelected", e => { 
             if(e.subject == this.item.id) { 
-                context.item.consumedDate = e.value;
-                context.date = dayjs(e.value);
+                
+                if(e.type === "date") {
+                    context.date = dayjs(e.value);
+                    context.item.consumedDate = e.value;
+                    context.formattedTime = this.getDateString(true);
+                    context.formattedDateTime = this.getDateString();
+                } 
+                else if(e.type === "text") {
+                    context.item.description = e.value;
+                }
+
                 context.updateParent();
-                context.formattedTime = this.getDateString(true);
-                context.formattedDateTime = this.getDateString();
             }
         });
     },

@@ -17,7 +17,8 @@ export default new Vuex.Store({
       value: null,
       modal: true,
       subject: null,
-      showTime: false
+      showTime: false,
+      type: null
     }
   },
   mutations: {

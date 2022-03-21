@@ -1,6 +1,10 @@
 <template>
     <div class="dialog-calendar">
-        <Calendar v-model="value"
+        <Textarea v-if="dialog.type==='text'" 
+            v-model="value" 
+            v-on:input="dialogOptionSelected" />
+        <Calendar v-if="dialog.type==='date'"
+                v-model="value"
                 v-on:date-select="dialogOptionSelected"
                 :inline="true"
                 :show-time="dialog.showTime" />
@@ -19,12 +23,14 @@
 <script>
 import Button from "primevue/button";
 import Calendar from "primevue/calendar";
+import Textarea from 'primevue/textarea';
 import { Store } from "../store";
 
 export default {
     components: {
         Button,
-        Calendar
+        Calendar,
+        Textarea
     },
     data() {
         return {
