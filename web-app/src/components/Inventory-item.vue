@@ -125,7 +125,7 @@ export default {
             dialog.display = true;
             dialog.value = this.item.description;
             dialog.type = "text";
-            dialog.header = "Description";
+            dialog.header = "Add/edit description";
             this.$store.commit(Store.mutations.setDialogOptions, dialog);
         },
         getDate(date) {
