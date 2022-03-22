@@ -27,9 +27,9 @@ namespace DiabetesManagement.Api.RequestHandlers
         public Task<Inventory> GetInventory(GetRequest request)
         {
             var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
-                    [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I]";
+                    [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I] 
+                    @@whereClause";
 
-            
             var whereClause = request.InventoryId.HasValue && request.InventoryId != default
                 ? "WHERE [I].[INVENTORYID] = @id"
                 : "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
