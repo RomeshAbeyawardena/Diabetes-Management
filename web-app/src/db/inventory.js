@@ -101,6 +101,9 @@ export default {
         let maxId = items[0]["max(id)"];
         return maxId;
     },
+    async sync() {
+        
+    },
     async getItems(fromDate, toDate) {
         let connection = await this.getDbConnection();
         
