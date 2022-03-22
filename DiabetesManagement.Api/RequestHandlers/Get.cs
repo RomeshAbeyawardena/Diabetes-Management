@@ -29,7 +29,10 @@ namespace DiabetesManagement.Api.RequestHandlers
             var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
                     [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I]";
 
-            var whereClause = "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
+            
+            var whereClause = request.InventoryId.HasValue && request.InventoryId != default
+                ? "WHERE [I].[INVENTORYID] = @id"
+                : "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
 
             var finalSql = sql
                 .Replace("@@whereClause", whereClause);
@@ -38,6 +41,7 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             return DbConnection.QueryFirstOrDefaultAsync<Inventory>(finalSql, new
             {
+                id = request.InventoryId,
                 key = request.Key,
                 userId = request.UserId,
             }, GetOrBeginTransaction);

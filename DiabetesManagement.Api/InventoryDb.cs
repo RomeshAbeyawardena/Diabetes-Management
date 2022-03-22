@@ -32,7 +32,7 @@ namespace DiabetesManagement.Api
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         [OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **key** parameter")]
         [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(Guid), Description = "The **userId** parameter")]
-        [OpenApiParameter(name: "version", In = ParameterLocation.Query, Required = false, Type = typeof(Guid), Description = "The **version** parameter")]
+        [OpenApiParameter(name: "version", In = ParameterLocation.Query, Required = false, Type = typeof(int?), Description = "The **version** parameter")]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(InventoryHistory), Description = "The OK response")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
@@ -54,7 +54,7 @@ namespace DiabetesManagement.Api
 
                 using var getHandler = new Get(ConnectionString);
 
-                var inventory = await getHandler.GetInventory(new GetRequest
+                var inventory = await getHandler.GetInventoryHistory(new GetRequest
                 {
                     Key = key,
                     UserId = userId,
