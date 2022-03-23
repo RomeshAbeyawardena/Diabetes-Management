@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dapper;
+using Microsoft.Extensions.Logging;
+using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
-    public class Post : HandlerBase
+    public class Post : HandlerBase<SaveCommand, Guid>
     {
         protected override void Dispose(bool disposing)
         {
 
         }
 
-        private readonly Get getHandler;
         /// <summary>
         /// Initialises a new instance of the POST handler to initiate a new connection
         /// </summary>
@@ -21,66 +18,46 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
         public Post(string connectionString)
             : base(connectionString)
         {
-            getHandler = new(DbConnection);
-            OnLoggerSet((logger) => getHandler.SetLogger = logger);
+            
         }
 
-        public Post(IDbConnection dbConnection, IDbTransaction dbTransaction = null)
+        public Post(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
             : base(dbConnection, dbTransaction)
         {
-            getHandler = new(dbConnection, dbTransaction);
-            OnLoggerSet((logger) => getHandler.SetLogger = logger);
+            
         }
 
-        public async Task<Guid> Save(Models.InventoryHistory inventoryHistory)
+        protected override async Task<Guid> HandleAsync(SaveCommand request)
         {
-            TryOpenConnection();
             var dbTransaction = GetOrBeginTransaction;
-            getHandler.UseTransaction = dbTransaction;
+            var inventoryHistory = request.InventoryHistory;
+
             var getRequest = new GetRequest
             {
-                Key = inventoryHistory.Key,
+                Key = inventoryHistory!.Key,
                 UserId = inventoryHistory.UserId,
                 Type = inventoryHistory.Type
             };
 
-            var inventory = await getHandler.GetInventory(getRequest);
-
-            Logger.LogInformation("Finding existing INVENTORY...");
-
-            var inventoryId = inventory?.InventoryId;
             var version = inventoryHistory.Version;
+            var inventoryId = inventoryHistory.InventoryId;
 
             if (version == default)
             {
-                Logger.LogInformation("Finding INVENTORY_HISTORY to extract version information as a version has not been supplied");
-                var inventoryHistoryRecord = await getHandler.GetInventoryHistory(getRequest);
+                var inventoryHistoryRecord = await HandlerFactory!.Execute<GetRequest, Models.InventoryHistory>(Queries.GetInventoryHistory, getRequest);
 
                 if (inventoryHistoryRecord != null)
                 {
-                    Logger.LogInformation("INVENTORY_HISTORY found with latest version at: {0}", inventoryHistoryRecord.Version);
+                    Logger.LogInformation("INVENTORY_HISTORY found with latest version at: {version}", inventoryHistoryRecord.Version);
                     version = inventoryHistoryRecord.Version + 1;
                 }
                 else
                     version = 1;
             }
 
-            if (inventory == null)
-            {
-                Logger.LogInformation("INVENTORY not found, saving as a new entry....");
-                inventoryId = await Save(inventoryHistory, getRequest, false, true);
-            }
-            else
-            {
-                Logger.LogInformation("INVENTORY found, updating entry....");
-                inventory.Modified = DateTimeOffset.UtcNow;
-                await UpdateInventory(inventory, getRequest, true);
-            }
-
             Logger.LogInformation("Saving INVENTORY_HISTORY...");
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand,
-                new
-                {
+                new {
                     inventoryHistoryId = inventoryHistory.InventoryHistoryId == default
                         ? Guid.NewGuid() : inventoryHistory.InventoryHistoryId,
                     inventoryId,
@@ -92,10 +69,14 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                         : inventoryHistory.Created
                 }, dbTransaction);
 
-            Logger.LogInformation("Committing changes...");
-            dbTransaction.Commit();
+            if (request.CommitOnCompletion)
+            {
+                Logger.LogInformation("Committing changes...");
+                dbTransaction.Commit();
+            }
 
             return result;
+
         }
     }
 }

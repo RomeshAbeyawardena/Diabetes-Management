@@ -1,8 +1,10 @@
 ﻿using Dapper;
+using DiabetesManagement.Shared.Attributes;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
+    [HandlerDescriptor(Queries.GetInventoryHistory)]
     public class Get : HandlerBase<GetRequest, Models.InventoryHistory>
     {
         public Get(string connectionString) : base(connectionString)

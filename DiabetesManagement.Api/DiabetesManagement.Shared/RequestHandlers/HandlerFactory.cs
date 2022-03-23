@@ -1,5 +1,6 @@
 ﻿using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Contracts;
+using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Reflection;
 
@@ -9,6 +10,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
     {
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
+        private readonly ILogger logger;
 
         private IRequestHandler GetRequestHandler(string queryOrCommand)
         {
@@ -21,6 +23,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
             {
                 requestHandler = (IRequestHandler)Activator.CreateInstance(handlerType, DbConnection, GetOrBeginTransaction)!;
                 requestHandler.SetHandlerFactory = this;
+                requestHandler.SetLogger = logger;
                 handlerTypes.Add(queryOrCommand, requestHandler);
                 return requestHandler;
             }
@@ -28,7 +31,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
             throw new InvalidOperationException();
         }
 
-        private bool IsHandler(Type type)
+        private bool AddIfIsHandler(Type type)
         {
             if(!type.GetInterfaces().Any(t => t == typeof(IRequestHandler)))
             {
@@ -49,18 +52,26 @@ namespace DiabetesManagement.Shared.RequestHandlers
         {
             handlerDictionary = new();
             handlerTypes = new();
-            typeof(HandlerFactory).Assembly.GetTypes().Where(IsHandler);
+            foreach(var type in typeof(HandlerFactory).Assembly.GetTypes())
+            {
+                if (AddIfIsHandler(type))
+                {
+                    logger.LogInformation("Adding {type}", type);
+                }
+            }
         }
 
-        public HandlerFactory(string connectionString)
+        public HandlerFactory(string connectionString, ILogger logger)
            : base(connectionString)
         {
             Init();
+            this.logger = logger;
         }
 
-        public HandlerFactory(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
+        public HandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
             : base(dbConnection, dbTransaction)
         {
+            this.logger = logger;
             Init();
         }
 

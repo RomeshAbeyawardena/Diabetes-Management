@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DiabetesManagement.Shared.Contracts;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
-    public class SaveCommand
+    public class SaveCommand : IRequest<Guid>
     {
-
+        public Models.InventoryHistory? InventoryHistory { get; set; }
+        public bool ThrowIfInventoryRowExists { get; set; }
+        public bool CommitOnCompletion { get; set; }
     }
 }

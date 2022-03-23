@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiabetesManagement.Shared.RequestHandlers
+﻿namespace DiabetesManagement.Shared.RequestHandlers
 {
-    public class Commands
+    public static class Commands
     {
-
+        public const string InsertInventoryHistoryCommand = @"INSERT INTO [dbo].[INVENTORY_HISTORY] (
+                                [INVENTORY_HISTORYID],
+                                [INVENTORYID],
+                                [VERSION],
+                                [TYPE],
+                                [ITEMS],
+                                [CREATED]
+                            ) VALUES (
+                                @inventoryHistoryId,
+                                @inventoryId,
+                                @version,
+                                @type,
+                                @items,
+                                @created
+                            ); SELECT @inventoryHistoryId";
     }
 }

@@ -1,5 +1,5 @@
-using DiabetesManagement.Api.Models;
-using DiabetesManagement.Api.RequestHandlers;
+using DiabetesManagement.Shared.Contracts;
+using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -16,8 +16,12 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
-    public class InventoryApi
+    using InventoryHistory = Shared.RequestHandlers.Inventory;
+    using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;
+    using DbModels = Shared.Models;
+    public class InventoryApi : IDisposable
     {
+        private readonly IHandlerFactory handlerFactory;
         private readonly ILogger<InventoryApi> _logger;
         private const string ConnectionString = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
 
@@ -30,6 +34,7 @@ namespace DiabetesManagement.Api
         public InventoryApi(ILogger<InventoryApi> log)
         {
             _logger = log;
+            handlerFactory = new HandlerFactory(ConnectionString, log);
         }
 
         [FunctionName("GetInventory")]
@@ -38,7 +43,7 @@ namespace DiabetesManagement.Api
         [OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **key** parameter")]
         [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(Guid), Description = "The **userId** parameter")]
         [OpenApiParameter(name: "version", In = ParameterLocation.Query, Required = false, Type = typeof(int?), Description = "The **version** parameter")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(InventoryHistory), Description = "The OK response")]
+        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(DbModels.InventoryHistory), Description = "The OK response")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
         {            
@@ -58,15 +63,15 @@ namespace DiabetesManagement.Api
                     versionNumber = versionNum;
                 }
 
-                using var getHandler = new Get(ConnectionString) { SetLogger = _logger };
-
-                var inventory = await getHandler.GetInventoryHistory(new GetRequest
-                {
-                    Key = key,
-                    Type = type,
-                    UserId = userId,
-                    Version = versionNumber
-                });
+                var inventory = handlerFactory
+                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.Inventory> (
+                        InventoryHistoryFeature.Queries.GetInventoryHistory, 
+                        new InventoryHistoryFeature.GetRequest {
+                            Key = key,
+                            Type = type,
+                            UserId = userId,
+                            Version = versionNumber
+                        }); // Get(ConnectionString) { SetLogger = _logger };
 
                 return new OkObjectResult(inventory);
             }
@@ -81,7 +86,7 @@ namespace DiabetesManagement.Api
         {
             try
             {
-                using var postHandler = new Post(ConnectionString) { SetLogger = _logger };
+                
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),
                 request.Form.TryGetValue("type", out var type),
@@ -115,6 +120,11 @@ namespace DiabetesManagement.Api
             {
                 return HandleException(dataException);
             }
+        }
+
+        public void Dispose()
+        {
+            handlerFactory.Dispose();
         }
     }
 }

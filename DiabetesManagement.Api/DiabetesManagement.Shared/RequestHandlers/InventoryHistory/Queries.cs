@@ -8,6 +8,8 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
     public static class Queries
     {
+        public const string GetInventoryHistory = "Get-Inventory-History";
+
         public const string InventoryHistoryQuery = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
                     [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
                     [IH].[INVENTORY_HISTORYID] [InventoryHistoryId], [IH].[VERSION],

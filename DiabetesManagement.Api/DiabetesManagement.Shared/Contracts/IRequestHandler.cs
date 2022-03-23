@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace DiabetesManagement.Shared.Contracts
     public interface IRequestHandler
     {
         IHandlerFactory SetHandlerFactory { set; }
+        ILogger SetLogger { set; }
         Task Handle(object request);
     }
 
