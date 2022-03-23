@@ -163,14 +163,21 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             if (version == default)
             {
+                Logger.LogInformation("Finding INVENTORY_HISTORY to extract version information as a version has not been supplied");
                 var inventoryHistoryRecord = await getHandler.GetInventoryHistory(getRequest);
 
-                version = inventoryHistoryRecord != null ? inventoryHistoryRecord.Version + 1 : 1;
+                if(inventoryHistoryRecord != null)
+                {
+                    Logger.LogInformation("INVENTORY_HISTORY found with latest version at: {0}", inventoryHistoryRecord.Version);
+                    version = inventoryHistoryRecord.Version + 1;
+                }
+                else
+                    version = 1;
             }
 
             if (inventory == null)
             {
-                Logger.LogInformation("INVENTORY not found, saving as new entry....");
+                Logger.LogInformation("INVENTORY not found, saving as a new entry....");
                 inventoryId = await Save(inventoryHistory, getRequest, false, true);
             }
             else
@@ -180,7 +187,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                 await UpdateInventory(inventory, getRequest, true); 
             }
 
-            Logger.LogInformation("Saving INVENTORY_HISTORY");
+            Logger.LogInformation("Saving INVENTORY_HISTORY...");
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand, 
                 new { 
                     inventoryHistoryId = inventoryHistory.InventoryHistoryId == default
