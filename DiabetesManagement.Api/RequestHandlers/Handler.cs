@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
+using System.Reactive.Subjects;
 
 namespace DiabetesManagement.Api.RequestHandlers
 {
@@ -9,6 +10,7 @@ namespace DiabetesManagement.Api.RequestHandlers
     {
         void IDisposable.Dispose()
         {
+            subscriber?.Dispose();
             dbTransaction?.Dispose();
             dbTransaction = null;
 
@@ -20,16 +22,27 @@ namespace DiabetesManagement.Api.RequestHandlers
             GC.SuppressFinalize(this);
         }
 
+        private IDisposable subscriber;
         private ILogger logger;
         private IDbConnection dbConnection;
         private IDbTransaction dbTransaction;
-
+        private readonly ISubject<ILogger> loggerSubject;
+        
         protected abstract void Dispose(bool disposing);
         protected IDbTransaction GetOrBeginTransaction => dbTransaction ??= dbConnection.BeginTransaction();
         protected IDbConnection DbConnection => dbConnection;
         protected ILogger Logger => logger;
+        protected IObservable<ILogger> LoggerSubject => loggerSubject;
+        
+        protected void OnLoggerSet(Action<ILogger> onNext)
+        {
+            if(subscriber != null)
+            {
+                subscriber.Dispose();
+            }
 
-        public IDbTransaction UseTransaction { set => dbTransaction = value; }
+            subscriber = loggerSubject.Subscribe(onNext);
+        }
         
         protected bool TryOpenConnection()
         {
@@ -54,8 +67,17 @@ namespace DiabetesManagement.Api.RequestHandlers
         {
             this.dbConnection = dbConnection;
             this.dbTransaction = dbTransaction;
+            loggerSubject = new Subject<ILogger>();
         }
 
-        public ILogger SetLogger { set => logger = value }
+        public IDbTransaction UseTransaction { set => dbTransaction = value; }
+
+        public ILogger SetLogger { 
+            set 
+            { 
+                loggerSubject.OnNext(value);
+                logger = value; 
+            }
+        }
     }
 }

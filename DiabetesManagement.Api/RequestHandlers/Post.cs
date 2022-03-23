@@ -13,7 +13,6 @@ namespace DiabetesManagement.Api.RequestHandlers
     public class Post : Handler
     {
         private readonly Get getHandler;
-
         /// <summary>
         /// Initialises a new instance of the POST handler to initiate a new connection
         /// </summary>
@@ -22,6 +21,7 @@ namespace DiabetesManagement.Api.RequestHandlers
             : base(connectionString)
         {
             getHandler = new(DbConnection);
+            OnLoggerSet((logger) => getHandler.SetLogger = logger);
         }
 
         /// <summary>
@@ -33,6 +33,7 @@ namespace DiabetesManagement.Api.RequestHandlers
             : base(dbConnection, dbTransaction)
         {
             getHandler = new(dbConnection, dbTransaction);
+            OnLoggerSet((logger) => getHandler.SetLogger = logger);
         }
 
         protected override void Dispose(bool disposing)
