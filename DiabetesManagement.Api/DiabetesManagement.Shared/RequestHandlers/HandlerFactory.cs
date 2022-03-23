@@ -33,9 +33,9 @@ namespace DiabetesManagement.Shared.RequestHandlers
             typeof(HandlerFactory).Assembly.GetTypes().Where(IsHandler);
         }
 
-        public Task Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
+        public async Task<TResponse> Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
         {
-
+            return (TResponse)(await Execute(queryOrCommand, request));
         }
 
         public Task Execute(string queryOrCommand, object request)
