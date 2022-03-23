@@ -11,8 +11,8 @@ namespace DiabetesManagement.Shared.Contracts
         
     }
 
-    public interface IRequest<TResponse>
+    public interface IRequest<TResponse> : IRequest
     {
-        TResponse Response { get; set; }
+        
     }
 }

@@ -8,6 +8,7 @@ namespace DiabetesManagement.Shared.Contracts
 {
     public interface IRequestHandler
     {
+        IHandlerFactory SetHandlerFactory { set; }
         Task Handle(object request);
     }
 

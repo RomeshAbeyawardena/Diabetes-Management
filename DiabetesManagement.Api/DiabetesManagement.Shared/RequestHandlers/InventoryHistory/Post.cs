@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
-    public class Post : Handler
+    public class Post : HandlerBase
     {
         protected override void Dispose(bool disposing)
         {

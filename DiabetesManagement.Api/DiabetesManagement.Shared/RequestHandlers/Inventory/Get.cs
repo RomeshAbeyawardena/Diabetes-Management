@@ -5,7 +5,7 @@ using System.Data;
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
     [HandlerDescriptor(Queries.GetInventory)]
-    public class Get : Handler<Models.GetRequest, Models.Inventory>
+    public class Get : HandlerBase<GetRequest, Models.Inventory>
     {
         public Get(string connectionString)
            : base(connectionString)
@@ -23,7 +23,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 
         }
 
-        public override Task<Models.Inventory> Handle(Models.GetRequest request)
+        protected override Task<Models.Inventory> HandleAsync(GetRequest request)
         {
             var finalSql = Queries.InventoryQuery
                 .Replace("@@whereClause", Queries.GetInventoryWhereClause(request.InventoryId));
@@ -37,5 +37,6 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                 userId = request.UserId,
             }, GetOrBeginTransaction);
         }
+
     }
 }

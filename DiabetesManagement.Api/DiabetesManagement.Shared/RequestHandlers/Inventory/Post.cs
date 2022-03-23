@@ -1,18 +1,18 @@
-﻿using System.Data;
-using Dapper;
-using DiabetesManagement.Shared.RequestHandlers.Inventory;
+﻿using Dapper;
+using DiabetesManagement.Shared.Attributes;
 using Microsoft.Extensions.Logging;
+using System.Data;
 
-namespace DiabetesManagement.Shared.RequestHandlers
+namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
-    public class Post : Handler
+    [HandlerDescriptor(Commands.SaveInventory)]
+    public class Post : HandlerBase<SaveRequest, Guid>
     {
         protected override void Dispose(bool disposing)
         {
 
         }
 
-        private readonly Get getHandler;
         /// <summary>
         /// Initialises a new instance of the POST handler to initiate a new connection
         /// </summary>
@@ -20,8 +20,6 @@ namespace DiabetesManagement.Shared.RequestHandlers
         public Post(string connectionString)
             : base(connectionString)
         {
-            getHandler = new(DbConnection);
-            OnLoggerSet((logger) => getHandler.SetLogger = logger);
         }
 
         /// <summary>
@@ -32,58 +30,52 @@ namespace DiabetesManagement.Shared.RequestHandlers
         public Post(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
             : base(dbConnection, dbTransaction)
         {
-            getHandler = new(dbConnection, dbTransaction);
-            OnLoggerSet((logger) => getHandler.SetLogger = logger);
+
         }
 
-        public async Task<Guid> Save(Models.Inventory inventory,
-            Models.GetRequest? request = null,
-            bool doValidationChecks = true,
-            bool isInTransaction = false)
+        protected override async Task<Guid> HandleAsync(SaveRequest request)
         {
-            TryOpenConnection();
             var transaction = GetOrBeginTransaction;
-            getHandler.UseTransaction = transaction;
+            var inventory = request.Inventory;
 
-            request ??= new Models.GetRequest
+            var getRequest = new GetRequest
             {
-                Key = inventory.Key,
-                UserId = inventory.UserId,
-                Type = inventory.DefaultType
+                InventoryId = inventory?.InventoryId == default ? null : inventory?.InventoryId,
+                Key = inventory!.Key,
+                UserId = inventory.UserId       
             };
 
-            if (doValidationChecks)
-            {
-                Logger.LogInformation("Checking INVENTORY exists...");
-                var inventoryRecord = await getHandler.GetInventory(request);
+            Logger.LogInformation("Checking INVENTORY exists...");
+            var inventoryRecord = await this.HandlerFactory!.Execute<GetRequest, Models.Inventory>(Queries.GetInventory, getRequest);
 
-                if (inventoryRecord != null)
+            if(inventoryRecord == null)
+            {
+                Logger.LogInformation("Saving INVENTORY...");
+
+                var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryCommand, new
                 {
-                    throw new DataException("Inventory record already exists");
+                    inventoryId = inventory.InventoryId == default ? Guid.NewGuid() : inventory.InventoryId,
+                    key = inventory.Key,
+                    userId = inventory.UserId,
+                    defaultType = inventory.DefaultType,
+                    created = inventory.Created == default ? DateTimeOffset.UtcNow : inventory.Created
+                }, GetOrBeginTransaction);
+
+                if (request.CommitOnCompletion)
+                {
+                    Logger.LogInformation("Committing changes...");
+                    transaction.Commit();
                 }
-            }
-            else
-            {
-                Logger.LogInformation("Skipping validation checks");
+
+                return result;
             }
 
-            Logger.LogInformation("Saving INVENTORY...");
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryCommand, new
+            if (request.ThrowIfInventoryRowExists)
             {
-                inventoryId = inventory.InventoryId == default ? Guid.NewGuid() : inventory.InventoryId,
-                key = inventory.Key,
-                userId = inventory.UserId,
-                defaultType = inventory.DefaultType,
-                created = inventory.Created == default ? DateTimeOffset.UtcNow : inventory.Created
-            }, transaction);
-
-            if (!isInTransaction)
-            {
-                Logger.LogInformation("Committing changes...");
-                transaction.Commit();
+                throw new DataException("Inventory record already exists");
             }
 
-            return result;
+            return inventoryRecord.InventoryId;
         }
     }
 }

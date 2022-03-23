@@ -1,26 +1,28 @@
 ﻿using DiabetesManagement.Shared.Contracts;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Data;
 using System.Reactive.Subjects;
 
 namespace DiabetesManagement.Shared.RequestHandlers
 {
-    public abstract class Handler<TRequest> : Handler, IRequestHandler<TRequest>
+    public abstract class HandlerBase<TRequest> : HandlerBase, IRequestHandler<TRequest>
         where TRequest: IRequest
     {
-        public Handler(string connectionString)
+        protected IHandlerFactory? HandlerFactory { get; private set; }
+
+        public IHandlerFactory SetHandlerFactory { set => HandlerFactory = value; }
+
+        public HandlerBase(string connectionString)
            : base(connectionString)
         {
 
         }
 
-        public Handler(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
+        public HandlerBase(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
             : base(dbConnection, dbTransaction)
         {
         }
-
 
         Task IRequestHandler.Handle(object request)
         {
@@ -30,20 +32,25 @@ namespace DiabetesManagement.Shared.RequestHandlers
         public abstract Task Handle(TRequest request);
     }
 
-    public abstract class Handler<TRequest, TResponse> : Handler<TRequest>, IRequestHandler<TRequest, TResponse>
-        where TRequest : IRequest
+    public abstract class HandlerBase<TRequest, TResponse> : HandlerBase<TRequest>, IRequestHandler<TRequest, TResponse>
+        where TRequest : IRequest<TResponse>
     {
         protected abstract Task<TResponse> HandleAsync(TRequest request);
 
-        public Handler(string connectionString)
+        public HandlerBase(string connectionString)
            : base(connectionString)
         {
 
         }
 
-        public Handler(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
+        public HandlerBase(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
             : base(dbConnection, dbTransaction)
         {
+        }
+
+        public override Task Handle(TRequest request)
+        {
+            return HandleAsync(request);
         }
 
         Task<TResponse> IRequestHandler<TRequest, TResponse>.Handle(TRequest request)
@@ -52,7 +59,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
         }
     }
 
-    public abstract class Handler : IDisposable
+    public abstract class HandlerBase : IDisposable
     {
         void IDisposable.Dispose()
         {
@@ -115,13 +122,13 @@ namespace DiabetesManagement.Shared.RequestHandlers
             return false;
         }
 
-        public Handler(string connectionString)
+        public HandlerBase(string connectionString)
             : this(new SqlConnection(connectionString))
         {
 
         }
 
-        public Handler(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
+        public HandlerBase(IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
         {
             this.dbConnection = dbConnection;
             this.dbTransaction = dbTransaction;

@@ -5,10 +5,29 @@ using System.Reflection;
 
 namespace DiabetesManagement.Shared.RequestHandlers
 {
-    public class HandlerFactory : Handler
+    public class HandlerFactory : HandlerBase, IHandlerFactory
     {
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
+
+        private IRequestHandler GetRequestHandler(string queryOrCommand)
+        {
+            if (handlerTypes!.TryGetValue(queryOrCommand, out var requestHandler))
+            {
+                return requestHandler;
+            }
+
+            if(handlerDictionary!.TryGetValue(queryOrCommand, out var handlerType))
+            {
+                requestHandler = (IRequestHandler)Activator.CreateInstance(handlerType, DbConnection, GetOrBeginTransaction)!;
+                requestHandler.SetHandlerFactory = this;
+                handlerTypes.Add(queryOrCommand, requestHandler);
+                return requestHandler;
+            }
+
+            throw new InvalidOperationException();
+        }
+
         private bool IsHandler(Type type)
         {
             if(!type.GetInterfaces().Any(t => t == typeof(IRequestHandler)))
@@ -33,28 +52,6 @@ namespace DiabetesManagement.Shared.RequestHandlers
             typeof(HandlerFactory).Assembly.GetTypes().Where(IsHandler);
         }
 
-        public async Task<TResponse> Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
-        {
-            return (TResponse)(await Execute(queryOrCommand, request));
-        }
-
-        public Task Execute(string queryOrCommand, object request)
-        {
-            if(handlerTypes!.TryGetValue(queryOrCommand, out var requestHandler))
-            {
-                return requestHandler.Handle(request);
-            }
-
-            if(handlerDictionary!.TryGetValue(queryOrCommand, out var handlerType))
-            {
-                requestHandler = (IRequestHandler)Activator.CreateInstance(handlerType, DbConnection, GetOrBeginTransaction)!;
-                handlerTypes.Add(queryOrCommand, requestHandler);
-                return requestHandler.Handle(request);
-            }
-
-            throw new InvalidOperationException();
-        }
-
         public HandlerFactory(string connectionString)
            : base(connectionString)
         {
@@ -71,5 +68,24 @@ namespace DiabetesManagement.Shared.RequestHandlers
         {
 
         }
+
+        public Task Execute(string queryOrCommand, object request)
+        {
+            return GetRequestHandler(queryOrCommand).Handle(request);
+        }
+
+        public Task Execute<TRequest>(string queryOrCommand, TRequest request)
+        {
+            var requestHandler = (IRequestHandler<TRequest>)GetRequestHandler(queryOrCommand).Handle(request!);
+            return requestHandler.Handle(request);
+        }
+
+        public async Task<TResponse> Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
+        {
+            var requestHandler = (IRequestHandler<TRequest, TResponse>)GetRequestHandler(queryOrCommand).Handle(request!);
+            return await requestHandler.Handle(request);
+        }
+
+        
     }
 }
