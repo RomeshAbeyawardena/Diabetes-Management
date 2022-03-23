@@ -13,6 +13,6 @@
             @emailAddress,
             @userName,
             @created
-        )";
+        ); SELECT @userId";
     }
 }
