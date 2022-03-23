@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using DiabetesManagement.Shared.Attributes;
 using Microsoft.Extensions.Logging;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
+    [HandlerDescriptor(Commands.SaveInventoryHistory)]
     public class Post : HandlerBase<SaveCommand, Guid>
     {
         protected override void Dispose(bool disposing)

@@ -5,7 +5,7 @@ using System.Data;
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
     [HandlerDescriptor(Commands.UpdateInventory)]
-    public class Put : HandlerBase<SaveRequest, Guid>
+    public class Put : HandlerBase<SaveCommand, Guid>
     {
         protected override void Dispose(bool disposing)
         {
@@ -21,7 +21,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
         {
         }
 
-        protected async override Task<Guid> HandleAsync(SaveRequest request)
+        protected async override Task<Guid> HandleAsync(SaveCommand request)
         {
             var transaction = GetOrBeginTransaction;
             var inventory = request.Inventory;

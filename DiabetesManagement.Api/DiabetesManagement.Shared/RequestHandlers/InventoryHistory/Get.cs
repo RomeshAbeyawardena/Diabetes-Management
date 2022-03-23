@@ -23,12 +23,13 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
         protected override Task<Models.InventoryHistory> HandleAsync(GetRequest request)
         {
             var finalSql = Queries.InventoryHistoryQuery
-                .Replace("@@whereClause", Queries.GetInventoryHistoryWhereClause(request.Version));
+                .Replace("@@whereClause", Queries.GetInventoryHistoryWhereClause(request));
 
             TryOpenConnection();
 
             return DbConnection.QueryFirstOrDefaultAsync<Models.InventoryHistory>(finalSql, new
             {
+                inventoryHistoryId = request.InventoryHistoryId,
                 key = request.Key,
                 userId = request.UserId,
                 type = request.Type,

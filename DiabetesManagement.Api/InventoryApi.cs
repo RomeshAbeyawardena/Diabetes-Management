@@ -97,7 +97,13 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        savedEntity = await Save(new );
+                        savedEntity = await Save(new DbModels.InventoryHistory
+                        {
+                            Items = items,
+                            Type = type,
+                            Key = key,
+                            UserId = userId
+                        });
                     }
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
@@ -125,24 +131,39 @@ namespace DiabetesManagement.Api
 
         public async Task<DbModels.InventoryHistory> Save(DbModels.InventoryHistory command)
         {
-            var inventory = await handlerFactory.Execute<InventoryFeature.GetRequest, DbModels.Inventory>(InventoryFeature.Queries.GetInventory, new InventoryFeature.GetRequest { 
-                Key = command.Key,
-                UserId = command.UserId,
-            });
+            var inventory = await handlerFactory.Execute<InventoryFeature.GetRequest, DbModels.Inventory>(
+                InventoryFeature.Queries.GetInventory, 
+                new InventoryFeature.GetRequest { 
+                    Key = command.Key,
+                    UserId = command.UserId,
+                });
 
             var inventoryId = inventory?.InventoryId;
 
             if(inventory == null)
             {
-                inventoryId = await handlerFactory.Execute<InventoryFeature.SaveRequest, Guid> (
+                inventoryId = await handlerFactory.Execute<InventoryFeature.SaveCommand, Guid> (
                     InventoryFeature.Commands.SaveInventory, 
-                    new InventoryFeature.SaveRequest {
+                    new InventoryFeature.SaveCommand {
                         Inventory = new DbModels.Inventory {
                             Created = DateTimeOffset.UtcNow,
                             DefaultType = command.Type,
                             Key = command.Key,
                             UserId = command.UserId  
                         },
+                    });
+            }
+            else
+            {
+                await handlerFactory.Execute<InventoryFeature.SaveCommand, Guid>(InventoryFeature.Commands.UpdateInventory,
+                    new InventoryFeature.SaveCommand
+                    {
+                        Inventory = new DbModels.Inventory {
+                            InventoryId = inventoryId.Value,
+                            Key = command.Key,
+                            UserId = command.UserId,
+                            Modified = DateTimeOffset.UtcNow
+                        }
                     });
             }
 
@@ -160,7 +181,8 @@ namespace DiabetesManagement.Api
                             Type = command.Type,
                             Items = command.Items,
                             InventoryId = inventoryId.Value,
-                        }
+                        },
+                        CommitOnCompletion = true
                     });
 
             return await handlerFactory.Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory>(
@@ -169,7 +191,7 @@ namespace DiabetesManagement.Api
                     {
                         InventoryHistoryId = inventoryHistoryId
                     }
-                )
+                );
         }
 
         public void Dispose()
