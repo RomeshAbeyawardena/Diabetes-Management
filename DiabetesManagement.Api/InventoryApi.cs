@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
-    using InventoryHistory = Shared.RequestHandlers.Inventory;
+    using InventoryFeature = Shared.RequestHandlers.Inventory;
     using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;
     using DbModels = Shared.Models;
     public class InventoryApi : IDisposable
@@ -86,7 +86,7 @@ namespace DiabetesManagement.Api
         {
             try
             {
-                
+                DbModels.InventoryHistory? savedEntity = null;
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),
                 request.Form.TryGetValue("type", out var type),
@@ -97,7 +97,7 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        await postHandler.Save(new InventoryHistory { Items = items, Key = key, Type = type, DefaultType = type, UserId = userId });
+                        savedEntity = await Save(new );
                     }
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
@@ -110,7 +110,8 @@ namespace DiabetesManagement.Api
                         $" { (requiredConditions[2] ? "key" : "") }, " +
                         $" { (requiredConditions[3] ? "userId" : "") }");
                 }
-                return new OkObjectResult(items);
+
+                return new OkObjectResult(savedEntity);
             }
             catch (InvalidOperationException invalidOperationException)
             {
@@ -122,9 +123,59 @@ namespace DiabetesManagement.Api
             }
         }
 
+        public async Task<DbModels.InventoryHistory> Save(DbModels.InventoryHistory command)
+        {
+            var inventory = await handlerFactory.Execute<InventoryFeature.GetRequest, DbModels.Inventory>(InventoryFeature.Queries.GetInventory, new InventoryFeature.GetRequest { 
+                Key = command.Key,
+                UserId = command.UserId,
+            });
+
+            var inventoryId = inventory?.InventoryId;
+
+            if(inventory == null)
+            {
+                inventoryId = await handlerFactory.Execute<InventoryFeature.SaveRequest, Guid> (
+                    InventoryFeature.Commands.SaveInventory, 
+                    new InventoryFeature.SaveRequest {
+                        Inventory = new DbModels.Inventory {
+                            Created = DateTimeOffset.UtcNow,
+                            DefaultType = command.Type,
+                            Key = command.Key,
+                            UserId = command.UserId  
+                        },
+                    });
+            }
+
+            if (!inventoryId.HasValue)
+            {
+                throw new DataException();
+            }
+
+            var inventoryHistoryId = await handlerFactory.Execute<InventoryHistoryFeature.SaveCommand, Guid> (
+                    InventoryHistoryFeature.Commands.SaveInventoryHistory,
+                    new InventoryHistoryFeature.SaveCommand {
+                        InventoryHistory = new DbModels.InventoryHistory
+                        {
+                            Created = DateTimeOffset.Now,
+                            Type = command.Type,
+                            Items = command.Items,
+                            InventoryId = inventoryId.Value,
+                        }
+                    });
+
+            return await handlerFactory.Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory>(
+                    InventoryHistoryFeature.Queries.GetInventoryHistory,
+                    new InventoryHistoryFeature.GetRequest
+                    {
+                        InventoryHistoryId = inventoryHistoryId
+                    }
+                )
+        }
+
         public void Dispose()
         {
-            handlerFactory.Dispose();
+            handlerFactory?.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

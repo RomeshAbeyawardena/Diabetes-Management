@@ -20,9 +20,11 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                     @@whereClause
                 ORDER BY [VERSION] DESC";
 
-        public static string GetInventoryHistoryWhereClause(int? version)
+        public static string GetInventoryHistoryWhereClause(Guid? inventoryHistoryId, int? version)
         {
-            var whereClause = "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId AND [IH].[TYPE] = @type";
+            var whereClause = inventoryHistoryId.HasValue 
+                ? "WHERE [IH].[INVENTORY_HISTORYID] = @inventoryHistoryId"
+                : "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId AND [IH].[TYPE] = @type";
 
             if (version.HasValue)
             {

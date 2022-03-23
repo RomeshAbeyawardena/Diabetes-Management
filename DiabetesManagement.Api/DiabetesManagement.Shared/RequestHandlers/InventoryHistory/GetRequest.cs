@@ -4,6 +4,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
     public class GetRequest : IRequest<Models.InventoryHistory>
     {
+        public Guid? InventoryHistoryId { get; set; }
         public string? Key { get; set; }
         public string? Type { get; set; }
         public Guid UserId { get; set; }
