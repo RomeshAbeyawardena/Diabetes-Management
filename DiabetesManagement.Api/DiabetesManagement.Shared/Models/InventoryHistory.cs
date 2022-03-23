@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Api.Models
+namespace DiabetesManagement.Shared.Models
 {
     public class InventoryHistory : Inventory
     {

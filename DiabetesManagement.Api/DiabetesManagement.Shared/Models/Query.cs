@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Api.Models
+﻿namespace DiabetesManagement.Shared.Models
 {
     public class Query
     {
