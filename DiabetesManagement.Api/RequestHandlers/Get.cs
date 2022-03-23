@@ -49,6 +49,7 @@ namespace DiabetesManagement.Api.RequestHandlers
             return DbConnection.QueryFirstOrDefaultAsync<InventoryHistory>(finalSql, new { 
                 key = request.Key, 
                 userId = request.UserId, 
+                type = request.Type,
                 version = request.Version }, GetOrBeginTransaction);
         }
     }

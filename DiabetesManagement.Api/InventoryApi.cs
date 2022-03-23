@@ -1,8 +1,3 @@
-using System;
-using System.Data;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
 using DiabetesManagement.Api.Models;
 using DiabetesManagement.Api.RequestHandlers;
 using Microsoft.AspNetCore.Http;
@@ -13,7 +8,11 @@ using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json;
+using System;
+using System.Data;
+using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
@@ -45,6 +44,7 @@ namespace DiabetesManagement.Api
             var requiredConditions = new[]
             {
                 request.Query.TryGetValue("key", out var key),
+                request.Query.TryGetValue("type", out var type),
                 request.Query.TryGetValue("userId", out var userIdValue)
             };
 
@@ -62,6 +62,7 @@ namespace DiabetesManagement.Api
                 var inventory = await getHandler.GetInventoryHistory(new GetRequest
                 {
                     Key = key,
+                    Type = type,
                     UserId = userId,
                     Version = versionNumber
                 });
@@ -82,6 +83,7 @@ namespace DiabetesManagement.Api
                 using var postHandler = new Post(ConnectionString);
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),
+                request.Form.TryGetValue("type", out var type),
                 request.Form.TryGetValue("key", out var key),
                 request.Form.TryGetValue("userId", out var userIdValue) };
 
@@ -89,17 +91,18 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        await postHandler.Save(new InventoryHistory { Items = items, Key = key, UserId = userId });
+                        await postHandler.Save(new InventoryHistory { Items = items, Key = key, Type = type, DefaultType = type, UserId = userId });
                     }
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
                 }
                 else
                 {
-                    throw new InvalidOperationException($"Expected form values: items, key, userId. " +
+                    throw new InvalidOperationException($"Expected form values for items, type, key, userId. " +
                         $"Received: { (requiredConditions[0] ? "items" : "") }," +
-                        $" { (requiredConditions[0] ? "key" : "") }, " +
-                        $" { (requiredConditions[0] ? "userId" : "") }");
+                        $" { (requiredConditions[1] ? "type" : "") }, " +
+                        $" { (requiredConditions[2] ? "key" : "") }, " +
+                        $" { (requiredConditions[3] ? "userId" : "") }");
                 }
                 return new OkObjectResult(items);
             }

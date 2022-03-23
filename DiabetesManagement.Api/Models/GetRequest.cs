@@ -10,6 +10,7 @@ namespace DiabetesManagement.Api.Models
     {
         public Guid? InventoryId { get; set; }
         public string Key { get; set; }
+        public string Type { get; set; }
         public Guid UserId { get; set; }
         public int? Version { get; set; }
     }
