@@ -44,18 +44,20 @@ namespace DiabetesManagement.Api.RequestHandlers
         /// </summary>
         public Get Get => getHandler;
 
-        public async Task<Guid> UpdateInventory(Inventory inventory, bool isInTransaction = false)
+        public async Task<Guid> UpdateInventory(Inventory inventory, GetRequest request, bool isInTransaction = false)
         {
             TryOpenConnection();
             var transaction = GetOrBeginTransaction;
-            var getRequest = new GetRequest
+
+            request ??= new GetRequest
             {
-                InventoryId = inventory.InventoryId == default ? null : inventory.InventoryId,
                 Key = inventory.Key,
                 UserId = inventory.UserId,
             };
-            
-            var inventoryRecord = await getHandler.GetInventory(getRequest);
+
+            request.InventoryId = inventory.InventoryId == default ? null : inventory.InventoryId;
+
+            var inventoryRecord = await getHandler.GetInventory(request);
 
             if (inventoryRecord == null)
             {
@@ -85,20 +87,25 @@ namespace DiabetesManagement.Api.RequestHandlers
         /// <param name="isInTransaction"></param>
         /// <returns></returns>
         /// <exception cref="DataException"></exception>
-        public async Task<Guid> Save(Inventory inventory, bool doValidationChecks = true, bool isInTransaction = false)
+        public async Task<Guid> Save(Inventory inventory, 
+            GetRequest request = null,
+            bool doValidationChecks = true, 
+            bool isInTransaction = false)
         {
             TryOpenConnection();
             var transaction = GetOrBeginTransaction;
             getHandler.UseTransaction = transaction;
-            var getRequest = new GetRequest
+
+            request ??= new GetRequest
             {
                 Key = inventory.Key,
                 UserId = inventory.UserId,
+                Type = inventory.DefaultType
             };
 
             if (doValidationChecks)
             {
-                var inventoryRecord = await getHandler.GetInventory(getRequest);
+                var inventoryRecord = await getHandler.GetInventory(request);
 
                 if (inventoryRecord != null)
                 {
@@ -136,6 +143,7 @@ namespace DiabetesManagement.Api.RequestHandlers
             {
                 Key = inventoryHistory.Key,
                 UserId = inventoryHistory.UserId,
+                Type = inventoryHistory.Type
             };
 
             var inventory = await getHandler.GetInventory(getRequest);
@@ -152,12 +160,12 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             if (inventory == null)
             {
-                inventoryId = await Save(inventoryHistory, false, true);
+                inventoryId = await Save(inventoryHistory, getRequest, false, true);
             }
             else
             {
                 inventory.Modified = DateTimeOffset.UtcNow;
-                await UpdateInventory(inventory, true); 
+                await UpdateInventory(inventory, getRequest, true); 
             }
 
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand, 
