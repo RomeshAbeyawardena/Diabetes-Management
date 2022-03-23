@@ -62,14 +62,8 @@ namespace DiabetesManagement.Api.RequestHandlers
                 throw new DataException("Inventory record not found");
             }
 
-            var command = @"UPDATE [dbo].[INVENTORY] 
-                SET 
-                    [KEY] = @key,
-                    [DEFAULT_TYPE] = @defaultType
-                    [MODIFIED] = @modified   
-                WHERE [INVENTORYID] = @inventoryid; SELECT @inventoryid";
-
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(command, new { 
+            
+            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.UpdateInventoryCommand, new { 
                 key = inventory.Key, 
                 defaultType = inventory.DefaultType,
                 modified = inventory.Modified, 
@@ -112,21 +106,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                 }
             }
 
-            var command = @"INSERT INTO [dbo].[Inventory] (
-                [INVENTORYID],
-	            [KEY],
-	            [USERID],
-                [DEFAULT_TYPE]
-	            [CREATED]
-            ) VALUES (
-                @inventoryId,
-                @key,
-                @userId,
-                @defaultType,
-                @created
-            ); SELECT @inventoryId";
-
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(command, new {
+            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryCommand, new {
                 inventoryId = inventory.InventoryId == default ? Guid.NewGuid() : inventory.InventoryId,
                 key = inventory.Key,
                 userId = inventory.UserId,
@@ -180,23 +160,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                 await UpdateInventory(inventory, true); 
             }
 
-            var command = @"INSERT INTO [dbo].[INVENTORY_HISTORY] (
-                                [INVENTORY_HISTORYID],
-                                [INVENTORYID],
-                                [VERSION],
-                                [TYPE],
-                                [ITEMS],
-                                [CREATED]
-                            ) VALUES (
-                                @inventoryHistoryId,
-                                @inventoryId,
-                                @version,
-                                @type,
-                                @items,
-                                @created
-                            ); SELECT @inventoryHistoryId";
-
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(command, 
+            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand, 
                 new { 
                     inventoryHistoryId = inventoryHistory.InventoryHistoryId == default
                         ? Guid.NewGuid() : inventoryHistory.InventoryHistoryId,

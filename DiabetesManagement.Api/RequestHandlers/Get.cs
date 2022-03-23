@@ -26,16 +26,8 @@ namespace DiabetesManagement.Api.RequestHandlers
 
         public Task<Inventory> GetInventory(GetRequest request)
         {
-            var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[DEFAULT_TYPE] [DefaultType], [I].[KEY], [I].[USERID],
-                    [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I] 
-                    @@whereClause";
-
-            var whereClause = request.InventoryId.HasValue && request.InventoryId != default
-                ? "WHERE [I].[INVENTORYID] = @id"
-                : "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
-
-            var finalSql = sql
-                .Replace("@@whereClause", whereClause);
+            var finalSql = Queries.InventoryQuery
+                .Replace("@@whereClause", Queries.GetInventoryWhereClause(request.InventoryId));
 
             TryOpenConnection();
 
@@ -49,25 +41,8 @@ namespace DiabetesManagement.Api.RequestHandlers
 
         public Task<InventoryHistory> GetInventoryHistory(GetRequest request)
         {
-            var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
-                    [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
-                    [IH].[INVENTORY_HISTORYID], [IH].[VERSION],
-                    [IH].[ITEMS], [IH].[TYPE], [IH].[CREATED] [InventoryHistoryCreated]
-                FROM [dbo].[INVENTORY_HISTORY] [IH]
-                INNER JOIN [dbo].[INVENTORY][I]
-                ON [IH].[INVENTORYID] = [I].[INVENTORYID]
-                    @@whereClause
-                ORDER BY [VERSION] DESC";
-
-            var whereClause = "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
-
-            if (request.Version.HasValue)
-            {
-                whereClause += " AND [IH].[Version] = @version";
-            }
-
-            var finalSql = sql
-                .Replace("@@whereClause", whereClause);
+            var finalSql = Queries.InventoryHistoryQuery
+                .Replace("@@whereClause", Queries.GetInventoryHistoryWhereClause(request.Version));
 
             TryOpenConnection();
 
