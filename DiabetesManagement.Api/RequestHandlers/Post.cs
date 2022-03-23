@@ -3,6 +3,7 @@ using DiabetesManagement.Api.Models;
 using System;
 using System.Data;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace DiabetesManagement.Api.RequestHandlers
 {
@@ -105,6 +106,7 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             if (doValidationChecks)
             {
+                Logger.LogInformation("Checking INVENTORY exists...");
                 var inventoryRecord = await getHandler.GetInventory(request);
 
                 if (inventoryRecord != null)
@@ -112,7 +114,12 @@ namespace DiabetesManagement.Api.RequestHandlers
                     throw new DataException("Inventory record already exists");
                 }
             }
+            else
+            {
+                Logger.LogInformation("Skipping validation checks");
+            }
 
+            Logger.LogInformation("Saving INVENTORY...");
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryCommand, new {
                 inventoryId = inventory.InventoryId == default ? Guid.NewGuid() : inventory.InventoryId,
                 key = inventory.Key,
@@ -123,6 +130,7 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             if (!isInTransaction)
             {
+                Logger.LogInformation("Committing changes...");
                 transaction.Commit();
             }
 
@@ -147,7 +155,9 @@ namespace DiabetesManagement.Api.RequestHandlers
             };
 
             var inventory = await getHandler.GetInventory(getRequest);
-
+            
+            Logger.LogInformation("Finding existing INVENTORY...");
+            
             var inventoryId = inventory?.InventoryId;
             var version = inventoryHistory.Version;
 
@@ -160,14 +170,17 @@ namespace DiabetesManagement.Api.RequestHandlers
 
             if (inventory == null)
             {
+                Logger.LogInformation("INVENTORY not found, saving as new entry....");
                 inventoryId = await Save(inventoryHistory, getRequest, false, true);
             }
             else
             {
+                Logger.LogInformation("INVENTORY found, updating entry....");
                 inventory.Modified = DateTimeOffset.UtcNow;
                 await UpdateInventory(inventory, getRequest, true); 
             }
 
+            Logger.LogInformation("Saving INVENTORY_HISTORY");
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand, 
                 new { 
                     inventoryHistoryId = inventoryHistory.InventoryHistoryId == default
@@ -181,6 +194,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                         : inventoryHistory.Created
                 }, dbTransaction);
 
+            Logger.LogInformation("Committing changes...");
             dbTransaction.Commit();
 
             return result;

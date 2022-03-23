@@ -21,8 +21,9 @@ namespace DiabetesManagement.Api
         private readonly ILogger<InventoryApi> _logger;
         private const string ConnectionString = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
 
-        private static IActionResult HandleException(Exception exception)
+        private IActionResult HandleException(Exception exception)
         {
+            _logger.LogError(exception, "A handled error has occurred");
             return new BadRequestObjectResult(exception.Message);
         }
 
@@ -57,7 +58,7 @@ namespace DiabetesManagement.Api
                     versionNumber = versionNum;
                 }
 
-                using var getHandler = new Get(ConnectionString);
+                using var getHandler = new Get(ConnectionString) { SetLogger = _logger };
 
                 var inventory = await getHandler.GetInventoryHistory(new GetRequest
                 {
@@ -80,7 +81,7 @@ namespace DiabetesManagement.Api
         {
             try
             {
-                using var postHandler = new Post(ConnectionString);
+                using var postHandler = new Post(ConnectionString) { SetLogger = _logger };
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),
                 request.Form.TryGetValue("type", out var type),
