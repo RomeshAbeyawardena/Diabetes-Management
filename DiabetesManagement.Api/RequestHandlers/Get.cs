@@ -26,7 +26,7 @@ namespace DiabetesManagement.Api.RequestHandlers
 
         public Task<Inventory> GetInventory(GetRequest request)
         {
-            var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
+            var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[DEFAULT_TYPE] [DefaultType], [I].[KEY], [I].[USERID],
                     [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I] 
                     @@whereClause";
 
@@ -50,9 +50,9 @@ namespace DiabetesManagement.Api.RequestHandlers
         public Task<InventoryHistory> GetInventoryHistory(GetRequest request)
         {
             var sql = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
-                    [I].[CREATED], [I].[MODIFIED],
-                    [IH].[INVENTORY_HISTORYID], [IH].[Version],
-                    [IH].[Items], [IH].[Created] [InventoryHistoryCreated]
+                    [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
+                    [IH].[INVENTORY_HISTORYID], [IH].[VERSION],
+                    [IH].[ITEMS], [IH].[TYPE], [IH].[CREATED] [InventoryHistoryCreated]
                 FROM [dbo].[INVENTORY_HISTORY] [IH]
                 INNER JOIN [dbo].[INVENTORY][I]
                 ON [IH].[INVENTORYID] = [I].[INVENTORYID]

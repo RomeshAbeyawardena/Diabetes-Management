@@ -10,7 +10,7 @@ namespace DiabetesManagement.Api.RequestHandlers
         {
             dbTransaction?.Dispose();
             dbTransaction = null;
-            dbConnection.Dispose();
+            dbConnection?.Dispose();
             dbConnection = null;
             Dispose(true);
             GC.SuppressFinalize(this);

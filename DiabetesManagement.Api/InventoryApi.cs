@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -11,18 +10,17 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 
 namespace DiabetesManagement.Api
 {
-    public class InventoryDb
+    public class InventoryApi
     {
-        private readonly ILogger<InventoryDb> _logger;
+        private readonly ILogger<InventoryApi> _logger;
         private const string ConnectionString = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
-        public InventoryDb(ILogger<InventoryDb> log)
+        public InventoryApi(ILogger<InventoryApi> log)
         {
             _logger = log;
         }
@@ -86,8 +84,8 @@ namespace DiabetesManagement.Api
             {
                 return new BadRequestResult();
             }
-
-            return new OkResult();
+            
+            return new OkObjectResult(items);
         }
     }
 }

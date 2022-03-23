@@ -65,11 +65,13 @@ namespace DiabetesManagement.Api.RequestHandlers
             var command = @"UPDATE [dbo].[INVENTORY] 
                 SET 
                     [KEY] = @key,
-                    [MODIFIED] = @modified
+                    [DEFAULT_TYPE] = @defaultType
+                    [MODIFIED] = @modified   
                 WHERE [INVENTORYID] = @inventoryid; SELECT @inventoryid";
 
             var result = await DbConnection.ExecuteScalarAsync<Guid>(command, new { 
                 key = inventory.Key, 
+                defaultType = inventory.DefaultType,
                 modified = inventory.Modified, 
                 inventoryRecord.InventoryId }, transaction);
 
@@ -114,11 +116,13 @@ namespace DiabetesManagement.Api.RequestHandlers
                 [INVENTORYID],
 	            [KEY],
 	            [USERID],
+                [DEFAULT_TYPE]
 	            [CREATED]
             ) VALUES (
                 @inventoryId,
                 @key,
                 @userId,
+                @defaultType,
                 @created
             ); SELECT @inventoryId";
 
@@ -126,6 +130,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                 inventoryId = inventory.InventoryId == default ? Guid.NewGuid() : inventory.InventoryId,
                 key = inventory.Key,
                 userId = inventory.UserId,
+                defaultType = inventory.DefaultType,
                 created = inventory.Created == default ? DateTimeOffset.UtcNow : inventory.Created
             }, transaction);
 
@@ -179,12 +184,14 @@ namespace DiabetesManagement.Api.RequestHandlers
                                 [INVENTORY_HISTORYID],
                                 [INVENTORYID],
                                 [VERSION],
+                                [TYPE],
                                 [ITEMS],
                                 [CREATED]
                             ) VALUES (
                                 @inventoryHistoryId,
                                 @inventoryId,
                                 @version,
+                                @type,
                                 @items,
                                 @created
                             ); SELECT @inventoryHistoryId";
@@ -195,6 +202,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                         ? Guid.NewGuid() : inventoryHistory.InventoryHistoryId,
                     inventoryId,
                     version,
+                    type = inventoryHistory.Type ?? inventoryHistory.DefaultType,
                     items = inventoryHistory.Items,
                     created = inventoryHistory.Created == default 
                         ? DateTimeOffset.UtcNow
