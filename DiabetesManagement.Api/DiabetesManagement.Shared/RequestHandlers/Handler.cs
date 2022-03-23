@@ -7,7 +7,7 @@ using System.Reactive.Subjects;
 
 namespace DiabetesManagement.Shared.RequestHandlers
 {
-    public abstract class Handler<TRequest> : Handler
+    public abstract class Handler<TRequest> : Handler, IRequestHandler<TRequest>
         where TRequest: IRequest
     {
         public Handler(string connectionString)
@@ -21,12 +21,20 @@ namespace DiabetesManagement.Shared.RequestHandlers
         {
         }
 
+
+        Task IRequestHandler.Handle(object request)
+        {
+            return Handle((TRequest)request);
+        }
+
         public abstract Task Handle(TRequest request);
     }
 
-    public abstract class Handler<TRequest, TResponse> :Handler
-        where TRequest : IRequest<TResponse>
+    public abstract class Handler<TRequest, TResponse> : Handler<TRequest>, IRequestHandler<TRequest, TResponse>
+        where TRequest : IRequest
     {
+        protected abstract Task<TResponse> HandleAsync(TRequest request);
+
         public Handler(string connectionString)
            : base(connectionString)
         {
@@ -38,8 +46,10 @@ namespace DiabetesManagement.Shared.RequestHandlers
         {
         }
 
-
-        public abstract Task<TResponse> Handle(TRequest request);
+        Task<TResponse> IRequestHandler<TRequest, TResponse>.Handle(TRequest request)
+        {
+            return HandleAsync(request);
+        }
     }
 
     public abstract class Handler : IDisposable

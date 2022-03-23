@@ -1,9 +1,11 @@
 ﻿using Dapper;
+using DiabetesManagement.Shared.Attributes;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
-    public class Get : Handler
+    [HandlerDescriptor(Queries.GetInventory)]
+    public class Get : Handler<Models.GetRequest, Models.Inventory>
     {
         public Get(string connectionString)
            : base(connectionString)
@@ -21,7 +23,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 
         }
 
-        public Task<Models.Inventory> GetInventory(Models.GetRequest request)
+        public override Task<Models.Inventory> Handle(Models.GetRequest request)
         {
             var finalSql = Queries.InventoryQuery
                 .Replace("@@whereClause", Queries.GetInventoryWhereClause(request.InventoryId));

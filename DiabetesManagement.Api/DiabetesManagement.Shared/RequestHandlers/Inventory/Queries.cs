@@ -8,6 +8,8 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
     public class Queries
     {
+        public const string GetInventory = "Get-Inventory";
+
         public const string InventoryQuery = @"SELECT TOP(1) [I].[INVENTORYID], [I].[DEFAULT_TYPE] [DefaultType], [I].[KEY], [I].[USERID],
                     [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I] 
                     @@whereClause";
