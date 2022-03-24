@@ -16,7 +16,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
 
-        internal IRequestHandler GetRequestHandler(string queryOrCommand)
+        internal virtual IRequestHandler GetRequestHandler(string queryOrCommand)
         {
             if (handlerTypes!.TryGetValue(queryOrCommand, out var requestHandler))
             {
