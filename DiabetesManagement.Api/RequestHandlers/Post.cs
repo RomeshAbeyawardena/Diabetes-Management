@@ -84,6 +84,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                         {
                             InventoryId = inventoryId.Value,
                             Key = command.Key,
+                            DefaultType = command.Type,
                             UserId = command.UserId,
                             Modified = DateTimeOffset.UtcNow
                         }
