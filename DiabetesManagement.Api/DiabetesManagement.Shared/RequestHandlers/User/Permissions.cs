@@ -2,7 +2,7 @@
 {
     public class Permissions
     {
-        public const string Query = "User.Get";
+        public const string View = "User.View";
         public const string Add = "User.Add";
         public const string Edit = "User.Edit";
     }

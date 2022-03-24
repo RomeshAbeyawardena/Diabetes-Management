@@ -1,7 +1,11 @@
 ﻿namespace DiabetesManagement.Shared.RequestHandlers.ApiToken
 {
-    public class GetRequest : IRequest<>
-    {
+    using Shared.Contracts;
 
+    public class GetRequest : IRequest<Models.ApiToken>
+    {
+        public Guid? ApiTokenId { get; set; }
+        public string? Key { get; set; }
+        public string? Secret { get; set; }
     }
 }

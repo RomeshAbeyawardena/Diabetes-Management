@@ -4,7 +4,7 @@ using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 {
-    [HandlerDescriptor(Queries.GetInventoryHistory, Permissions.Query)]
+    [HandlerDescriptor(Queries.GetInventoryHistory, Permissions.View)]
     public class Get : HandlerBase<GetRequest, Models.InventoryHistory>
     {
         public Get(string connectionString) : base(connectionString)
