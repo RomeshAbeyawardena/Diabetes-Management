@@ -1,3 +1,4 @@
+using DiabetesManagement.Api.RequestHandlers;
 using DiabetesManagement.Shared.Contracts;
 using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.AspNetCore.Http;
@@ -65,16 +66,16 @@ namespace DiabetesManagement.Api
                     versionNumber = versionNum;
                 }
 
-                var inventory = await handlerFactory
-                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory>(
-                        InventoryHistoryFeature.Queries.GetInventoryHistory,
-                        new InventoryHistoryFeature.GetRequest
-                        {
-                            Key = key,
-                            Type = type,
-                            UserId = userId,
-                            Version = versionNumber
-                        });
+                var inventory = handlerFactory
+                    .Execute<GetRequest, DbModels.InventoryHistory>(
+                    Queries.GetInventoryItems, 
+                    new GetRequest
+                    {
+                        Key = key,
+                        Type = type,
+                        UserId = userId,
+                        Version = versionNumber
+                    });
 
                 return new OkObjectResult(inventory);
             }

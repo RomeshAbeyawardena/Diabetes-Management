@@ -2,7 +2,7 @@
 using DiabetesManagement.Shared.Models;
 using System;
 
-namespace DiabetesManagement.Api
+namespace DiabetesManagement.Api.RequestHandlers
 {
     public class SaveRequest : IRequest<InventoryHistory>
     {

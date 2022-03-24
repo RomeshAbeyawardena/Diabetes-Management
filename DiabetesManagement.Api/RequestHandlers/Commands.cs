@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Api
+﻿namespace DiabetesManagement.Api.RequestHandlers
 {
     public static class Commands
     {
