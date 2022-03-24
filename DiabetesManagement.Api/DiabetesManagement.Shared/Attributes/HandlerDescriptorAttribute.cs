@@ -8,6 +8,13 @@
             QueryOrCommand = queryOrCommand;
         }
 
+        public HandlerDescriptorAttribute(string queryOrCommand, params string[] requiredPermissions)
+            : this(queryOrCommand)
+        {
+            RequiredPermissions = requiredPermissions;
+        }
+
         public string QueryOrCommand { get; }
+        public IEnumerable<string> RequiredPermissions { get; } = Array.Empty<string>();
     }
 }

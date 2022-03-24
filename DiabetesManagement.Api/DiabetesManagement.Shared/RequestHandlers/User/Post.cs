@@ -5,7 +5,7 @@ using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.User
 {
-    [HandlerDescriptor(Commands.SaveUser)]
+    [HandlerDescriptor(Commands.SaveUser, Permissions.Add, Permissions.Edit)]
     public class Post : HandlerBase<SaveCommand, Guid>
     {
         public Post(string connectionString) : base(connectionString)

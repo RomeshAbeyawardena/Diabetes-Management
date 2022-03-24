@@ -6,7 +6,7 @@ using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
-    [HandlerDescriptor(Commands.SaveInventory)]
+    [HandlerDescriptor(Commands.SaveInventory, Permissions.Add, Permissions.Edit)]
     public class Post : HandlerBase<SaveCommand, Guid>
     {
         protected override void Dispose(bool disposing)

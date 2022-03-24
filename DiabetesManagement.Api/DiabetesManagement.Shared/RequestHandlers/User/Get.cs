@@ -4,7 +4,7 @@ using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.User
 {
-    [HandlerDescriptor(Queries.GetUser)]
+    [HandlerDescriptor(Queries.GetUser, Permissions.Query)]
     public class Get : HandlerBase<GetRequest, Models.User>
     {
         public Get(string connectionString) : base(connectionString)
