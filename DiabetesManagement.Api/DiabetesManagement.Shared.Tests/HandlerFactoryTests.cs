@@ -12,8 +12,6 @@ using InventoryHistoryRequestHandlers = RequestHandlers.InventoryHistory;
 using UserRequestHandlers = RequestHandlers.User;
 public class HandlerFactoryTests 
 {
-    
-
     private HandlerFactory? handlerFactory;
     private Mock<ILogger>? loggerMock;
     private Mock<IDbConnection>? dbConnectionMock;

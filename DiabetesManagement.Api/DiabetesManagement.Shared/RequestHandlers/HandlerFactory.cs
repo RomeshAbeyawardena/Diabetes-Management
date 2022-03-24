@@ -31,6 +31,18 @@ namespace DiabetesManagement.Shared.RequestHandlers
             throw new InvalidOperationException();
         }
 
+        internal IRequestHandler<TRequest> GetRequestHandler<TRequest>(string queryOrCommand)
+            where TRequest : IRequest
+        {
+            return (IRequestHandler<TRequest>)GetRequestHandler(queryOrCommand);
+        }
+
+        internal IRequestHandler<TRequest, TResponse> GetRequestHandler<TRequest, TResponse>(string queryOrCommand)
+            where TRequest : IRequest<TResponse>
+        {
+            return (IRequestHandler<TRequest, TResponse>)GetRequestHandler(queryOrCommand);
+        }
+
         private bool AddIfIsHandler(Type type)
         {
             if(!type.GetInterfaces().Any(t => t == typeof(IRequestHandler)))
@@ -48,11 +60,13 @@ namespace DiabetesManagement.Shared.RequestHandlers
             return true;
         }
 
-        private void Init()
+        private void Init(IEnumerable<Assembly> assemblies)
         {
             handlerDictionary = new();
             handlerTypes = new();
-            foreach(var type in typeof(HandlerFactory).Assembly.GetTypes())
+
+            var types = assemblies.SelectMany(a => a.GetTypes());
+            foreach (var type in types)
             {
                 if (AddIfIsHandler(type))
                 {
@@ -61,18 +75,18 @@ namespace DiabetesManagement.Shared.RequestHandlers
             }
         }
 
-        public HandlerFactory(string connectionString, ILogger logger)
+        public HandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null)
            : base(connectionString)
         {
-            Init();
             this.logger = logger;
+            Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
 
-        public HandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null)
+        public HandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null)
             : base(dbConnection, dbTransaction)
         {
             this.logger = logger;
-            Init();
+            Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
 
         protected override void Dispose(bool disposing)
@@ -86,17 +100,17 @@ namespace DiabetesManagement.Shared.RequestHandlers
         }
 
         public Task Execute<TRequest>(string queryOrCommand, TRequest request)
+            where TRequest : IRequest
         {
-            var requestHandler = (IRequestHandler<TRequest>)GetRequestHandler(queryOrCommand).Handle(request!);
+            var requestHandler = GetRequestHandler<TRequest>(queryOrCommand);
             return requestHandler.Handle(request);
         }
 
         public async Task<TResponse> Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
+            where TRequest : IRequest<TResponse>
         {
-            var requestHandler = (IRequestHandler<TRequest, TResponse>)GetRequestHandler(queryOrCommand).Handle(request!);
+            var requestHandler = GetRequestHandler<TRequest, TResponse>(queryOrCommand);
             return await requestHandler.Handle(request);
         }
-
-        
     }
 }

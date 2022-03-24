@@ -64,7 +64,7 @@ namespace DiabetesManagement.Api
                 }
 
                 var inventory = handlerFactory
-                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.Inventory> (
+                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory> (
                         InventoryHistoryFeature.Queries.GetInventoryHistory, 
                         new InventoryHistoryFeature.GetRequest {
                             Key = key,
