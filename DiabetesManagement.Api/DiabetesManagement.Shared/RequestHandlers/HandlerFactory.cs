@@ -10,7 +10,6 @@ namespace DiabetesManagement.Shared.RequestHandlers
     {
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
-        private readonly ILogger logger;
 
         internal IRequestHandler GetRequestHandler(string queryOrCommand)
         {
@@ -22,8 +21,8 @@ namespace DiabetesManagement.Shared.RequestHandlers
             if(handlerDictionary!.TryGetValue(queryOrCommand, out var handlerType))
             {
                 requestHandler = (IRequestHandler)Activator.CreateInstance(handlerType, DbConnection, GetOrBeginTransaction)!;
+                requestHandler.SetLogger = Logger;
                 requestHandler.SetHandlerFactory = this;
-                requestHandler.SetLogger = logger;
                 handlerTypes.Add(queryOrCommand, requestHandler);
                 return requestHandler;
             }
@@ -70,28 +69,28 @@ namespace DiabetesManagement.Shared.RequestHandlers
             {
                 if (AddIfIsHandler(type))
                 {
-                    logger.LogInformation("Adding {type}", type);
+                    Logger.LogInformation("Adding {type}", type);
                 }
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+
         }
 
         public HandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null)
            : base(connectionString)
         {
-            this.logger = logger;
+            base.SetLogger = logger;
             Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
 
         public HandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null)
             : base(dbConnection, dbTransaction)
         {
-            this.logger = logger;
+            base.SetLogger = logger;
             Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-
         }
 
         public Task Execute(string queryOrCommand, object request)

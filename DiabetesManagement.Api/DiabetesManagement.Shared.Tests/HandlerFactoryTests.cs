@@ -23,6 +23,8 @@ public class HandlerFactoryTests
             var requestHandler = handlerFactory!.GetRequestHandler(query);
 
             Assert.IsNotNull(requestHandler);
+            Assert.IsNotNull(requestHandler.HandlerFactory);
+            Assert.AreSame(handlerFactory, requestHandler.HandlerFactory);
         }
     }
 
@@ -36,6 +38,13 @@ public class HandlerFactoryTests
     [Test] public void Ensure_QueryHandlers_exist()
     {
         var queries = new[] {
+            InventoryRequestHandlers.Queries.GetInventory,
+            InventoryRequestHandlers.Commands.SaveInventory,
+            InventoryRequestHandlers.Commands.UpdateInventory,
+            InventoryHistoryRequestHandlers.Queries.GetInventoryHistory,
+            InventoryHistoryRequestHandlers.Commands.SaveInventoryHistory,
+            UserRequestHandlers.Queries.GetUser,
+            UserRequestHandlers.Commands.SaveUser,
             InventoryRequestHandlers.Queries.GetInventory,
             InventoryRequestHandlers.Commands.SaveInventory,
             InventoryRequestHandlers.Commands.UpdateInventory,

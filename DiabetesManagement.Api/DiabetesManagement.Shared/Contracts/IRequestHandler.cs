@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Shared.Contracts
 {
-    public interface IRequestHandler
+    public interface IRequestHandler : IHandler
     {
+        IHandlerFactory HandlerFactory { get; }
         IHandlerFactory SetHandlerFactory { set; }
-        ILogger SetLogger { set; }
         Task Handle(object request);
     }
 

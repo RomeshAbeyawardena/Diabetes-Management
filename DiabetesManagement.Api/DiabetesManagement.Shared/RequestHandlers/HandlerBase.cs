@@ -9,6 +9,8 @@ namespace DiabetesManagement.Shared.RequestHandlers
     public abstract class HandlerBase<TRequest> : HandlerBase, IRequestHandler<TRequest>
         where TRequest: IRequest
     {
+        IHandlerFactory IRequestHandler.HandlerFactory => HandlerFactory!;
+
         protected IHandlerFactory? HandlerFactory { get; private set; }
 
         public IHandlerFactory SetHandlerFactory { set => HandlerFactory = value; }
@@ -59,11 +61,15 @@ namespace DiabetesManagement.Shared.RequestHandlers
         }
     }
 
-    public abstract class HandlerBase : IDisposable
+    public abstract class HandlerBase : IHandler
     {
         void IDisposable.Dispose()
         {
-            subscriber?.Dispose();
+            foreach (var subscriber in subscribers)
+            {
+                subscriber?.Dispose();
+            }
+
             dbTransaction?.Dispose();
             dbTransaction = null;
 
@@ -75,40 +81,41 @@ namespace DiabetesManagement.Shared.RequestHandlers
             GC.SuppressFinalize(this);
         }
 
-        private IDisposable? subscriber;
+        private readonly List<IDisposable> subscribers;
         private ILogger? logger;
         private IDbConnection? dbConnection;
         private IDbTransaction? dbTransaction;
         private readonly ISubject<ILogger> loggerSubject;
-        
+        private readonly ISubject<IDbTransaction> transactionSubject;
+
         protected abstract void Dispose(bool disposing);
         
-        protected virtual Task Get()
+        protected IDbTransaction GetOrBeginTransaction
         {
-            return Task.CompletedTask;
+            get
+            {
+                if (dbTransaction == null)
+                {
+                    TryOpenConnection();
+                    SetTransaction = dbConnection!.BeginTransaction();
+                }
+
+                return dbTransaction!;
+            }
         }
-
-        protected virtual Task Save()
-        {
-            return Task.CompletedTask;
-        }
-
-
-        protected IDbTransaction GetOrBeginTransaction => dbTransaction ??= dbConnection!.BeginTransaction();
         protected IDbConnection DbConnection => dbConnection!;
         protected ILogger Logger => logger!;
-        protected IObservable<ILogger> LoggerSubject => loggerSubject;
         
         protected void OnLoggerSet(Action<ILogger> onNext)
         {
-            if(subscriber != null)
-            {
-                subscriber.Dispose();
-            }
-
-            subscriber = loggerSubject.Subscribe(onNext);
+            subscribers.Add(loggerSubject.Subscribe(onNext));
         }
-        
+
+        protected void OnTransactionSet(Action<IDbTransaction> onNext)
+        {
+            subscribers.Add(transactionSubject.Subscribe(onNext));
+        }
+
         protected bool TryOpenConnection()
         {
             if(dbConnection!.State == ConnectionState.Closed)
@@ -133,9 +140,20 @@ namespace DiabetesManagement.Shared.RequestHandlers
             this.dbConnection = dbConnection;
             this.dbTransaction = dbTransaction;
             loggerSubject = new Subject<ILogger>();
+            transactionSubject = new Subject<IDbTransaction>();
+            subscribers = new List<IDisposable>();
         }
 
-        public IDbTransaction UseTransaction { set => dbTransaction = value; }
+        public IObservable<ILogger> LoggerChanged => loggerSubject;
+        public IObservable<IDbTransaction> DbTransactionChanged => transactionSubject;
+
+        public IDbTransaction SetTransaction { 
+            set 
+            { 
+                transactionSubject.OnNext(value); 
+                dbTransaction = value; 
+            } 
+        }
 
         public ILogger SetLogger { 
             set 

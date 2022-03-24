@@ -63,7 +63,7 @@ namespace DiabetesManagement.Api
                     versionNumber = versionNum;
                 }
 
-                var inventory = handlerFactory
+                var inventory = await handlerFactory
                     .Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory> (
                         InventoryHistoryFeature.Queries.GetInventoryHistory, 
                         new InventoryHistoryFeature.GetRequest {
