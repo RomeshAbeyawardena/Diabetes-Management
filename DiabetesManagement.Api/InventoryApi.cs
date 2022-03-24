@@ -6,6 +6,7 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
@@ -16,16 +17,14 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
-    using InventoryFeature = Shared.RequestHandlers.Inventory;
     using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;
-    using UserFeature = Shared.RequestHandlers.User;
 
     using DbModels = Shared.Models;
     public class InventoryApi : IDisposable
     {
         private readonly IHandlerFactory handlerFactory;
         private readonly ILogger<InventoryApi> _logger;
-        private const string ConnectionString = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
+        // = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
 
         private IActionResult HandleException(Exception exception)
         {
@@ -33,10 +32,11 @@ namespace DiabetesManagement.Api
             return new BadRequestObjectResult(exception.Message);
         }
 
-        public InventoryApi(ILogger<InventoryApi> log)
+        public InventoryApi(ILogger<InventoryApi> log, IConfiguration configuration)
         {
             _logger = log;
-            handlerFactory = new HandlerFactory(ConnectionString, log);
+            var connectionString = configuration.GetConnectionString("Default");
+            handlerFactory = new HandlerFactory(connectionString, log);
         }
 
         [FunctionName("GetInventory")]
@@ -99,8 +99,7 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        savedEntity = await Save(new DbModels.InventoryHistory
-                        {
+                        savedEntity = await handlerFactory.Execute<SaveRequest, DbModels.InventoryHistory>(Commands.SaveInventoryPayload, new SaveRequest {
                             Items = items,
                             Type = type,
                             Key = key,
@@ -129,91 +128,6 @@ namespace DiabetesManagement.Api
             {
                 return HandleException(dataException);
             }
-        }
-        [NonAction]
-        public async Task<DbModels.InventoryHistory> Save(DbModels.InventoryHistory command)
-        {
-            var user = await handlerFactory
-                .Execute<UserFeature.GetRequest, DbModels.User>(UserFeature.Queries.GetUser, new UserFeature.GetRequest { 
-                    UserId = command.UserId });
-
-            var userId = user?.UserId;
-
-            if(user == null)
-            {
-                userId = await handlerFactory.Execute<UserFeature.SaveCommand, Guid>(UserFeature.Commands.SaveUser, new UserFeature.SaveCommand {
-                    User = new DbModels.User
-                    {
-                        UserId = command.UserId,
-                        Created = command.Created
-                    }
-                });
-            }
-
-
-            var inventory = await handlerFactory.Execute<InventoryFeature.GetRequest, DbModels.Inventory>(
-                InventoryFeature.Queries.GetInventory, 
-                new InventoryFeature.GetRequest { 
-                    Key = command.Key,
-                    UserId = userId.Value,
-                });
-
-            var inventoryId = inventory?.InventoryId;
-
-            if(inventory == null)
-            {
-                inventoryId = await handlerFactory.Execute<InventoryFeature.SaveCommand, Guid> (
-                    InventoryFeature.Commands.SaveInventory, 
-                    new InventoryFeature.SaveCommand {
-                        Inventory = new DbModels.Inventory {
-                            Created = DateTimeOffset.UtcNow,
-                            DefaultType = command.Type,
-                            Key = command.Key,
-                            UserId = command.UserId  
-                        },
-                    });
-            }
-            else
-            {
-                await handlerFactory.Execute<InventoryFeature.SaveCommand, Guid>(InventoryFeature.Commands.UpdateInventory,
-                    new InventoryFeature.SaveCommand
-                    {
-                        Inventory = new DbModels.Inventory {
-                            InventoryId = inventoryId.Value,
-                            Key = command.Key,
-                            UserId = command.UserId,
-                            Modified = DateTimeOffset.UtcNow
-                        }
-                    });
-            }
-
-            if (!inventoryId.HasValue)
-            {
-                throw new DataException();
-            }
-
-            var inventoryHistoryId = await handlerFactory.Execute<InventoryHistoryFeature.SaveCommand, Guid> (
-                    InventoryHistoryFeature.Commands.SaveInventoryHistory,
-                    new InventoryHistoryFeature.SaveCommand {
-                        InventoryHistory = new DbModels.InventoryHistory
-                        {
-                            Created = DateTimeOffset.Now,
-                            Key = command.Key,
-                            Type = command.Type,
-                            Items = command.Items,
-                            InventoryId = inventoryId.Value,
-                            UserId = command.UserId,
-                        },
-                        CommitOnCompletion = true
-                    });
-
-            return await handlerFactory.Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory>(
-                    InventoryHistoryFeature.Queries.GetInventoryHistory,
-                    new InventoryHistoryFeature.GetRequest
-                    {
-                        InventoryHistoryId = inventoryHistoryId
-                    }
-                );
         }
 
         public void Dispose()
