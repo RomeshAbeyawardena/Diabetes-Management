@@ -61,21 +61,22 @@ namespace DiabetesManagement.Api
             {
                 int? versionNumber = null;
 
-                if (request.Query.TryGetValue("version", out var version) && int.TryParse(version, out int versionNum))
+                if (request.Query.TryGetValue("version", out var version) 
+                    && int.TryParse(version, out int versionNum))
                 {
                     versionNumber = versionNum;
                 }
 
                 var inventory = await handlerFactory
                     .Execute<GetRequest, DbModels.InventoryHistory>(
-                    Queries.GetInventoryItems, 
-                    new GetRequest
-                    {
-                        Key = key,
-                        Type = type,
-                        UserId = userId,
-                        Version = versionNumber
-                    });
+                        Queries.GetInventoryItems, 
+                        new GetRequest
+                        {
+                            Key = key,
+                            Type = type,
+                            UserId = userId,
+                            Version = versionNumber
+                        });
 
                 return new OkObjectResult(inventory);
             }
@@ -101,13 +102,16 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        savedEntity = await handlerFactory.Execute<SaveRequest, DbModels.InventoryHistory>(Commands.SaveInventoryPayload, new SaveRequest
-                        {
-                            Items = items,
-                            Type = type,
-                            Key = key,
-                            UserId = userId
-                        });
+                        savedEntity = await handlerFactory
+                            .Execute<SaveRequest, DbModels.InventoryHistory>(
+                                Commands.SaveInventoryPayload, 
+                                new SaveRequest
+                                {
+                                    Items = items,
+                                    Type = type,
+                                    Key = key,
+                                    UserId = userId
+                                });
                     }
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
