@@ -7,7 +7,7 @@
             [USERID], 
             [EMAILADDRESS], 
             [USERNAME], 
-            [HASH]
+            [HASH],
             [CREATED]
         ) VALUES (
             @userId,

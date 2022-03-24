@@ -18,7 +18,7 @@
 	            [KEY],
 	            [USERID],
                 [DEFAULT_TYPE],
-                [Hash]
+                [Hash],
 	            [CREATED]
             ) VALUES (
                 @inventoryId,

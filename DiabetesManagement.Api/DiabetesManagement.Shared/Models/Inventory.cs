@@ -1,5 +1,6 @@
 ﻿namespace DiabetesManagement.Shared.Models
 {
+    [MessagePack.MessagePackObject(true)]
     public class Inventory
     {
         public Guid InventoryId { get; set; }

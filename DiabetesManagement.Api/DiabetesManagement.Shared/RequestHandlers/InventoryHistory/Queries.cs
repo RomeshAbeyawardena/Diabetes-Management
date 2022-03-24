@@ -5,9 +5,10 @@
         public const string GetInventoryHistory = "Get-Inventory-History";
 
         public const string InventoryHistoryQuery = @"SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
-                    [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
+                    [I].[HASH], [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
                     [IH].[INVENTORY_HISTORYID] [InventoryHistoryId], [IH].[VERSION],
-                    [IH].[ITEMS], [IH].[TYPE], [IH].[CREATED] [InventoryHistoryCreated]
+                    [IH].[ITEMS], [IH].[TYPE], [IH].[HASH] [InventoryHistoryHash], 
+                    [IH].[CREATED] [InventoryHistoryCreated]
                 FROM [dbo].[INVENTORY_HISTORY] [IH]
                 INNER JOIN [dbo].[INVENTORY][I]
                 ON [IH].[INVENTORYID] = [I].[INVENTORYID]

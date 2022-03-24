@@ -4,7 +4,7 @@
     {
         public const string GetUser = "Get-User";
 
-        public const string GetUserQuery = "SELECT TOP (1) [USERID], [EMAILADDRESS], [USERNAME], [CREATED], [MODIFIED] FROM [dbo].[USER]  @@whereClause";
+        public const string GetUserQuery = "SELECT TOP (1) [USERID], [EMAILADDRESS], [USERNAME], [HASH], [CREATED], [MODIFIED] FROM [dbo].[USER]  @@whereClause";
 
         public static string GetWhereClause(GetRequest request)
         {

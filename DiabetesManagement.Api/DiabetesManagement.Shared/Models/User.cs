@@ -1,5 +1,6 @@
 ﻿namespace DiabetesManagement.Shared.Models
 {
+    [MessagePack.MessagePackObject(true)]
     public class User
     {
         public Guid UserId { get; set; }
