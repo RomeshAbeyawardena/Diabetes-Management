@@ -1,13 +1,10 @@
 ﻿using Dapper;
-using System;
-using System.Collections.Generic;
+using DiabetesManagement.Shared.Attributes;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DiabetesManagement.Shared.RequestHandlers.User
 {
+    [HandlerDescriptor(Commands.SaveUser)]
     public class Post : HandlerBase<SaveCommand, Guid>
     {
         public Post(string connectionString) : base(connectionString)

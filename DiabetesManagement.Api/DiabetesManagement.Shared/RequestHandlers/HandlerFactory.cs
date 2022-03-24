@@ -12,7 +12,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
         private Dictionary<string, IRequestHandler>? handlerTypes;
         private readonly ILogger logger;
 
-        private IRequestHandler GetRequestHandler(string queryOrCommand)
+        internal IRequestHandler GetRequestHandler(string queryOrCommand)
         {
             if (handlerTypes!.TryGetValue(queryOrCommand, out var requestHandler))
             {

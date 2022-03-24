@@ -4,8 +4,14 @@
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="DiabetesManagement.Api.Tests\**" />
+    <Compile Remove="DiabetesManagement.Shared.Tests\**" />
     <Compile Remove="DiabetesManagement.Shared\**" />
+    <EmbeddedResource Remove="DiabetesManagement.Api.Tests\**" />
+    <EmbeddedResource Remove="DiabetesManagement.Shared.Tests\**" />
     <EmbeddedResource Remove="DiabetesManagement.Shared\**" />
+    <None Remove="DiabetesManagement.Api.Tests\**" />
+    <None Remove="DiabetesManagement.Shared.Tests\**" />
     <None Remove="DiabetesManagement.Shared\**" />
   </ItemGroup>
   <ItemGroup>
