@@ -54,6 +54,7 @@ namespace DiabetesManagement.Api.RequestHandlers
                 InventoryFeature.Queries.GetInventory,
                 new InventoryFeature.GetRequest
                 {
+                    Type = command.Type,
                     Key = command.Key,
                     UserId = userId.Value,
                 });

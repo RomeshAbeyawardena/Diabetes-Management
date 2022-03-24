@@ -12,7 +12,7 @@
         {
             return inventoryId.HasValue && inventoryId != default
                 ? "WHERE [I].[INVENTORYID] = @id"
-                : "WHERE [I].[KEY] = @key AND [I].[USERID] = @userId ";
+                : "WHERE [I].[TYPE] = @type AND [I].[KEY] = @key AND [I].[USERID] = @userId ";
         }
     }
 }

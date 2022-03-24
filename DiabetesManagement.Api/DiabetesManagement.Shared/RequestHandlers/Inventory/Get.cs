@@ -34,6 +34,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
             {
                 id = request.InventoryId,
                 key = request.Key,
+                type = request.Type,
                 userId = request.UserId,
             }, GetOrBeginTransaction);
         }
