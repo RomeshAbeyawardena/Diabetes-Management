@@ -18,6 +18,8 @@ namespace DiabetesManagement.Api
 {
     using InventoryFeature = Shared.RequestHandlers.Inventory;
     using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;
+    using UserFeature = Shared.RequestHandlers.User;
+
     using DbModels = Shared.Models;
     public class InventoryApi : IDisposable
     {
@@ -82,11 +84,11 @@ namespace DiabetesManagement.Api
         [FunctionName("SaveInventory")]
         [OpenApiOperation(operationId: "Save", tags: new[] { "post" })]
         [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
-        public async Task<IActionResult> Save([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        public async Task<IActionResult> SaveInventory([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
         {
             try
             {
-                DbModels.InventoryHistory? savedEntity = null;
+                DbModels.InventoryHistory savedEntity = null;
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),
                 request.Form.TryGetValue("type", out var type),
@@ -128,14 +130,32 @@ namespace DiabetesManagement.Api
                 return HandleException(dataException);
             }
         }
-
+        [NonAction]
         public async Task<DbModels.InventoryHistory> Save(DbModels.InventoryHistory command)
         {
+            var user = await handlerFactory
+                .Execute<UserFeature.GetRequest, DbModels.User>(UserFeature.Queries.GetUser, new UserFeature.GetRequest { 
+                    UserId = command.UserId });
+
+            var userId = user?.UserId;
+
+            if(user == null)
+            {
+                userId = await handlerFactory.Execute<UserFeature.SaveCommand, Guid>(UserFeature.Commands.SaveUser, new UserFeature.SaveCommand {
+                    User = new DbModels.User
+                    {
+                        UserId = command.UserId,
+                        Created = command.Created
+                    }
+                });
+            }
+
+
             var inventory = await handlerFactory.Execute<InventoryFeature.GetRequest, DbModels.Inventory>(
                 InventoryFeature.Queries.GetInventory, 
                 new InventoryFeature.GetRequest { 
                     Key = command.Key,
-                    UserId = command.UserId,
+                    UserId = userId.Value,
                 });
 
             var inventoryId = inventory?.InventoryId;
@@ -178,9 +198,11 @@ namespace DiabetesManagement.Api
                         InventoryHistory = new DbModels.InventoryHistory
                         {
                             Created = DateTimeOffset.Now,
+                            Key = command.Key,
                             Type = command.Type,
                             Items = command.Items,
                             InventoryId = inventoryId.Value,
+                            UserId = command.UserId,
                         },
                         CommitOnCompletion = true
                     });

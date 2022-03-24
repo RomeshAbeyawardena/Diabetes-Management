@@ -20,11 +20,11 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
             
         }
 
-        protected override Task<Models.User> HandleAsync(GetRequest request)
+        protected override async Task<Models.User> HandleAsync(GetRequest request)
         {
             var finalSql = Queries.GetUserQuery.Replace("@@whereClause", Queries.GetWhereClause(request));
 
-            return DbConnection.QueryFirstOrDefault(finalSql, new { 
+            return await DbConnection.QueryFirstOrDefaultAsync<Models.User>(finalSql, new { 
                 userId = request.UserId, 
                 emailAddress = request.EmailAddress, 
                 userName = request.Username }, GetOrBeginTransaction);
