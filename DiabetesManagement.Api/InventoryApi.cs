@@ -36,7 +36,7 @@ namespace DiabetesManagement.Api
         {
             _logger = log;
             var connectionString = configuration.GetConnectionString("Default");
-            handlerFactory = new HandlerFactory(connectionString, log);
+            handlerFactory = new HandlerFactory(connectionString, log, HandlerFactory.GetAssemblies(typeof(InventoryApi).Assembly));
         }
 
         [FunctionName("GetInventory")]
@@ -48,7 +48,7 @@ namespace DiabetesManagement.Api
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(DbModels.InventoryHistory), Description = "The OK response")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
-        {            
+        {
             var requiredConditions = new[]
             {
                 request.Query.TryGetValue("key", out var key),
@@ -56,7 +56,7 @@ namespace DiabetesManagement.Api
                 request.Query.TryGetValue("userId", out var userIdValue)
             };
 
-            if(requiredConditions.All(a => a) && Guid.TryParse(userIdValue, out var userId))
+            if (requiredConditions.All(a => a) && Guid.TryParse(userIdValue, out var userId))
             {
                 int? versionNumber = null;
 
@@ -66,14 +66,15 @@ namespace DiabetesManagement.Api
                 }
 
                 var inventory = await handlerFactory
-                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory> (
-                        InventoryHistoryFeature.Queries.GetInventoryHistory, 
-                        new InventoryHistoryFeature.GetRequest {
+                    .Execute<InventoryHistoryFeature.GetRequest, DbModels.InventoryHistory>(
+                        InventoryHistoryFeature.Queries.GetInventoryHistory,
+                        new InventoryHistoryFeature.GetRequest
+                        {
                             Key = key,
                             Type = type,
                             UserId = userId,
                             Version = versionNumber
-                        }); // Get(ConnectionString) { SetLogger = _logger };
+                        });
 
                 return new OkObjectResult(inventory);
             }
@@ -99,7 +100,8 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        savedEntity = await handlerFactory.Execute<SaveRequest, DbModels.InventoryHistory>(Commands.SaveInventoryPayload, new SaveRequest {
+                        savedEntity = await handlerFactory.Execute<SaveRequest, DbModels.InventoryHistory>(Commands.SaveInventoryPayload, new SaveRequest
+                        {
                             Items = items,
                             Type = type,
                             Key = key,

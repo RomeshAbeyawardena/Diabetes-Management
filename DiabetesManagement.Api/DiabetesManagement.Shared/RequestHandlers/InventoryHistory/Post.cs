@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
+using DiabetesManagement.Shared.Extensions;
 using Microsoft.Extensions.Logging;
 using System.Data;
 
@@ -57,6 +58,16 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                     version = 1;
             }
 
+            if (string.IsNullOrWhiteSpace(inventoryHistory.Type))
+            {
+                inventoryHistory.Type = inventoryHistory.DefaultType;
+            }
+
+            if(inventoryHistory.Created == default)
+            {
+                inventoryHistory.Created = DateTimeOffset.UtcNow;
+            }
+
             Logger.LogInformation("Saving INVENTORY_HISTORY...");
             var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand,
                 new {
@@ -64,11 +75,10 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                         ? Guid.NewGuid() : inventoryHistory.InventoryHistoryId,
                     inventoryId,
                     version,
-                    type = inventoryHistory.Type ?? inventoryHistory.DefaultType,
+                    type = inventoryHistory.Type,
                     items = inventoryHistory.Items,
-                    created = inventoryHistory.Created == default
-                        ? DateTimeOffset.UtcNow
-                        : inventoryHistory.Created
+                    hash = inventoryHistory.Hash ?? inventoryHistory.GetHash(),
+                    created = inventoryHistory.Created
                 }, dbTransaction);
 
             if (request.CommitOnCompletion)

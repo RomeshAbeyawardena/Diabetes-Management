@@ -10,6 +10,7 @@
                                 [VERSION],
                                 [TYPE],
                                 [ITEMS],
+                                [HASH],
                                 [CREATED]
                             ) VALUES (
                                 @inventoryHistoryId,
@@ -17,6 +18,7 @@
                                 @version,
                                 @type,
                                 @items,
+                                @hash,
                                 @created
                             ); SELECT @inventoryHistoryId";
     }

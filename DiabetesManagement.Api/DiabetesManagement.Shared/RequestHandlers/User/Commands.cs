@@ -7,11 +7,13 @@
             [USERID], 
             [EMAILADDRESS], 
             [USERNAME], 
+            [HASH]
             [CREATED]
         ) VALUES (
             @userId,
             @emailAddress,
             @userName,
+            @hash,
             @created
         ); SELECT @userId";
     }

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiabetesManagement.Shared.RequestHandlers.Inventory
+﻿namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
     public static class Commands
     {
@@ -24,12 +18,14 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 	            [KEY],
 	            [USERID],
                 [DEFAULT_TYPE],
+                [Hash]
 	            [CREATED]
             ) VALUES (
                 @inventoryId,
                 @key,
                 @userId,
                 @defaultType,
+                @hash,
                 @created
             ); SELECT @inventoryId";
     }

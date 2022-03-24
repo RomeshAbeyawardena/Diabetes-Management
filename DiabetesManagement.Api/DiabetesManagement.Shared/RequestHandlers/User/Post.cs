@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
+using DiabetesManagement.Shared.Extensions;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.User
@@ -22,11 +23,17 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
 
         protected override Task<Guid> HandleAsync(SaveCommand request)
         {
+            if(request.User!.Created == default)
+            {
+                request.User.Created = DateTimeOffset.UtcNow;
+            }
+
             return DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertUser, new {
                 userId = request.User!.UserId,
                 emailAddress = request.User.EmailAddress,
                 userName = request.User.Username,
-                created = request.User.Created == default ? DateTime.UtcNow : request.User.Created,
+                hash = request.User.Hash ?? request.User.GetHash(),
+                created = request.User.Created,
             }, GetOrBeginTransaction);
         }
     }

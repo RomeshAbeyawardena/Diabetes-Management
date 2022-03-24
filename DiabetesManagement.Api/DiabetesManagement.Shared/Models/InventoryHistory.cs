@@ -6,6 +6,7 @@
         public int Version { get; set; }
         public string? Type { get; set; }
         public string? Items { get; set; }
+        public string? Hash { get; set; }
         public DateTimeOffset InventoryHistoryCreated { get; set; }
     }
 }

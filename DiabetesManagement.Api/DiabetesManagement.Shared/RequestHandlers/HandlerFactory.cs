@@ -8,6 +8,11 @@ namespace DiabetesManagement.Shared.RequestHandlers
 {
     public class HandlerFactory : HandlerBase, IHandlerFactory
     {
+        public static IEnumerable<Assembly> GetAssemblies(params Assembly[] assemblies)
+        {
+            return assemblies.Append(typeof(HandlerFactory).Assembly);
+        }
+
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
 
