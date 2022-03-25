@@ -20,6 +20,9 @@ namespace DiabetesManagement.Api.RequestHandlers.ApiToken
 
             var signingCredentials =
                 new SigningCredentials(symmetricSecurityKey, "HS256");
+
+            var encryptingCredentials = new EncryptingCredentials(symmetricSecurityKey, SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes256CbcHmacSha512);
+
             var tokenHandler = new JsonWebTokenHandler();
 
             Dictionary<string, object> claims = new();
@@ -28,6 +31,7 @@ namespace DiabetesManagement.Api.RequestHandlers.ApiToken
             claims.Add("secret", request.Secret);
 
             var token = tokenHandler.CreateToken(new SecurityTokenDescriptor {
+                EncryptingCredentials = encryptingCredentials,
                 SigningCredentials = signingCredentials,
                 Claims = claims,
                 Audience = request.Audience,
