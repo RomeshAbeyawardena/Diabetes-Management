@@ -1,15 +1,17 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace DiabetesManagement.Api.RequestHandlers.ApiToken
 {
     using DiabetesManagement.Shared.Attributes;
     using DiabetesManagement.Shared.Contracts;
     using DiabetesManagement.Shared.RequestHandlers;
-    using System.Linq;
+    
     using ApiTokenFeature = Shared.RequestHandlers.ApiToken;
     using Models = Shared.Models;
 

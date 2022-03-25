@@ -38,6 +38,8 @@ namespace DiabetesManagement.Api
                     ApiKeyFeature.Queries.GetValidatedApiToken, 
                     new ApiKeyFeature.GetRequest { 
                         Key = Convert.FromBase64String(applicationSettings.SigningKey),
+                        ValidAudience = applicationSettings.Audience,
+                        ValidIssuer = applicationSettings.Issuer,
                         ApiKey = apiKey, 
                         ApiKeyChallenge = apiChallenge,
                         UseAuthenticatedContext = false,
@@ -66,12 +68,6 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("GetInventory")]
-        [OpenApiOperation(operationId: "Run", tags: new[] { "get" })]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Header)]
-        [OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **key** parameter")]
-        [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(Guid), Description = "The **userId** parameter")]
-        [OpenApiParameter(name: "version", In = ParameterLocation.Query, Required = false, Type = typeof(int?), Description = "The **version** parameter")]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(DbModels.InventoryHistory), Description = "The OK response")]
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
         {
@@ -112,8 +108,6 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("SaveInventory")]
-        [OpenApiOperation(operationId: "Save", tags: new[] { "post" })]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
         public async Task<IActionResult> SaveInventory([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
         {
             try
@@ -164,6 +158,33 @@ namespace DiabetesManagement.Api
             {
                 return HandleException(dataException);
             }
+        }
+
+        [FunctionName("Challenge")]
+        public async Task<IActionResult> Challenge([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        {
+            var requiredFields = new[]
+            {
+                request.Form.TryGetValue("apiKey", out var apiKey),
+                request.Form.TryGetValue("apiSecret", out var secret)
+            };
+
+            if(requiredFields.All(a => a))
+            {
+                var result = await handlerFactory.Execute<ApiKeyFeature.SaveRequest, string>(ApiKeyFeature.Commands.SaveApiTokenChallenge, new ApiKeyFeature.SaveRequest
+                {
+                    ApiKey = apiKey,
+                    Secret = secret,
+                    Key = Convert.FromBase64String(applicationSettings.SigningKey),
+                    Audience = applicationSettings.Audience,
+                    Issuer = applicationSettings.Issuer,
+
+                });
+
+                return new OkObjectResult(result);
+            }
+
+            return new BadRequestResult();
         }
 
         public void Dispose()

@@ -31,6 +31,11 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
             var handlerDescriptor = requestHandler.GetType().GetCustomAttribute<HandlerDescriptorAttribute>();
 
+            if (handlerDescriptor == null || !handlerDescriptor.RequiredPermissions.Any())
+            {
+                return requestHandler;
+            }
+
             if (handlerDescriptor != null 
                     && apiToken != null 
                     && claims != null && claims.Any())
