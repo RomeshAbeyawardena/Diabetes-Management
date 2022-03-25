@@ -5,6 +5,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Threading.Tasks;
 
 namespace DiabetesManagement.Shared.Tests;
 using InventoryRequestHandlers = RequestHandlers.Inventory;
@@ -16,11 +17,11 @@ public class HandlerFactoryTests
     private Mock<ILogger>? loggerMock;
     private Mock<IDbConnection>? dbConnectionMock;
 
-    private void VerifyIsNotNull(IEnumerable<string> queries)
+    private async Task VerifyIsNotNull(IEnumerable<string> queries)
     {
         foreach (var query in queries)
         {
-            var requestHandler = handlerFactory!.GetRequestHandler(query);
+            var requestHandler = await handlerFactory!.GetRequestHandler(query);
 
             Assert.IsNotNull(requestHandler);
             Assert.IsNotNull(requestHandler.HandlerFactory);
@@ -35,7 +36,7 @@ public class HandlerFactoryTests
         handlerFactory = new(loggerMock.Object, dbConnectionMock.Object);
     }
 
-    [Test] public void Ensure_QueryHandlers_exist()
+    [Test] public async Task Ensure_QueryHandlers_exist()
     {
         var queries = new[] {
             InventoryRequestHandlers.Queries.GetInventory,
@@ -54,12 +55,12 @@ public class HandlerFactoryTests
             UserRequestHandlers.Commands.SaveUser
         };
 
-        VerifyIsNotNull(queries);
+        await VerifyIsNotNull(queries);
     }
 
     [Test] public void GetQueryHandlers_throws_InvalidOperationException()
     {
         var query = "Invalid-Query";
-        Assert.Throws<InvalidOperationException>(() => handlerFactory!.GetRequestHandler(query));
+        Assert.ThrowsAsync<InvalidOperationException>(async() => await handlerFactory!.GetRequestHandler(query));
     }
 }
