@@ -18,12 +18,10 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
-    using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;
-
     using DbModels = Shared.Models;
     public class InventoryApi : IDisposable
     {
-        private readonly IHandlerFactory handlerFactory;
+        private readonly IAuthenticatedHandlerFactory handlerFactory;
         private readonly ILogger<InventoryApi> _logger;
         // = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
 
@@ -37,7 +35,7 @@ namespace DiabetesManagement.Api
         {
             _logger = log;
             var connectionString = configuration.GetConnectionString("Default");
-            handlerFactory = new HandlerFactory(connectionString, log, HandlerFactory.GetAssemblies(typeof(InventoryApi).Assembly));
+            handlerFactory = new AuthenticatedHandlerFactory(connectionString, log, HandlerFactory.GetAssemblies(typeof(InventoryApi).Assembly));
         }
 
         [FunctionName("GetInventory")]

@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace DiabetesManagement.Shared.RequestHandlers
 {
-    public class AuthenticatedHandlerFactory : HandlerFactory
+    public class AuthenticatedHandlerFactory : HandlerFactory, IAuthenticatedHandlerFactory
     {
         private Models.ApiToken? apiToken;
         private IEnumerable<Models.ApiTokenClaim> claims = Array.Empty<Models.ApiTokenClaim>();
@@ -41,7 +41,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
                 throw new UnauthorizedAccessException();
             }
 
-            throw new UnauthorizedAccessException();
+            throw new UnauthorizedAccessException("Authentication has not been carried out, call IsAuthenticated(string key, string secret) and try again");
         }
 
         public async Task<bool> IsAuthenticated(string key, string secret)
