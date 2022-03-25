@@ -1,4 +1,4 @@
-using DiabetesManagement.Api.RequestHandlers;
+using DiabetesManagement.Api.RequestHandlers.InventoryHistory;
 using DiabetesManagement.Shared.Contracts;
 using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.AspNetCore.Http;
@@ -19,11 +19,33 @@ using System.Threading.Tasks;
 namespace DiabetesManagement.Api
 {
     using DbModels = Shared.Models;
+    using ApiKeyFeature = DiabetesManagement.Api.RequestHandlers.ApiKey;
+
     public class InventoryApi : IDisposable
     {
         private readonly IAuthenticatedHandlerFactory handlerFactory;
         private readonly ILogger<InventoryApi> _logger;
-        // = "Server=dotnetinsights.database.windows.net;Initial Catalog=DiabetesUnitsManager;User Id=romesh.a;password=e138llRA1787!;MultipleActiveResultSets=true";
+        
+        private async Task<DbModels.ApiToken> AuthenticateRequest(HttpRequest httpRequest)
+        {
+            httpRequest.Headers.TryGetValue("X-API-KEY", out var apiKey);
+            httpRequest.Headers.TryGetValue("X-API-CHALLENGE", out var apiChallenge);
+
+            var apiToken = await handlerFactory
+                .Execute<ApiKeyFeature.GetRequest, DbModels.ApiToken>(
+                    ApiKeyFeature.Queries.GetValidatedApiToken, 
+                    new ApiKeyFeature.GetRequest { 
+                        ApiKey = apiKey, 
+                        ApiKeyChallenge = apiChallenge 
+                    });
+
+            if (await handlerFactory.IsAuthenticated(apiToken.Key, apiToken.Secret))
+            {
+                return apiToken;
+            }
+
+            throw new UnauthorizedAccessException();
+        }
 
         private IActionResult HandleException(Exception exception)
         {
@@ -48,6 +70,8 @@ namespace DiabetesManagement.Api
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
         {
+            await AuthenticateRequest(request);
+
             var requiredConditions = new[]
             {
                 request.Query.TryGetValue("key", out var key),
@@ -89,6 +113,8 @@ namespace DiabetesManagement.Api
         {
             try
             {
+                await AuthenticateRequest(request);
+
                 DbModels.InventoryHistory savedEntity = null;
 
                 var requiredConditions = new[] { request.Form.TryGetValue("items", out var items),

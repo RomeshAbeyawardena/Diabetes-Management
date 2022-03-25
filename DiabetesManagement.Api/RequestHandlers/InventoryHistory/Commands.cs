@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Api.RequestHandlers
+﻿namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
     public static class Commands
     {

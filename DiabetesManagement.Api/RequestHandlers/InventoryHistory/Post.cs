@@ -4,7 +4,7 @@ using System;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Api.RequestHandlers
+namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
     using Models = Shared.Models;
     using InventoryFeature = Shared.RequestHandlers.Inventory;
@@ -24,7 +24,7 @@ namespace DiabetesManagement.Api.RequestHandlers
 
         protected override void Dispose(bool disposing)
         {
-            
+
         }
 
         protected override async Task<Models.InventoryHistory> HandleAsync(SaveRequest command)

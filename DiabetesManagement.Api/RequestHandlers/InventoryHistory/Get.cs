@@ -3,7 +3,7 @@ using DiabetesManagement.Shared.RequestHandlers;
 using System.Data;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Api.RequestHandlers
+namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
     using Models = Shared.Models;
     using InventoryHistoryFeature = Shared.RequestHandlers.InventoryHistory;

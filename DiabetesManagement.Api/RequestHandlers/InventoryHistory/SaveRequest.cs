@@ -1,10 +1,10 @@
 ﻿using DiabetesManagement.Shared.Contracts;
-using DiabetesManagement.Shared.Models;
+using Models = DiabetesManagement.Shared.Models;
 using System;
 
-namespace DiabetesManagement.Api.RequestHandlers
+namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
-    public class SaveRequest : IRequest<InventoryHistory>
+    public class SaveRequest : IRequest<Models.InventoryHistory>
     {
         public Guid UserId { get; set; }
         public int Version { get; set; }

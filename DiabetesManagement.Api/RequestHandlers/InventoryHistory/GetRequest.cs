@@ -1,7 +1,7 @@
 ﻿using DiabetesManagement.Shared.Contracts;
 using System;
 
-namespace DiabetesManagement.Api.RequestHandlers
+namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
     public class GetRequest : IRequest<Shared.Models.InventoryHistory>
     {
