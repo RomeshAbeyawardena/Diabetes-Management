@@ -33,7 +33,8 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
             if (handlerDescriptor != null && apiToken != null && claims != null && claims.Any())
             {
-                if(claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
+                if(!handlerDescriptor.RequiredPermissions.Any() 
+                    || claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
                 {
                     return requestHandler;
                 }
