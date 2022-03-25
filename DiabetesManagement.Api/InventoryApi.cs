@@ -20,10 +20,12 @@ namespace DiabetesManagement.Api
     using DiabetesManagement.Shared.RequestHandlers;
     using DbModels = Shared.Models;
     using ApiKeyFeature = RequestHandlers.ApiToken;
+    using DiabetesManagement.Shared;
 
     public class InventoryApi : IDisposable
     {
         private readonly IAuthenticatedHandlerFactory handlerFactory;
+        private readonly ApplicationSettings applicationSettings;
         private readonly ILogger<InventoryApi> _logger;
         
         private async Task<bool> AuthenticateRequest(HttpRequest httpRequest)
@@ -35,9 +37,10 @@ namespace DiabetesManagement.Api
                 .Execute<ApiKeyFeature.GetRequest, DbModels.ApiToken>(
                     ApiKeyFeature.Queries.GetValidatedApiToken, 
                     new ApiKeyFeature.GetRequest { 
+                        Key = Convert.FromBase64String(applicationSettings.SigningKey),
                         ApiKey = apiKey, 
                         ApiKeyChallenge = apiChallenge,
-                        UseAuthenticatedContext = false
+                        UseAuthenticatedContext = false,
                     });
 
             if (await handlerFactory.IsAuthenticated(apiToken))
@@ -57,6 +60,7 @@ namespace DiabetesManagement.Api
         public InventoryApi(ILogger<InventoryApi> log, IConfiguration configuration)
         {
             _logger = log;
+            this.applicationSettings = new ApplicationSettings(configuration);
             var connectionString = configuration.GetConnectionString("Default");
             handlerFactory = new AuthenticatedHandlerFactory(connectionString, log, HandlerFactory.GetAssemblies(typeof(InventoryApi).Assembly));
         }
