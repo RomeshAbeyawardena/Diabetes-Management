@@ -24,10 +24,10 @@ namespace DiabetesManagement.Shared.RequestHandlers.ApiToken
         {
             return DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertApiTokenCommand, new
             {
-                @apiTokenId = request.ApiToken!.ApiTokenId == default ? Guid.NewGuid() : request.ApiToken.ApiTokenId,
-                @key = request.ApiToken.Key,
-                @secret = request.ApiToken.Secret,
-                @created = request.ApiToken.Created == default ? DateTimeOffset.UtcNow : request.ApiToken.Created
+                apiTokenId = request.ApiToken!.ApiTokenId == default ? Guid.NewGuid() : request.ApiToken.ApiTokenId,
+                key = request.ApiToken.Key,
+                secret = request.ApiToken.Secret,
+                created = request.ApiToken.Created == default ? DateTimeOffset.UtcNow : request.ApiToken.Created
             }, GetOrBeginTransaction);
         }
     }

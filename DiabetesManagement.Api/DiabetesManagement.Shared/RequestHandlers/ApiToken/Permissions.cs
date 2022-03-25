@@ -2,7 +2,7 @@
 {
     public static class Permissions
     {
-        public const string View = "Inventory.View";
+        public const string View = "ApiToken.View";
         public const string Add = "ApiToken.Add";
         public const string Edit = "ApiToken.Edit";
     }

@@ -11,11 +11,13 @@ namespace DiabetesManagement.Shared.RequestHandlers
         private Models.ApiToken? apiToken;
         private IEnumerable<Models.ApiTokenClaim> claims = Array.Empty<Models.ApiTokenClaim>();
         private bool BypassChecks = false;
-        public AuthenticatedHandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null) : base(connectionString, logger, assemblies)
+        public AuthenticatedHandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null) 
+            : base(connectionString, logger, assemblies)
         {
         }
 
-        public AuthenticatedHandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null) : base(logger, dbConnection, dbTransaction, assemblies)
+        public AuthenticatedHandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null) 
+            : base(logger, dbConnection, dbTransaction, assemblies)
         {
         }
 
