@@ -31,7 +31,9 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
             var handlerDescriptor = requestHandler.GetType().GetCustomAttribute<HandlerDescriptorAttribute>();
 
-            if (handlerDescriptor != null && apiToken != null && claims != null && claims.Any())
+            if (handlerDescriptor != null 
+                    && apiToken != null 
+                    && claims != null && claims.Any())
             {
                 if(!handlerDescriptor.RequiredPermissions.Any() 
                     || claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
@@ -47,26 +49,77 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
         public async Task<bool> IsAuthenticated(string key, string secret)
         {
-            BypassChecks = true;
-            
-            apiToken = await Execute<ApiToken.GetRequest, Models.ApiToken> (
-                ApiToken.Queries.GetApiToken, 
-                new ApiToken.GetRequest { Key = key, Secret = secret });
-
-            if(apiToken == null)
+            return await BypassAuthentication(async (handler) =>
             {
-                return false;
+                apiToken = await Execute<ApiToken.GetRequest, Models.ApiToken>(
+                    ApiToken.Queries.GetApiToken,
+                    new ApiToken.GetRequest
+                    {
+                        Key = key,
+                        Secret = secret
+                    });
+
+                if (apiToken == null)
+                {
+                    return false;
+                }
+
+                claims = await Execute<ApiTokenClaim.GetRequest, IEnumerable<Models.ApiTokenClaim>>(
+                    ApiTokenClaim.Queries.GetApiTokenClaimsQuery,
+                    new ApiTokenClaim.GetRequest
+                    {
+                        ApiTokenId = apiToken.ApiTokenId
+                    });
+
+                return await IsAuthenticated(apiToken);
+            });
+        }
+
+        public async Task<bool> IsAuthenticated(Models.ApiToken apiToken)
+        {
+            return await BypassAuthentication(async (handler) =>
+            {
+                if (apiToken == null)
+                {
+                    return false;
+                }
+
+                claims = await handler.Execute<ApiTokenClaim.GetRequest, IEnumerable<Models.ApiTokenClaim>>(
+                    ApiTokenClaim.Queries.GetApiTokenClaimsQuery,
+                    new ApiTokenClaim.GetRequest
+                    {
+                        ApiTokenId = apiToken.ApiTokenId
+                    });
+
+                BypassChecks = false;
+                return true;
+            });
+        }
+
+        public async Task BypassAuthentication(Func<IAuthenticatedHandlerFactory, Task> action)
+        {
+            if (!BypassChecks)
+            {
+                BypassChecks = true;
             }
 
-            claims = await Execute<ApiTokenClaim.GetRequest, IEnumerable<Models.ApiTokenClaim>> (
-                ApiTokenClaim.Queries.GetApiTokenClaimsQuery, 
-                new ApiTokenClaim.GetRequest
-                {
-                    ApiTokenId = apiToken.ApiTokenId
-                });
+            await action(this);
 
             BypassChecks = false;
-            return true;
+        }
+
+        public async Task<TResult> BypassAuthentication<TResult>(Func<IAuthenticatedHandlerFactory, Task<TResult>> action)
+        {
+            if (!BypassChecks)
+            {
+                BypassChecks = true;
+            }
+
+            var result = await action(this);
+
+            BypassChecks = false;
+
+            return result;
         }
     }
 }

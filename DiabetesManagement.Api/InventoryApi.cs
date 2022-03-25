@@ -1,6 +1,3 @@
-using DiabetesManagement.Api.RequestHandlers.InventoryHistory;
-using DiabetesManagement.Shared.Contracts;
-using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -18,15 +15,18 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
+    using DiabetesManagement.Api.RequestHandlers.InventoryHistory;
+    using DiabetesManagement.Shared.Contracts;
+    using DiabetesManagement.Shared.RequestHandlers;
     using DbModels = Shared.Models;
-    using ApiKeyFeature = DiabetesManagement.Api.RequestHandlers.ApiKey;
+    using ApiKeyFeature = RequestHandlers.ApiToken;
 
     public class InventoryApi : IDisposable
     {
         private readonly IAuthenticatedHandlerFactory handlerFactory;
         private readonly ILogger<InventoryApi> _logger;
         
-        private async Task<DbModels.ApiToken> AuthenticateRequest(HttpRequest httpRequest)
+        private async Task<bool> AuthenticateRequest(HttpRequest httpRequest)
         {
             httpRequest.Headers.TryGetValue("X-API-KEY", out var apiKey);
             httpRequest.Headers.TryGetValue("X-API-CHALLENGE", out var apiChallenge);
@@ -36,12 +36,13 @@ namespace DiabetesManagement.Api
                     ApiKeyFeature.Queries.GetValidatedApiToken, 
                     new ApiKeyFeature.GetRequest { 
                         ApiKey = apiKey, 
-                        ApiKeyChallenge = apiChallenge 
+                        ApiKeyChallenge = apiChallenge,
+                        UseAuthenticatedContext = false
                     });
 
-            if (await handlerFactory.IsAuthenticated(apiToken.Key, apiToken.Secret))
+            if (await handlerFactory.IsAuthenticated(apiToken))
             {
-                return apiToken;
+                return true;
             }
 
             throw new UnauthorizedAccessException();
@@ -62,7 +63,7 @@ namespace DiabetesManagement.Api
 
         [FunctionName("GetInventory")]
         [OpenApiOperation(operationId: "Run", tags: new[] { "get" })]
-        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Query)]
+        [OpenApiSecurity("function_key", SecuritySchemeType.ApiKey, Name = "code", In = OpenApiSecurityLocationType.Header)]
         [OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Description = "The **key** parameter")]
         [OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(Guid), Description = "The **userId** parameter")]
         [OpenApiParameter(name: "version", In = ParameterLocation.Query, Required = false, Type = typeof(int?), Description = "The **version** parameter")]

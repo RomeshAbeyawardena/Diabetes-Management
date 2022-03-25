@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Api.RequestHandlers.ApiKey
+﻿namespace DiabetesManagement.Api.RequestHandlers.ApiToken
 {
     public static class Queries
     {
