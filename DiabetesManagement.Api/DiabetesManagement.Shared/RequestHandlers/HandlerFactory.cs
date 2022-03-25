@@ -16,8 +16,9 @@ namespace DiabetesManagement.Shared.RequestHandlers
         private Dictionary<string, Type>? handlerDictionary;
         private Dictionary<string, IRequestHandler>? handlerTypes;
 
-        internal virtual IRequestHandler GetRequestHandler(string queryOrCommand)
+        internal virtual async Task<IRequestHandler> GetRequestHandler(string queryOrCommand)
         {
+            await Task.CompletedTask;
             if (handlerTypes!.TryGetValue(queryOrCommand, out var requestHandler))
             {
                 return requestHandler;
@@ -35,16 +36,18 @@ namespace DiabetesManagement.Shared.RequestHandlers
             throw new InvalidOperationException();
         }
 
-        internal IRequestHandler<TRequest> GetRequestHandler<TRequest>(string queryOrCommand)
+        internal async Task<IRequestHandler<TRequest>> GetRequestHandler<TRequest>(string queryOrCommand)
             where TRequest : IRequest
         {
-            return (IRequestHandler<TRequest>)GetRequestHandler(queryOrCommand);
+            var requestHandler = await GetRequestHandler(queryOrCommand);
+            return (IRequestHandler<TRequest>)requestHandler;
         }
 
-        internal IRequestHandler<TRequest, TResponse> GetRequestHandler<TRequest, TResponse>(string queryOrCommand)
+        internal async Task<IRequestHandler<TRequest, TResponse>> GetRequestHandler<TRequest, TResponse>(string queryOrCommand)
             where TRequest : IRequest<TResponse>
         {
-            return (IRequestHandler<TRequest, TResponse>)GetRequestHandler(queryOrCommand);
+            var requestHandler = await GetRequestHandler(queryOrCommand);
+            return (IRequestHandler<TRequest, TResponse>)requestHandler;
         }
 
         private bool AddIfIsHandler(Type type)
@@ -98,22 +101,23 @@ namespace DiabetesManagement.Shared.RequestHandlers
             Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
 
-        public Task Execute(string queryOrCommand, object request)
+        public async Task Execute(string queryOrCommand, object request)
         {
-            return GetRequestHandler(queryOrCommand).Handle(request);
+            var requestHandler = await GetRequestHandler(queryOrCommand);
+            await requestHandler.Handle(request);
         }
 
-        public Task Execute<TRequest>(string queryOrCommand, TRequest request)
+        public async Task Execute<TRequest>(string queryOrCommand, TRequest request)
             where TRequest : IRequest
         {
-            var requestHandler = GetRequestHandler<TRequest>(queryOrCommand);
-            return requestHandler.Handle(request);
+            var requestHandler = await GetRequestHandler<TRequest>(queryOrCommand);
+            await requestHandler.Handle(request);
         }
 
         public async Task<TResponse> Execute<TRequest, TResponse>(string queryOrCommand, TRequest request)
             where TRequest : IRequest<TResponse>
         {
-            var requestHandler = GetRequestHandler<TRequest, TResponse>(queryOrCommand);
+            var requestHandler = await GetRequestHandler<TRequest, TResponse>(queryOrCommand);
             return await requestHandler.Handle(request);
         }
     }

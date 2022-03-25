@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Shared.Contracts;
+﻿using DiabetesManagement.Shared.Attributes;
+using DiabetesManagement.Shared.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Reflection;
@@ -9,7 +10,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
     {
         private Models.ApiToken? apiToken;
         private IEnumerable<Models.ApiTokenClaim> claims = Array.Empty<Models.ApiTokenClaim>();
-
+        private bool BypassChecks = false;
         public AuthenticatedHandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null) : base(connectionString, logger, assemblies)
         {
         }
@@ -18,13 +19,33 @@ namespace DiabetesManagement.Shared.RequestHandlers
         {
         }
 
-        internal override IRequestHandler<TRequest> GetRequestHandler<TRequest>(string queryOrCommand)
+        internal override async Task<IRequestHandler> GetRequestHandler(string queryOrCommand)
         {
-            return base.GetRequestHandler<TRequest>(queryOrCommand);
+            var requestHandler = await base.GetRequestHandler(queryOrCommand);
+            if (BypassChecks)
+            {
+                return requestHandler;
+            }
+
+            var handlerDescriptor = requestHandler.GetType().GetCustomAttribute<HandlerDescriptorAttribute>();
+
+            if (handlerDescriptor != null && apiToken != null && claims != null && claims.Any())
+            {
+                if(claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
+                {
+                    return requestHandler;
+                }
+
+                throw new UnauthorizedAccessException();
+            }
+
+            throw new UnauthorizedAccessException();
         }
 
         public async Task<bool> IsAuthenticated(string key, string secret)
         {
+            BypassChecks = true;
+            
             apiToken = await Execute<ApiToken.GetRequest, Models.ApiToken> (
                 ApiToken.Queries.GetApiToken, 
                 new ApiToken.GetRequest { Key = key, Secret = secret });
@@ -41,6 +62,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
                     ApiTokenId = apiToken.ApiTokenId
                 });
 
+            BypassChecks = false;
             return true;
         }
     }
