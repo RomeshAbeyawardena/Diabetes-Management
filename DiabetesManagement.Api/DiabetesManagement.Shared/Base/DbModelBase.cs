@@ -54,8 +54,8 @@ namespace DiabetesManagement.Shared.Base
         IEnumerable<string> IDbModel.Columns => Columns;
 
         string IDbModel.TableName => $"[{Schema}].[{TableName}]";
-
-        public string ColumnDelimitedList => $"{string.Join(",", Columns)}";
+        public string FullyQualifiedColumnDelimitedList => $"[{TableName}].[{string.Join($"], [{TableName}].[", Columns)}]";
+        public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
         public string WhereClause => $"WHERE [{IdProperty}]= @id";
     }
 }
