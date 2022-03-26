@@ -14,12 +14,13 @@ namespace DiabetesManagement.Shared.Base
         private IEnumerable<PropertyInfo>? properties;
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
-
+        
+        protected virtual TableAttribute? TableAttribute => tableAttribute ??= EntityType.GetCustomAttribute<TableAttribute>();
         protected virtual IEnumerable<string> Columns => columns ??= GetColumns();
         protected virtual Type EntityType => type ??= GetType();
         protected virtual IEnumerable<PropertyInfo> Properties => properties ??= EntityType.GetProperties();
-        protected virtual string TableName => tableName ??= (tableAttribute = EntityType.GetCustomAttribute<TableAttribute>())?.Name ?? EntityType.Name;
-        protected virtual string Schema => schema ??= tableAttribute?.Schema ?? "dbo";
+        protected virtual string TableName => tableName ??= TableAttribute?.Name ?? EntityType.Name;
+        protected virtual string Schema => schema ??= TableAttribute?.Schema ?? "dbo";
 
         protected IEnumerable<string> GetColumns()
         {
@@ -52,7 +53,7 @@ namespace DiabetesManagement.Shared.Base
 
         IEnumerable<string> IDbModel.Columns => Columns;
 
-        string IDbModel.TableName => TableName;
+        string IDbModel.TableName => $"[{Schema}].[{TableName}]";
 
         public string ColumnDelimitedList => $"{string.Join(",", Columns)}";
         public string WhereClause => $"WHERE [{IdProperty}]= @id";

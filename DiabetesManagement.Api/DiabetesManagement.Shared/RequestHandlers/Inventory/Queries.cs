@@ -1,17 +1,19 @@
-﻿namespace DiabetesManagement.Shared.RequestHandlers.Inventory
+﻿using DiabetesManagement.Shared.Contracts;
+
+namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
     public class Queries
     {
+        private static readonly IDbModel inventory = new Models.Inventory();
+
         public const string GetInventory = "Get-Inventory";
 
-        public const string InventoryQuery = @"SELECT TOP(1) [I].[INVENTORYID], [I].[DEFAULT_TYPE] [DefaultType], [I].[KEY], [I].[USERID],
-                    [I].[HASH], [I].[CREATED], [I].[MODIFIED] FROM [dbo].[INVENTORY][I] 
-                    @@whereClause";
+        public static string InventoryQuery = $"SELECT TOP(1) { inventory.ColumnDelimitedList } FROM { inventory.TableName } @@whereClause";
 
         public static string GetInventoryWhereClause(Guid? inventoryId)
         {
             return inventoryId.HasValue && inventoryId != default
-                ? "WHERE [I].[INVENTORYID] = @id"
+                ? $"{inventory.WhereClause}"
                 : "WHERE [I].[DEFAULT_TYPE] = @type AND [I].[KEY] = @key AND [I].[USERID] = @userId ";
         }
     }

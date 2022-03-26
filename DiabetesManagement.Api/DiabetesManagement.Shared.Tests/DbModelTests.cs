@@ -1,5 +1,5 @@
-﻿using DiabetesManagement.Shared.Models;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using DiabetesManagement.Shared.RequestHandlers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +13,10 @@ namespace DiabetesManagement.Shared.Tests
         [Test]
         public void Test()
         {
-            var inventory = new Inventory();
+            var inventory = new Models.Inventory();
             Assert.AreEqual("InventoryId,UserId,Key,DefaultType,Hash,Created,Modified", inventory.ColumnDelimitedList);
+            Assert.AreEqual("SELECT TOP(1) InventoryId,UserId,Key,DefaultType,Hash,Created,Modified FROM [dbo].[INVENTORY] @@whereClause", RequestHandlers.Inventory.Queries.InventoryQuery);
+            
         }
     }
 }

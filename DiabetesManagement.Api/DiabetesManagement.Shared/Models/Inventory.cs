@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DiabetesManagement.Shared.Models
 {
     [MessagePack.MessagePackObject(true),
-     Table("INVENTORY", Schema = "DBO")]
+     Table("INVENTORY")]
     public class Inventory : DbModelBase
     {
         [Key, Column("")]
