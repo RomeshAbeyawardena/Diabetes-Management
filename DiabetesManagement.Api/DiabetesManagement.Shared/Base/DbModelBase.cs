@@ -12,6 +12,7 @@ namespace DiabetesManagement.Shared.Base
         private string? tableName;
         private Type? type;
         private IEnumerable<PropertyInfo>? properties;
+        private readonly IDictionary<PropertyInfo, string> columnResolutionDictionary;
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
         
@@ -43,11 +44,34 @@ namespace DiabetesManagement.Shared.Base
                     IdProperty = name;
                 }
 
+                columnResolutionDictionary.Add(property, name!);
+
                 columnsList.Add(name!);
             }
 
             return columnsList;
         }
+
+        public DbModelBase()
+        {
+            columnResolutionDictionary = new Dictionary<PropertyInfo, string>();
+        }
+
+        public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
+        {
+            if (!columnResolutionDictionary.Any())
+            {
+                GetColumns();
+            }
+
+            if(columnResolutionDictionary.TryGetValue(property, out var columnName))
+            {
+                return fullyQualified ? $"[{TableName}].[{columnName}]" : columnName;
+            }
+
+            return string.Empty;
+        }
+
 
         [AllowNull] public string IdProperty { get; protected set; }
 

@@ -37,8 +37,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 
             var getRequest = new GetRequest
             {
-                Key = inventoryHistory!.Key,
-                UserId = inventoryHistory.UserId,
+                InventoryHistoryId = inventoryHistory!.InventoryHistoryId,
                 Type = inventoryHistory.Type
             };
 
@@ -60,7 +59,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 
             if (string.IsNullOrWhiteSpace(inventoryHistory.Type))
             {
-                inventoryHistory.Type = inventoryHistory.DefaultType;
+                inventoryHistory.Type = inventoryHistory.Type;
             }
 
             if(inventoryHistory.Created == default)

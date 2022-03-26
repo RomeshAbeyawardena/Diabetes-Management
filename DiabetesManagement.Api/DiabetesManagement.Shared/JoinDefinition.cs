@@ -9,7 +9,7 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
     private TChild? child;
     private PropertyInfo? parentProperty;
     private PropertyInfo? childProperty;
-    private JoinDefinitionVisitor joinDefinitionVisitor;
+    private readonly JoinDefinitionVisitor joinDefinitionVisitor;
     internal class JoinDefinitionVisitor : ExpressionVisitor
     {
         public PropertyInfo? Property { get; private set; }
@@ -45,7 +45,7 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
             if (parentProperty == null)
                 joinDefinitionVisitor.Visit(ParentRelationProperty); 
                     
-            return joinDefinitionVisitor.Property!;
+            return parentProperty ??= joinDefinitionVisitor.Property!;
         }
     }
 
@@ -56,7 +56,9 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
             if (childProperty == null)
                 joinDefinitionVisitor.Visit(ChildRelationProperty);
 
-            return joinDefinitionVisitor.Property!;
+            return childProperty ??= joinDefinitionVisitor.Property!;
         }
     }
+
+    public IJoinDefinition Definition => this;
 }

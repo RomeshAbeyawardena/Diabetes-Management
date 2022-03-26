@@ -11,6 +11,7 @@ namespace DiabetesManagement.Shared.Contracts
 
     public interface IJoinDefinition<TParent, TChild> : IJoinDefinition
     {
+        IJoinDefinition Definition { get; }
         new Expression<Func<TParent, object>> ParentRelationProperty { get; }
         new Expression<Func<TChild, object>> ChildRelationProperty { get; }
         TParent Parent { get; }

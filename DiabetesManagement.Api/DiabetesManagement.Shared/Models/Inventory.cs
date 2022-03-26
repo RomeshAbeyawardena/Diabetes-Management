@@ -8,7 +8,6 @@ namespace DiabetesManagement.Shared.Models
      Table("INVENTORY")]
     public class Inventory : DbModelBase
     {
-        [Key, Column("")]
         public Guid InventoryId { get; set; }
         public Guid UserId { get; set; }
         public string? Key { get; set; }

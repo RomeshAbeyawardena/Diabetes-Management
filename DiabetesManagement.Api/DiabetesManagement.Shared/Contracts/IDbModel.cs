@@ -1,11 +1,14 @@
-﻿namespace DiabetesManagement.Shared.Contracts
+﻿using System.Reflection;
+
+namespace DiabetesManagement.Shared.Contracts
 {
     public interface IDbModel
     {
-        public string IdProperty { get; }
-        public IEnumerable<string> Columns { get; }
-        public string TableName { get; }
-        public string ColumnDelimitedList { get; }
-        public string WhereClause { get; }
+        string IdProperty { get; }
+        IEnumerable<string> Columns { get; }
+        string TableName { get; }
+        string ColumnDelimitedList { get; }
+        string WhereClause { get; }
+        string ResolveColumnName(PropertyInfo property, bool fullyQualified);
     }
 }
