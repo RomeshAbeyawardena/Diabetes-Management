@@ -19,7 +19,7 @@ namespace DiabetesManagement.Api.RequestHandlers.ApiToken
             IdentityModelEventSource.ShowPII = true;
 
             var signingCredentials =
-                new SigningCredentials(symmetricSecurityKey, "HS256");
+                new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
 
             var encryptingCredentials = new EncryptingCredentials(symmetricSecurityKey, SecurityAlgorithms.Aes256KW, SecurityAlgorithms.Aes256CbcHmacSha512);
 

@@ -1,6 +1,8 @@
-﻿namespace DiabetesManagement.Shared.Models
+﻿using DiabetesManagement.Shared.Base;
+
+namespace DiabetesManagement.Shared.Models
 {
-    public class ApiToken
+    public class ApiToken : DbModelBase
     {
         public Guid ApiTokenId { get; set; }
         public string? Key { get; set; }
