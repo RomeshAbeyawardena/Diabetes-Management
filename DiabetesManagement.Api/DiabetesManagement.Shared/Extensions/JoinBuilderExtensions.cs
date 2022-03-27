@@ -5,8 +5,10 @@ namespace DiabetesManagement.Shared.Extensions
 {
     public static class JoinBuilderExtensions
     {
-        public static string Build(this IJoinDefinitionBuilder joinDefinitions)
+        public static string Build(this IJoinDefinitionBuilder joinDefinitions, out string columns)
         {
+            columns = string.Empty;
+
             var query = "FROM ";
             foreach(var (parentType, definitions) in joinDefinitions.ParentJoinDefinitions)
             {
@@ -16,6 +18,8 @@ namespace DiabetesManagement.Shared.Extensions
                     {
                         query += $"{parentModel.TableName} {Enum.GetName(typeof(JoinType), definition.JoinType)!.ToUpper()} JOIN {childModel.TableName} " +
                             $"ON {parentModel.ResolveColumnName(definition.ParentRelationProperty, true)} = {childModel.ResolveColumnName(definition.ChildRelationProperty, true)}";
+
+                        columns += childModel.FullyQualifiedColumnDelimitedList;
                     }
                 }
             }

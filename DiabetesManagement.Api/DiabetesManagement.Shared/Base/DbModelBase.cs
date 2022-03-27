@@ -44,7 +44,7 @@ namespace DiabetesManagement.Shared.Base
                     IdProperty = name;
                 }
 
-                columnResolutionDictionary.Add(property, name!);
+                columnResolutionDictionary.TryAdd(property, name!);
 
                 columnsList.Add(name!);
             }
@@ -57,6 +57,13 @@ namespace DiabetesManagement.Shared.Base
             columnResolutionDictionary = new Dictionary<PropertyInfo, string>();
         }
 
+        public string ResolveColumnName(string propertyName, bool fullyQualified)
+        {
+            var kv = columnResolutionDictionary.FirstOrDefault(c => c.Key.Name == propertyName);
+
+            return ResolveColumnName(kv.Key, fullyQualified);
+        }
+
         public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
         {
             if (!columnResolutionDictionary.Any())
@@ -64,7 +71,7 @@ namespace DiabetesManagement.Shared.Base
                 GetColumns();
             }
 
-            if(columnResolutionDictionary.TryGetValue(property, out var columnName))
+            if (columnResolutionDictionary.TryGetValue(property, out var columnName))
             {
                 return fullyQualified ? $"[{TableName}].[{columnName}]" : $"[{columnName}]";
             }

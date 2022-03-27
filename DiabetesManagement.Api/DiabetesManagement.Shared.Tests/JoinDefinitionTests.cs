@@ -29,12 +29,13 @@ namespace DiabetesManagement.Shared.Tests
 
             var definitionBuilder = new JoinDefinitionBuilder();
             definitionBuilder.Add<Inventory, InventoryHistory>(b => { b.ParentRelationProperty = i => i.InventoryId; b.ChildRelationProperty = iH => iH.InventoryId; });
-            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build());
-
+            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build(out string columns));
+            Assert.AreEqual("[InventoryHistory].[InventoryHistoryId], [InventoryHistory].[InventoryId], [InventoryHistory].[Version], [InventoryHistory].[Type], [InventoryHistory].[Items], [InventoryHistory].[Hash], [InventoryHistory].[Created]", columns);
 
             definitionBuilder = new JoinDefinitionBuilder();
             definitionBuilder.Add<Inventory, InventoryHistory>(i => i.InventoryId, iH => iH.InventoryId);
-            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build());
+            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build(out columns));
+            Assert.AreEqual("[InventoryHistory].[InventoryHistoryId], [InventoryHistory].[InventoryId], [InventoryHistory].[Version], [InventoryHistory].[Type], [InventoryHistory].[Items], [InventoryHistory].[Hash], [InventoryHistory].[Created]", columns);
         }
     }
 }

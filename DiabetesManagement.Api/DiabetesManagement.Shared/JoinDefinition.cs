@@ -36,6 +36,7 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
         joinDefinitionVisitor = new();
         ParentRelationProperty = parentRelationProperty;
         ChildRelationProperty = childRelationProperty;
+        JoinType = joinType;
     }
 
     public virtual Expression<Func<TParent, object>> ParentRelationProperty { get; set; }
