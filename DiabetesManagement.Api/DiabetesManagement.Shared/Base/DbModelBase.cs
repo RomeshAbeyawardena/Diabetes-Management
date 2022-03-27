@@ -96,6 +96,6 @@ namespace DiabetesManagement.Shared.Base
         string IDbModel.TableName => $"[{Schema}].[{TableName}]";
         public string FullyQualifiedColumnDelimitedList => $"[{TableName}].[{string.Join($"], [{TableName}].[", Columns)}]";
         public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
-        public string WhereClause => $"WHERE [{IdProperty}]= @id";
+        public virtual string WhereClause => $"WHERE [{IdProperty}]= @{IdProperty}";
     }
 }

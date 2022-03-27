@@ -1,6 +1,6 @@
-﻿using Dapper;
-using DiabetesManagement.Shared.Attributes;
+﻿using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
+using DiabetesManagement.Shared.Extensions;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
@@ -42,14 +42,12 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                 throw new DataException("Inventory record not found");
             }
 
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.UpdateInventoryCommand, new
-            {
-                key = inventory.Key,
-                defaultType = inventory.DefaultType,
-                modified = inventory.Modified,
-                inventoryRecord.InventoryId
-            }, transaction);
+            Models.InventoryHistory inventoryHistory = new();
+            
+            var result = await inventoryHistory.Update(new PutRequest {
 
+            }, DbConnection, transaction);
+            
             if (request.CommitOnCompletion)
             {
                 transaction.Commit();

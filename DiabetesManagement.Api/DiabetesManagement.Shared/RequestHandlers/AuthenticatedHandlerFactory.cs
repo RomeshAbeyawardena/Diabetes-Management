@@ -1,5 +1,4 @@
-﻿using DiabetesManagement.Shared.Attributes;
-using DiabetesManagement.Shared.Contracts;
+﻿using DiabetesManagement.Shared.Contracts;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Reflection;

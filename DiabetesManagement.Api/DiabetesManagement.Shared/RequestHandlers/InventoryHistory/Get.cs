@@ -1,5 +1,4 @@
-﻿using Dapper;
-using DiabetesManagement.Shared.Attributes;
+﻿using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
 using DiabetesManagement.Shared.Extensions;
 using System.Data;

@@ -10,7 +10,10 @@ namespace DiabetesManagement.Shared.Extensions
 
     public static class DbModelExtensions
     {
-        public static string Build<TRequest>(this IDbModel model, BuildMode buildMode, TRequest request)
+        public static string Build<TRequest>(
+            this IDbModel model, 
+            BuildMode buildMode, 
+            TRequest request)
         {
             if (buildMode == BuildMode.Update)
             {
@@ -18,7 +21,7 @@ namespace DiabetesManagement.Shared.Extensions
 
                 query += GenerateWhereClause(model, request, ", ");
 
-                return query;
+                return $"{query} {model.WhereClause}";
             }
 
             throw new NotSupportedException();
@@ -38,7 +41,10 @@ namespace DiabetesManagement.Shared.Extensions
             throw new NotSupportedException();
         }
 
-        public static string Build(this IDbModel model, int? topAmount = null, string? whereClause = default, Action<IJoinDefinitionBuilder>? builder = null)
+        public static string Build(this IDbModel model, 
+            int? topAmount = null, 
+            string? whereClause = default, 
+            Action<IJoinDefinitionBuilder>? builder = null)
         {
             var query = "SELECT ";
             var otherColumns = string.Empty;
@@ -136,7 +142,10 @@ namespace DiabetesManagement.Shared.Extensions
             return await dbConnection.ExecuteScalarAsync<Guid>(query, model, transaction);
         }
 
-        public static async Task<Guid> Update<TRequest>(this IDbModel model, TRequest request, IDbConnection dbConnection, IDbTransaction? transaction)
+        public static async Task<Guid> Update<TRequest>(this IDbModel model, 
+            TRequest request, 
+            IDbConnection dbConnection, 
+            IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Update, request);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, request, transaction);

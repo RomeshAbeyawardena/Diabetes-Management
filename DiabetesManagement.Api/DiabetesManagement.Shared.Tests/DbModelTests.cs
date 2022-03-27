@@ -8,11 +8,11 @@ namespace DiabetesManagement.Shared.Tests
     public class DbModelTests
     {
         [Test]
-        public void BuildForSave()
+        public void BuildForUpdate()
         {
             var inventory = new Models.Inventory();
-            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[Modified] = @Modified", inventory.Build(Enumerations.BuildMode.Update, new Models.Inventory { Modified = DateTimeOffset.UtcNow }));
-            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[DEFAULT_TYPE] = @DefaultType, [INVENTORY].[Modified] = @Modified", inventory.Build(Enumerations.BuildMode.Update, 
+            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[Modified] = @Modified WHERE [InventoryId]= @InventoryId", inventory.Build(Enumerations.BuildMode.Update, new Models.Inventory { Modified = DateTimeOffset.UtcNow }));
+            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[DEFAULT_TYPE] = @DefaultType, [INVENTORY].[Modified] = @Modified WHERE [InventoryId]= @InventoryId", inventory.Build(Enumerations.BuildMode.Update, 
                 new Models.Inventory { DefaultType = "Orange", Modified = DateTimeOffset.UtcNow }));
         }
 

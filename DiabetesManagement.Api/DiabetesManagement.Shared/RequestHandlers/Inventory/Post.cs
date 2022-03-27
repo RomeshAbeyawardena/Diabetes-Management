@@ -1,5 +1,4 @@
-﻿using Dapper;
-using DiabetesManagement.Shared.Attributes;
+﻿using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
 using DiabetesManagement.Shared.Extensions;
 using Microsoft.Extensions.Logging;
@@ -64,15 +63,9 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                     inventory.Created = DateTimeOffset.UtcNow;
                 }
 
-                var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryCommand, new
-                {
-                    inventoryId = inventory.InventoryId,
-                    key = inventory.Key,
-                    userId = inventory.UserId,
-                    defaultType = inventory.DefaultType,
-                    hash = inventory.Hash ?? inventory.GetHash(),
-                    created = inventory.Created
-                }, GetOrBeginTransaction);
+                inventoryRecord = new();
+
+                var result = await inventoryRecord.Insert(DbConnection, GetOrBeginTransaction);
 
                 if (request.CommitOnCompletion)
                 {

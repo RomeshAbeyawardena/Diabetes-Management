@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace DiabetesManagement.Shared.Extensions
+﻿namespace DiabetesManagement.Shared.Extensions
 {
     public static class TypeExtensions
     {
