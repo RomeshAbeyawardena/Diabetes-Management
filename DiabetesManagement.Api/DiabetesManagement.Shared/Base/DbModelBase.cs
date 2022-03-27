@@ -20,7 +20,7 @@ namespace DiabetesManagement.Shared.Base
         protected virtual IEnumerable<string> Columns => columns ??= GetColumns();
         protected virtual Type EntityType => type ??= GetType();
         protected virtual IEnumerable<PropertyInfo> Properties => properties ??= EntityType.GetProperties();
-        protected virtual string TableName => tableName ??= TableAttribute?.Name ?? EntityType.Name;
+        protected virtual string TableName => tableName ??= TableAttribute!.Name ?? EntityType.Name;
         protected virtual string Schema => schema ??= TableAttribute?.Schema ?? "dbo";
 
         protected IEnumerable<string> GetColumns()
@@ -33,7 +33,6 @@ namespace DiabetesManagement.Shared.Base
                     continue;
                 }
 
-                var propertyType = property.PropertyType;
                 var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
                 var keyAttribute = property.GetCustomAttribute<KeyAttribute>();
 

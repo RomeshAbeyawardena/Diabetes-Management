@@ -8,6 +8,14 @@ namespace DiabetesManagement.Shared.Tests
     public class DbModelTests
     {
         [Test]
+        public void BuildForInsert()
+        {
+            var inventory = new Models.Inventory();
+            Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) " +
+                "VALUES (@InventoryId, @UserId, @Key, @DEFAULT_TYPE, @Hash, @Created, @Modified);", inventory.Build());
+        }
+
+        [Test]
         public void Build()
         {
             var inventory = new Models.Inventory();

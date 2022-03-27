@@ -1,13 +1,42 @@
 ﻿using Dapper;
-using DiabetesManagement.Shared.Contracts;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data;
 using System.Reflection;
 
 namespace DiabetesManagement.Shared.Extensions
 {
+    using DiabetesManagement.Shared.Contracts;
+    using DiabetesManagement.Shared.Enumerations;
+
     public static class DbModelExtensions
     {
+        public static string Build<TRequest>(this IDbModel model, BuildMode buildMode, TRequest request)
+        {
+            if (buildMode == BuildMode.Update)
+            {
+                var query = $"UPDATE {model.TableName} SET";
+
+                query += GenerateWhereClause(model, request);
+
+                return query;
+            }
+
+            throw new NotSupportedException();
+        }
+        public static string Build(this IDbModel model, BuildMode buildMode)
+        {
+            var columnsDelimitedList = model.FullyQualifiedColumnDelimitedList;
+
+            if (buildMode == BuildMode.Insert)
+            {
+                var query = $"INSERT INTO {model.TableName} ({columnsDelimitedList}) VALUES (";
+                query += $"@{string.Join(", @", model.Columns)}";
+                return query += ");";
+            }
+
+            throw new NotSupportedException();
+        }
+
         public static string Build(this IDbModel model, int? topAmount = null, string? whereClause = default, Action<IJoinDefinitionBuilder>? builder = null)
         {
             var query = "SELECT ";
@@ -45,7 +74,7 @@ namespace DiabetesManagement.Shared.Extensions
             return joinDefinitionBuilder;
         }
 
-        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request)
+        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request, string defaultLogicalOperator = " AND ")
         {
             string query = string.Empty;
 
@@ -61,7 +90,7 @@ namespace DiabetesManagement.Shared.Extensions
 
                 if (!string.IsNullOrWhiteSpace(query))
                 {
-                    query += " AND ";
+                    query += defaultLogicalOperator;
                 }
 
                 var name = property.Name;
