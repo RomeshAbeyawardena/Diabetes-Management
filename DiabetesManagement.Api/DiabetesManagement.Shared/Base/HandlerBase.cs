@@ -4,10 +4,10 @@ using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Reactive.Subjects;
 
-namespace DiabetesManagement.Shared.RequestHandlers
+namespace DiabetesManagement.Shared.Base
 {
     public abstract class HandlerBase<TRequest> : HandlerBase, IRequestHandler<TRequest>
-        where TRequest: IRequest
+        where TRequest : IRequest
     {
         IHandlerFactory IRequestHandler.HandlerFactory => HandlerFactory!;
 
@@ -89,7 +89,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
         private readonly ISubject<IDbTransaction> transactionSubject;
 
         protected abstract void Dispose(bool disposing);
-        
+
         protected IDbTransaction GetOrBeginTransaction
         {
             get
@@ -105,7 +105,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
         }
         protected IDbConnection DbConnection => dbConnection!;
         protected ILogger Logger => logger!;
-        
+
         protected void OnLoggerSet(Action<ILogger> onNext)
         {
             subscribers.Add(loggerSubject.Subscribe(onNext));
@@ -118,7 +118,7 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
         protected bool TryOpenConnection()
         {
-            if(dbConnection!.State == ConnectionState.Closed)
+            if (dbConnection!.State == ConnectionState.Closed)
             {
                 logger!.LogInformation("Opening db connection");
                 dbConnection.Open();
@@ -147,19 +147,21 @@ namespace DiabetesManagement.Shared.RequestHandlers
         public IObservable<ILogger> LoggerChanged => loggerSubject;
         public IObservable<IDbTransaction> DbTransactionChanged => transactionSubject;
 
-        public IDbTransaction SetTransaction { 
-            set 
-            { 
-                transactionSubject.OnNext(value); 
-                dbTransaction = value; 
-            } 
+        public IDbTransaction SetTransaction
+        {
+            set
+            {
+                transactionSubject.OnNext(value);
+                dbTransaction = value;
+            }
         }
 
-        public ILogger SetLogger { 
-            set 
-            { 
+        public ILogger SetLogger
+        {
+            set
+            {
                 loggerSubject.OnNext(value);
-                logger = value; 
+                logger = value;
             }
         }
     }

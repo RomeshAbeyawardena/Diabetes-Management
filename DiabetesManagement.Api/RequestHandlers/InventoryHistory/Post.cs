@@ -1,5 +1,5 @@
 ﻿using DiabetesManagement.Shared.Attributes;
-using DiabetesManagement.Shared.RequestHandlers;
+using DiabetesManagement.Shared.Base;
 using System;
 using System.Data;
 using System.Threading.Tasks;

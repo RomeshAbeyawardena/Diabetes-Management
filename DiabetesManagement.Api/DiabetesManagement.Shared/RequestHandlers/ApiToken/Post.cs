@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
+using DiabetesManagement.Shared.Base;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.ApiToken

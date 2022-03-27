@@ -66,7 +66,7 @@ namespace DiabetesManagement.Shared.Base
 
             if(columnResolutionDictionary.TryGetValue(property, out var columnName))
             {
-                return fullyQualified ? $"[{TableName}].[{columnName}]" : columnName;
+                return fullyQualified ? $"[{TableName}].[{columnName}]" : $"[{columnName}]";
             }
 
             return string.Empty;

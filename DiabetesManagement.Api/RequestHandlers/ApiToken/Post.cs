@@ -1,5 +1,5 @@
 ﻿using DiabetesManagement.Shared.Attributes;
-using DiabetesManagement.Shared.RequestHandlers;
+using DiabetesManagement.Shared.Base;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;

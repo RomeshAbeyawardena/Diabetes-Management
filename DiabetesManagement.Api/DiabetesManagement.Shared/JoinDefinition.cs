@@ -1,4 +1,5 @@
 ﻿using DiabetesManagement.Shared.Contracts;
+using DiabetesManagement.Shared.Enumerations;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -24,20 +25,30 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
         }
     }
 
-    public JoinDefinition(Expression<Func<TParent, object>> parentRelationProperty, Expression<Func<TChild, object>> childRelationProperty)
+    public JoinDefinition()
+        : this(null!, null!)
+    {
+
+    }
+
+    public JoinDefinition(Expression<Func<TParent, object>> parentRelationProperty, Expression<Func<TChild, object>> childRelationProperty, JoinType joinType = JoinType.Inner)
     {
         joinDefinitionVisitor = new();
         ParentRelationProperty = parentRelationProperty;
         ChildRelationProperty = childRelationProperty;
     }
 
-    public Expression<Func<TParent, object>> ParentRelationProperty { get; }
+    public virtual Expression<Func<TParent, object>> ParentRelationProperty { get; set; }
 
-    public Expression<Func<TChild, object>> ChildRelationProperty { get; }
+    public virtual Expression<Func<TChild, object>> ChildRelationProperty { get; set; }
 
     public TParent Parent => parent ??= Activator.CreateInstance<TParent>();
 
     public TChild Child => child ??= Activator.CreateInstance<TChild>();
+
+    public JoinType JoinType { get; }
+
+    public IJoinDefinition Definition => this;
 
     PropertyInfo IJoinDefinition.ParentRelationProperty 
     {
@@ -60,5 +71,6 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
         }
     }
 
-    public IJoinDefinition Definition => this;
+    object IJoinDefinition.Parent => Parent!;
+    object IJoinDefinition.Child => Child!;
 }

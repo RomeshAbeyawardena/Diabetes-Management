@@ -9,9 +9,9 @@ using System.Linq;
 namespace DiabetesManagement.Api.RequestHandlers.ApiToken
 {
     using DiabetesManagement.Shared.Attributes;
+    using DiabetesManagement.Shared.Base;
     using DiabetesManagement.Shared.Contracts;
-    using DiabetesManagement.Shared.RequestHandlers;
-    
+
     using ApiTokenFeature = Shared.RequestHandlers.ApiToken;
     using Models = Shared.Models;
 
