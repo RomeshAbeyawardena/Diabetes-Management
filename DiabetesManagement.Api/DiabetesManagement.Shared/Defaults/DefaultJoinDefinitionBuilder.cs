@@ -2,9 +2,9 @@
 using DiabetesManagement.Shared.Enumerations;
 using System.Linq.Expressions;
 
-namespace DiabetesManagement.Shared
+namespace DiabetesManagement.Shared.Defaults
 {
-    public class JoinDefinitionBuilder : List<IJoinDefinition>, IJoinDefinitionBuilder
+    public class DefaultJoinDefinitionBuilder : List<IJoinDefinition>, IJoinDefinitionBuilder
     {
         private void AddOrUpdate(Type parentType, IJoinDefinition joinDefinition)
         {
@@ -18,7 +18,7 @@ namespace DiabetesManagement.Shared
             Add(joinDefinition);
         }
 
-        public JoinDefinitionBuilder()
+        public DefaultJoinDefinitionBuilder()
         {
             ParentJoinDefinitions = new Dictionary<Type, IEnumerable<IJoinDefinition>>();
         }
@@ -27,7 +27,7 @@ namespace DiabetesManagement.Shared
 
         public IJoinDefinitionBuilder Add<TParent, TChild>(Expression<Func<TParent, object>> parentRelationProperty, Expression<Func<TChild, object>> childRelationProperty, JoinType joinType = JoinType.Inner)
         {
-            var joinDefinition = (IJoinDefinition)Activator.CreateInstance(typeof(JoinDefinition<TParent, TChild>), parentRelationProperty, childRelationProperty, joinType)!;
+            var joinDefinition = (IJoinDefinition)Activator.CreateInstance(typeof(DefaultJoinDefinition<TParent, TChild>), parentRelationProperty, childRelationProperty, joinType)!;
 
             var parentType = typeof(TParent);
 
@@ -37,7 +37,7 @@ namespace DiabetesManagement.Shared
 
         public IJoinDefinitionBuilder Add<TParent, TChild>(Action<IJoinDefinition<TParent, TChild>> build)
         {
-            var joinDefinition = Activator.CreateInstance<JoinDefinition<TParent, TChild>>();
+            var joinDefinition = Activator.CreateInstance<DefaultJoinDefinition<TParent, TChild>>();
             build(joinDefinition);
 
             var parentType = typeof(TParent);

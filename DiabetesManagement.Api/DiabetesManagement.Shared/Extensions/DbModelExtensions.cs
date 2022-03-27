@@ -6,6 +6,7 @@ using System.Reflection;
 namespace DiabetesManagement.Shared.Extensions
 {
     using DiabetesManagement.Shared.Contracts;
+    using DiabetesManagement.Shared.Defaults;
     using DiabetesManagement.Shared.Enumerations;
 
     public static class DbModelExtensions
@@ -74,7 +75,7 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static IJoinDefinitionBuilder JoinDefinitionsBuilder(this IDbModel model, Action<IJoinDefinitionBuilder> builder)
         {
-            var joinDefinitionBuilder = new JoinDefinitionBuilder();
+            var joinDefinitionBuilder = new DefaultJoinDefinitionBuilder();
 
             builder?.Invoke(joinDefinitionBuilder);
 

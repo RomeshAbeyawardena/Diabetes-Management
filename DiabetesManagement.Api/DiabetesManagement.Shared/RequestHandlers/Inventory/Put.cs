@@ -43,10 +43,34 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
             }
 
             Models.InventoryHistory inventoryHistory = new();
-            
-            var result = await inventoryHistory.Update(new PutRequest {
 
-            }, DbConnection, transaction);
+            var putRequest = new PutRequest();
+
+            bool hasChanges = false;
+
+            if(request.Inventory!.DefaultType != inventoryRecord.DefaultType)
+            {
+                putRequest.DefaultType = request.Inventory.DefaultType;
+                hasChanges = true;
+            }
+
+            if (request.Inventory.DefaultType != inventoryRecord.DefaultType)
+            {
+                putRequest.DefaultType = request.Inventory.DefaultType;
+                hasChanges = true;
+            }
+
+            if (request.Inventory.DefaultType != inventoryRecord.DefaultType)
+            {
+                putRequest.DefaultType = request.Inventory.DefaultType;
+                hasChanges = true;
+            }
+
+            if(hasChanges != true){
+                return inventoryRecord.InventoryId;
+            }
+
+            var result = await inventoryHistory.Update(putRequest, DbConnection, transaction);
             
             if (request.CommitOnCompletion)
             {

@@ -3,8 +3,8 @@ using DiabetesManagement.Shared.Enumerations;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace DiabetesManagement.Shared;
-public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
+namespace DiabetesManagement.Shared.Defaults;
+public class DefaultJoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
 {
     private TParent? parent;
     private TChild? child;
@@ -25,13 +25,13 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
         }
     }
 
-    public JoinDefinition()
+    public DefaultJoinDefinition()
         : this(null!, null!)
     {
 
     }
 
-    public JoinDefinition(Expression<Func<TParent, object>> parentRelationProperty, Expression<Func<TChild, object>> childRelationProperty, JoinType joinType = JoinType.Inner)
+    public DefaultJoinDefinition(Expression<Func<TParent, object>> parentRelationProperty, Expression<Func<TChild, object>> childRelationProperty, JoinType joinType = JoinType.Inner)
     {
         joinDefinitionVisitor = new();
         ParentRelationProperty = parentRelationProperty;
@@ -51,12 +51,13 @@ public class JoinDefinition<TParent, TChild> : IJoinDefinition<TParent, TChild>
 
     public IJoinDefinition Definition => this;
 
-    PropertyInfo IJoinDefinition.ParentRelationProperty 
+    PropertyInfo IJoinDefinition.ParentRelationProperty
     {
-        get {
+        get
+        {
             if (parentProperty == null)
-                joinDefinitionVisitor.Visit(ParentRelationProperty); 
-                    
+                joinDefinitionVisitor.Visit(ParentRelationProperty);
+
             return parentProperty ??= joinDefinitionVisitor.Property!;
         }
     }
