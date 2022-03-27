@@ -22,20 +22,20 @@ namespace DiabetesManagement.Shared.Tests
             Assert.IsNotNull(definition.ChildRelationProperty);
 
             Assert.AreEqual("[INVENTORY].[InventoryId]", joinDefinition.Parent.ResolveColumnName(definition.ParentRelationProperty, true));
-            Assert.AreEqual("[InventoryHistory].[InventoryId]", joinDefinition.Child.ResolveColumnName(definition.ChildRelationProperty, true));
+            Assert.AreEqual("[INVENTORY_HISTORY].[InventoryId]", joinDefinition.Child.ResolveColumnName(definition.ChildRelationProperty, true));
 
             Assert.AreEqual("[InventoryId]", joinDefinition.Parent.ResolveColumnName(definition.ParentRelationProperty, false));
             Assert.AreEqual("[InventoryId]", joinDefinition.Child.ResolveColumnName(definition.ChildRelationProperty, false));
 
             var definitionBuilder = new JoinDefinitionBuilder();
             definitionBuilder.Add<Inventory, InventoryHistory>(b => { b.ParentRelationProperty = i => i.InventoryId; b.ChildRelationProperty = iH => iH.InventoryId; });
-            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build(out string columns));
-            Assert.AreEqual("[InventoryHistory].[InventoryHistoryId], [InventoryHistory].[InventoryId], [InventoryHistory].[Version], [InventoryHistory].[Type], [InventoryHistory].[Items], [InventoryHistory].[Hash], [InventoryHistory].[Created]", columns);
+            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]", definitionBuilder.Build(out string columns));
+            Assert.AreEqual("[INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created]", columns);
 
             definitionBuilder = new JoinDefinitionBuilder();
             definitionBuilder.Add<Inventory, InventoryHistory>(i => i.InventoryId, iH => iH.InventoryId);
-            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[InventoryHistory] ON [INVENTORY].[InventoryId] = [InventoryHistory].[InventoryId]", definitionBuilder.Build(out columns));
-            Assert.AreEqual("[InventoryHistory].[InventoryHistoryId], [InventoryHistory].[InventoryId], [InventoryHistory].[Version], [InventoryHistory].[Type], [InventoryHistory].[Items], [InventoryHistory].[Hash], [InventoryHistory].[Created]", columns);
+            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]", definitionBuilder.Build(out columns));
+            Assert.AreEqual("[INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created]", columns);
         }
     }
 }
