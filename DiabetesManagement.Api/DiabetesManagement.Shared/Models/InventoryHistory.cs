@@ -1,4 +1,5 @@
 ﻿using DiabetesManagement.Shared.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiabetesManagement.Shared.Models
@@ -7,7 +8,7 @@ namespace DiabetesManagement.Shared.Models
      Table("INVENTORY_HISTORY")]
     public class InventoryHistory : DbModelBase
     {
-        [Column("INVENTORY_HISTORYID")]
+        [Column("INVENTORY_HISTORYID"), Key]
         public Guid InventoryHistoryId { get; set; }
         public Guid InventoryId { get; set; }
         public int Version { get; set; }

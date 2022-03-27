@@ -14,15 +14,16 @@ namespace DiabetesManagement.Shared.Extensions
         {
             if (buildMode == BuildMode.Update)
             {
-                var query = $"UPDATE {model.TableName} SET";
+                var query = $"UPDATE {model.TableName} SET ";
 
-                query += GenerateWhereClause(model, request);
+                query += GenerateWhereClause(model, request, ", ");
 
                 return query;
             }
 
             throw new NotSupportedException();
         }
+        
         public static string Build(this IDbModel model, BuildMode buildMode)
         {
             var columnsDelimitedList = model.FullyQualifiedColumnDelimitedList;
@@ -31,7 +32,7 @@ namespace DiabetesManagement.Shared.Extensions
             {
                 var query = $"INSERT INTO {model.TableName} ({columnsDelimitedList}) VALUES (";
                 query += $"@{string.Join(", @", model.Columns)}";
-                return query += ");";
+                return query += $"); SELECT @{model.IdProperty}";
             }
 
             throw new NotSupportedException();
@@ -78,7 +79,7 @@ namespace DiabetesManagement.Shared.Extensions
         {
             string query = string.Empty;
 
-            foreach (var property in typeof(TRequest).GetProperties())
+            foreach (var property in typeof(TRequest).GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
             {
                 var propertyValue = property.GetValue(request);
 
@@ -127,6 +128,18 @@ namespace DiabetesManagement.Shared.Extensions
         {
             var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
             return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
+        }
+
+        public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
+        {
+            var query = model.Build(BuildMode.Insert);
+            return await dbConnection.ExecuteScalarAsync<Guid>(query, model, transaction);
+        }
+
+        public static async Task<Guid> Update<TRequest>(this IDbModel model, TRequest request, IDbConnection dbConnection, IDbTransaction? transaction)
+        {
+            var query = model.Build(BuildMode.Update, request);
+            return await dbConnection.ExecuteScalarAsync<Guid>(query, request, transaction);
         }
     }
 }

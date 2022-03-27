@@ -65,14 +65,14 @@ namespace DiabetesManagement.Shared.Base
 
             var kv = columnResolutionDictionary.FirstOrDefault(c => c.Key.Name == propertyName);
 
-            return ResolveColumnName(kv.Key!, fullyQualified);
+            return ResolveColumnName(kv.Key!, fullyQualified) ?? (fullyQualified ? $"[{TableName}].[{propertyName}]" : $"[{propertyName}]");
         }
 
         public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
         {
             if(property == null)
             {
-                return string.Empty;
+                return null!;
             }
 
             if (!columnResolutionDictionary.Any())
