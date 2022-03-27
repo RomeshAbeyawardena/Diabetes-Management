@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-
-namespace DiabetesManagement.Shared.Contracts
+﻿namespace DiabetesManagement.Shared.Contracts
 {
     public interface IChangeSetDetector
     {

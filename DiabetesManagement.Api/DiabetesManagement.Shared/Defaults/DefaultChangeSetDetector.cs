@@ -15,18 +15,34 @@ namespace DiabetesManagement.Shared.Defaults
 
             var changeSet = new DefaultChangeSet<TSource, TDestination>(source, destination);
 
-            changeSet.SourceProperties.Copy(GetProperties(typeof(TSource)));
-            changeSet.DestinationProperties.Copy(GetProperties(typeof(TDestination)));
-            
+            var sourceType = typeof(TSource);
+            var destinationType = typeof(TDestination);
+
+            if (sourceType == destinationType)
+            {
+                var properties = GetProperties(sourceType);
+                changeSet.SourceProperties.Copy(properties);
+                changeSet.DestinationProperties.Copy(properties);
+            }
+            else
+            {
+                changeSet.SourceProperties.Copy(GetProperties(sourceType));
+                changeSet.DestinationProperties.Copy(GetProperties(destinationType));
+            }
+
             foreach(var (name, property) in changeSet.SourceProperties)
             {
                 var sourceValue = property.GetValue(source);
 
-                if (sourceValue != null && changeSet.DestinationProperties.TryGetValue(name, out var destinationProperty))
+                if (changeSet.DestinationProperties.TryGetValue(name, out var destinationProperty))
                 {
                    var destinationValue = destinationProperty.GetValue(destination);
 
-                    if (destinationValue != null && !destinationValue.Equals(sourceValue))
+                    if(sourceValue == null || destinationValue == null && sourceValue != destinationValue)
+                    {
+                        changeSet.ChangedProperties.Add(property, destinationProperty);
+                    }
+                    else if (sourceValue!.Equals(destinationValue))
                     {
                         changeSet.ChangedProperties.Add(property, destinationProperty);
                     }
