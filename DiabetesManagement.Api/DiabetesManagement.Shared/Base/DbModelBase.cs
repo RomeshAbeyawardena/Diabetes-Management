@@ -34,8 +34,8 @@ namespace DiabetesManagement.Shared.Base
                 }
 
                 var propertyType = property.PropertyType;
-                var columnAttribute = propertyType.GetCustomAttribute<ColumnAttribute>();
-                var keyAttribute = propertyType.GetCustomAttribute<KeyAttribute>();
+                var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+                var keyAttribute = property.GetCustomAttribute<KeyAttribute>();
 
                 var name = columnAttribute != null ? columnAttribute.Name : property.Name;
 
@@ -59,13 +59,23 @@ namespace DiabetesManagement.Shared.Base
 
         public string ResolveColumnName(string propertyName, bool fullyQualified)
         {
+            if (!columnResolutionDictionary.Any())
+            {
+                GetColumns();
+            }
+
             var kv = columnResolutionDictionary.FirstOrDefault(c => c.Key.Name == propertyName);
 
-            return ResolveColumnName(kv.Key, fullyQualified);
+            return ResolveColumnName(kv.Key!, fullyQualified);
         }
 
         public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
         {
+            if(property == null)
+            {
+                return string.Empty;
+            }
+
             if (!columnResolutionDictionary.Any())
             {
                 GetColumns();

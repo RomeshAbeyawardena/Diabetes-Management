@@ -104,11 +104,11 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                         InventoryHistory = new Models.InventoryHistory
                         {
                             Created = DateTimeOffset.Now,
-                            Key = command.Key,
+                            //Key = command.Key,
                             Type = command.Type,
                             Items = command.Items,
                             InventoryId = inventoryId.Value,
-                            UserId = command.UserId,
+                            //UserId = command.UserId,
                         },
                         CommitOnCompletion = true
                     });

@@ -1,5 +1,4 @@
 ﻿using DiabetesManagement.Shared.Base;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiabetesManagement.Shared.Models
@@ -11,6 +10,7 @@ namespace DiabetesManagement.Shared.Models
         public Guid InventoryId { get; set; }
         public Guid UserId { get; set; }
         public string? Key { get; set; }
+        [Column("DEFAULT_TYPE")]
         public string? DefaultType { get; set; }
         public string? Hash { get; set; }
         public DateTimeOffset Created { get; set; }

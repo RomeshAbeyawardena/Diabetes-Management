@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
+using DiabetesManagement.Shared.Extensions;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
@@ -24,22 +25,13 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 
         }
 
-        protected override Task<Models.Inventory> HandleAsync(GetRequest request)
+        protected override async Task<Models.Inventory> HandleAsync(GetRequest request)
         {
             var inventoryModel = new Models.Inventory();
-
-            var finalSql = Queries.InventoryQuery
-                .Replace("@@whereClause", Queries.GetInventoryWhereClause(request.InventoryId));
-
             TryOpenConnection();
+            var result = await inventoryModel.Get(DbConnection, request, transaction: GetOrBeginTransaction);
 
-            return DbConnection.QueryFirstOrDefaultAsync<Models.Inventory>(finalSql, new
-            {
-                id = request.InventoryId,
-                key = request.Key,
-                type = request.Type,
-                userId = request.UserId,
-            }, GetOrBeginTransaction);
+            return result.FirstOrDefault()!;
         }
 
     }

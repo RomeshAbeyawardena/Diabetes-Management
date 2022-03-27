@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
+using DiabetesManagement.Shared.Extensions;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
@@ -18,24 +19,20 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 
         protected override void Dispose(bool disposing)
         {
-            throw new NotImplementedException();
+            
         }
 
-        protected override Task<Models.InventoryHistory> HandleAsync(GetRequest request)
+        protected override async Task<Models.InventoryHistory> HandleAsync(GetRequest request)
         {
-            var finalSql = Queries.InventoryHistoryQuery
-                .Replace("@@whereClause", Queries.GetInventoryHistoryWhereClause(request));
+            var inventoryHistory = new Models.InventoryHistory();
+
+            var inventoryHistoryItems = await inventoryHistory.Get(DbConnection, request, 
+                builder: builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId), 
+                transaction: GetOrBeginTransaction);
 
             TryOpenConnection();
 
-            return DbConnection.QueryFirstOrDefaultAsync<Models.InventoryHistory>(finalSql, new
-            {
-                inventoryHistoryId = request.InventoryHistoryId,
-                key = request.Key,
-                userId = request.UserId,
-                type = request.Type,
-                version = request.Version
-            }, GetOrBeginTransaction);
+            return inventoryHistoryItems.FirstOrDefault()!;
         }
     }
 }

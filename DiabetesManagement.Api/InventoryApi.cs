@@ -71,7 +71,7 @@ namespace DiabetesManagement.Api
         public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
         {
-            await AuthenticateRequest(request);
+            //await AuthenticateRequest(request);
 
             var requiredConditions = new[]
             {

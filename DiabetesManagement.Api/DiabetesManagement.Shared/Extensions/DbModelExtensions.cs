@@ -51,12 +51,17 @@ namespace DiabetesManagement.Shared.Extensions
 
             foreach (var property in typeof(TRequest).GetProperties())
             {
-
                 var propertyValue = property.GetValue(request);
-                
-                if(propertyValue == null || propertyValue.GetDefaultValue() == propertyValue)
+
+                var defaultValue = property.PropertyType.GetDefaultValue();
+                if (propertyValue == null || propertyValue.Equals(defaultValue))
                 {
                     continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(query))
+                {
+                    query += " AND ";
                 }
 
                 var name = property.Name;
@@ -69,20 +74,30 @@ namespace DiabetesManagement.Shared.Extensions
 
                 var columnName = model.ResolveColumnName(name!, true);
 
-                query += $"{columnName} = @{name}";
+                query += $"{columnName} = @{property.Name}";
             }
 
             return query;
         }
 
+        public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this TResponse model,
+            IDbConnection dbConnection,
+            TRequest request, int topAmount = 1,
+            Action<IJoinDefinitionBuilder>? builder = null,
+            IDbTransaction? transaction = null)
+            where TResponse : class, IDbModel
+        {
+            return await Get<TRequest, TResponse>((IDbModel)model, dbConnection, request, topAmount, builder, transaction);
+        }
 
         public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this IDbModel model, 
             IDbConnection dbConnection, 
             TRequest request, int topAmount = 1,  
-            Action<IJoinDefinitionBuilder>? builder = null)
+            Action<IJoinDefinitionBuilder>? builder = null,
+            IDbTransaction? transaction = null)
         {
             var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
-            return await dbConnection.QueryAsync<TResponse>(query, request);
+            return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
         }
     }
 }

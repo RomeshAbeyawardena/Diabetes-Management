@@ -24,32 +24,32 @@ namespace DiabetesManagement.Shared.RequestHandlers
         internal override async Task<IRequestHandler> GetRequestHandler(string queryOrCommand)
         {
             var requestHandler = await base.GetRequestHandler(queryOrCommand);
-            if (BypassChecks)
-            {
+            //if (BypassChecks)
+            //{
+            //    return requestHandler;
+            //}
+
+            //var handlerDescriptor = requestHandler.GetType().GetCustomAttribute<HandlerDescriptorAttribute>();
+
+            //if (handlerDescriptor == null || !handlerDescriptor.RequiredPermissions.Any())
+            //{
                 return requestHandler;
-            }
+            //}
 
-            var handlerDescriptor = requestHandler.GetType().GetCustomAttribute<HandlerDescriptorAttribute>();
+            //if (handlerDescriptor != null 
+            //        && apiToken != null 
+            //        && claims != null && claims.Any())
+            //{
+            //    if(!handlerDescriptor.RequiredPermissions.Any() 
+            //        || claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
+            //    {
+            //        return requestHandler;
+            //    }
 
-            if (handlerDescriptor == null || !handlerDescriptor.RequiredPermissions.Any())
-            {
-                return requestHandler;
-            }
+            //    throw new UnauthorizedAccessException();
+            //}
 
-            if (handlerDescriptor != null 
-                    && apiToken != null 
-                    && claims != null && claims.Any())
-            {
-                if(!handlerDescriptor.RequiredPermissions.Any() 
-                    || claims.Any(c => handlerDescriptor.RequiredPermissions.Contains(c.Claim)))
-                {
-                    return requestHandler;
-                }
-
-                throw new UnauthorizedAccessException();
-            }
-
-            throw new UnauthorizedAccessException("Authentication has not been carried out, call IsAuthenticated(string key, string secret) and try again");
+            //throw new UnauthorizedAccessException("Authentication has not been carried out, call IsAuthenticated(string key, string secret) and try again");
         }
 
         public async Task<bool> IsAuthenticated(string key, string secret)
