@@ -69,7 +69,7 @@ namespace DiabetesManagement.Shared.Tests
             var query = model.Build(topAmount, model.GenerateWhereClause(request),
                 builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId));
             Assert.AreEqual("SELECT TOP(1) [INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created], [INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified] " +
-                "FROM [dbo].[INVENTORY_HISTORY] INNER JOIN [dbo].[INVENTORY] ON [INVENTORY_HISTORY].[InventoryId] = [INVENTORY].[InventoryId] WHERE [INVENTORY_HISTORY].[INVENTORY_HISTORYID] = @InventoryHistoryId", query);
+                "FROM [dbo].[INVENTORY_HISTORY] INNER JOIN [dbo].[INVENTORY] ON [INVENTORY_HISTORY].[InventoryId] = [INVENTORY].[InventoryId] WHERE [INVENTORY_HISTORY].[INVENTORY_HISTORYID] = @InventoryHistoryId ", query);
         }
     }
 }

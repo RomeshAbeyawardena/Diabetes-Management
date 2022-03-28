@@ -10,6 +10,7 @@ namespace DiabetesManagement.Shared.Extensions
     using DiabetesManagement.Shared.Enumerations;
     using System.Diagnostics;
     using System.Dynamic;
+    using System.Runtime.Serialization;
 
     public static class DbModelExtensions
     {
@@ -81,7 +82,7 @@ namespace DiabetesManagement.Shared.Extensions
                 query += $" {joinDefinitionBuilder.Build(out string otherCols)}";
 
                 otherColumns += otherCols;
-                return $"{GetQuery()} {GetWhereClause()}";
+                return $"{GetQuery()} {GetWhereClause()} ";
             }
 
             return $"{GetQuery()} FROM {model.TableName} {GetWhereClause()}";
@@ -102,6 +103,13 @@ namespace DiabetesManagement.Shared.Extensions
 
             foreach (var property in typeof(TRequest).GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
             {
+                var ignoreDataMemberAttribute = property.GetCustomAttribute<IgnoreDataMemberAttribute>();
+
+                if (ignoreDataMemberAttribute != null)
+                {
+                    continue;
+                }
+
                 var propertyValue = property.GetValue(request);
 
                 var defaultValue = property.PropertyType.GetDefaultValue();
@@ -152,21 +160,37 @@ namespace DiabetesManagement.Shared.Extensions
             var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
             Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
-                query += orderByQuery;
-            return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
+                query = $"{query} {orderByQuery}";
+            return await dbConnection.QueryAsync<TResponse>(query, request!.ToDynamic(), transaction);
+        }
+
+        public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null)
+        {
+            ExpandoObject dynamic = new();
+
+            if(properties == null)
+            {
+                properties = value.GetType().GetProperties();
+            }
+
+            foreach (var property in properties)
+            {
+                var ignoreDataMemberAttribute = property.GetCustomAttribute<IgnoreDataMemberAttribute>();
+                if (ignoreDataMemberAttribute != null)
+                {
+                    continue;
+                }
+
+                var val = property.GetValue(value);
+                dynamic.TryAdd(property.Name, val);
+            }
+
+            return dynamic;
         }
 
         public static ExpandoObject ToDynamic(this IDbModel model)
         {
-            ExpandoObject dynamic = new();
-
-            foreach (var property in model.Properties)
-            {
-                var value = property.GetValue(model);
-                dynamic.TryAdd(property.Name, value);
-            }
-
-            return dynamic;
+            return model.ToDynamic(model.Properties);
         }
 
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
