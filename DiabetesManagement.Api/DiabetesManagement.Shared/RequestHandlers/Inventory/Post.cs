@@ -68,9 +68,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                     inventory.Hash = inventory.GetHash();
                 }
 
-                inventoryRecord = new();
-
-                var result = await inventoryRecord.Insert(DbConnection, GetOrBeginTransaction);
+                var result = await inventory.Insert(DbConnection, GetOrBeginTransaction);
 
                 if (request.CommitOnCompletion)
                 {

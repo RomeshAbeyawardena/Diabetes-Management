@@ -58,7 +58,7 @@ namespace DiabetesManagement.Shared.Base
 
                 if(keyAttribute != null)
                 {
-                    IdProperty = name;
+                    IdProperty = property.Name;
                 }
 
                 columnResolutionDictionary.TryAdd(property, name!);
