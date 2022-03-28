@@ -17,6 +17,7 @@ namespace DiabetesManagement.Api
     using DbModels = Shared.Models;
     using ApiKeyFeature = RequestHandlers.ApiToken;
     using DiabetesManagement.Shared;
+    using DiabetesManagement.Shared.Extensions;
 
     public class InventoryApi : IDisposable
     {
@@ -144,7 +145,7 @@ namespace DiabetesManagement.Api
                         $" { (requiredConditions[3] ? "userId" : "") }");
                 }
 
-                return new OkObjectResult(savedEntity);
+                return new OkObjectResult(savedEntity.ToDynamic());
             }
             catch (InvalidOperationException invalidOperationException)
             {

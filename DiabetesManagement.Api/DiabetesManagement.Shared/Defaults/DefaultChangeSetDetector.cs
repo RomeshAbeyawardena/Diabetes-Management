@@ -50,11 +50,16 @@ namespace DiabetesManagement.Shared.Defaults
                 {
                    var destinationValue = destinationProperty.GetValue(destination);
 
-                    if(sourceValue == null && destinationValue == null)
+                    if (sourceValue == null && destinationValue == null)
                     {
                         continue;
                     }
-                    else if (!sourceValue!.Equals(destinationValue))
+
+                    if (sourceValue != null && destinationValue != null && (sourceValue.Equals(destinationValue) || sourceValue.Equals(sourceValue.GetDefaultValue())))
+                    {
+                        continue;
+                    }
+                    else
                     {
                         changeSet.ChangedProperties.Add(property, destinationProperty);
                     }

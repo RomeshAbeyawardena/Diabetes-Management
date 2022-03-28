@@ -147,18 +147,23 @@ namespace DiabetesManagement.Shared.Extensions
             return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
         }
 
+        public static ExpandoObject ToDynamic(this IDbModel model)
+        {
+            ExpandoObject dynamic = new();
+
+            foreach (var property in model.Properties)
+            {
+                var value = property.GetValue(model);
+                dynamic.TryAdd(property.Name, value);
+            }
+
+            return dynamic;
+        }
+
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Insert);
-            ExpandoObject d = new ExpandoObject();
-            
-            foreach(var property in model.Properties)
-            {
-                var value = property.GetValue(model);
-                d.TryAdd(property.Name, value);
-            }
-            
-            
+            var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
 
@@ -168,7 +173,8 @@ namespace DiabetesManagement.Shared.Extensions
             IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Update, request);
-            return await dbConnection.ExecuteScalarAsync<Guid>(query, request, transaction);
+            var d = ToDynamic(model);
+            return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
     }
 }

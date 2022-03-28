@@ -1,4 +1,5 @@
 ﻿using DiabetesManagement.Shared.Contracts;
+using DiabetesManagement.Shared.Extensions;
 using System.Reflection;
 
 namespace DiabetesManagement.Shared.Defaults
@@ -33,6 +34,12 @@ namespace DiabetesManagement.Shared.Defaults
             foreach(var (sourceProperty, destinationProperty) in ChangedProperties)
             {
                 var value = sourceProperty.GetValue(source);
+                var defaultValue = sourceProperty.PropertyType.GetDefaultValue();
+                if(value == null || value.Equals(defaultValue))
+                {
+                    continue;
+                }
+
                 destinationProperty.SetValue(destination, value);
             }
 
