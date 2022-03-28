@@ -63,6 +63,11 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                     inventory.Created = DateTimeOffset.UtcNow;
                 }
 
+                if (string.IsNullOrWhiteSpace(inventory.Hash))
+                {
+                    inventory.Hash = inventory.GetHash();
+                }
+
                 inventoryRecord = new();
 
                 var result = await inventoryRecord.Insert(DbConnection, GetOrBeginTransaction);

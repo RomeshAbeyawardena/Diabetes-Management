@@ -8,6 +8,7 @@ namespace DiabetesManagement.Shared.Extensions
     using DiabetesManagement.Shared.Contracts;
     using DiabetesManagement.Shared.Defaults;
     using DiabetesManagement.Shared.Enumerations;
+    using System.Dynamic;
 
     public static class DbModelExtensions
     {
@@ -42,7 +43,7 @@ namespace DiabetesManagement.Shared.Extensions
             if (buildMode == BuildMode.Insert)
             {
                 var query = $"INSERT INTO {model.TableName} ({columnsDelimitedList}) VALUES (";
-                query += $"@{string.Join(", @", model.Columns)}";
+                query += $"@{string.Join(", @", model.Properties.Select(p => p.Name))}";
                 return query += $"); SELECT @{model.IdProperty}";
             }
 
@@ -76,6 +77,8 @@ namespace DiabetesManagement.Shared.Extensions
                 otherColumns += otherCols;
                 return GetQuery();
             }
+
+            whereClause = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : string.Empty;
 
             return $"{GetQuery()} FROM {model.TableName} " + whereClause;
         }
@@ -147,7 +150,16 @@ namespace DiabetesManagement.Shared.Extensions
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Insert);
-            return await dbConnection.ExecuteScalarAsync<Guid>(query, model, transaction);
+            ExpandoObject d = new ExpandoObject();
+            
+            foreach(var property in model.Properties)
+            {
+                var value = property.GetValue(model);
+                d.TryAdd(property.Name, value);
+            }
+            
+            
+            return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
 
         public static async Task<Guid> Update<TRequest>(this IDbModel model, 

@@ -108,7 +108,7 @@ namespace DiabetesManagement.Api
         {
             try
             {
-                await AuthenticateRequest(request);
+                //await AuthenticateRequest(request);
 
                 DbModels.InventoryHistory savedEntity = null;
 

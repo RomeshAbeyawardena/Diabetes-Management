@@ -1,8 +1,12 @@
-﻿namespace DiabetesManagement.Shared.Models
+﻿using DiabetesManagement.Shared.Base;
+using System.ComponentModel.DataAnnotations;
+
+namespace DiabetesManagement.Shared.Models
 {
     [MessagePack.MessagePackObject(true)]
-    public class User
+    public class User : DbModelBase
     {
+        [Key]
         public Guid UserId { get; set; }
         public string? Username { get; set; }
         public string? EmailAddress { get; set; }

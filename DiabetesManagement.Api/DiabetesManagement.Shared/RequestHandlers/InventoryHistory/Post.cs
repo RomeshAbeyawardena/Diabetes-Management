@@ -43,7 +43,6 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
             };
 
             var version = inventoryHistory.Version;
-            var inventoryId = inventoryHistory.InventoryId;
 
             if (version == default)
             {
@@ -52,10 +51,10 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                 if (inventoryHistoryRecord != null)
                 {
                     Logger.LogInformation("INVENTORY_HISTORY found with latest version at: {version}", inventoryHistoryRecord.Version);
-                    version = inventoryHistoryRecord.Version + 1;
+                    inventoryHistory.Version = inventoryHistoryRecord.Version + 1;
                 }
                 else
-                    version = 1;
+                    inventoryHistory.Version = 1;
             }
 
             if (string.IsNullOrWhiteSpace(inventoryHistory.Type))
@@ -63,23 +62,24 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                 inventoryHistory.Type = inventoryHistory.Type;
             }
 
-            if(inventoryHistory.Created == default)
+            if (inventoryHistory.InventoryHistoryId == default)
+            {
+                inventoryHistory.InventoryHistoryId = Guid.NewGuid();
+            }
+
+            if (inventoryHistory.Created == default)
             {
                 inventoryHistory.Created = DateTimeOffset.UtcNow;
             }
 
+            if(string.IsNullOrWhiteSpace(inventoryHistory.Hash))
+            {
+                inventoryHistory.Hash = inventoryHistory.GetHash();
+            }
+
             Logger.LogInformation("Saving INVENTORY_HISTORY...");
-            var result = await DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertInventoryHistoryCommand,
-                new {
-                    inventoryHistoryId = inventoryHistory.InventoryHistoryId == default
-                        ? Guid.NewGuid() : inventoryHistory.InventoryHistoryId,
-                    inventoryId,
-                    version,
-                    type = inventoryHistory.Type,
-                    items = inventoryHistory.Items,
-                    hash = inventoryHistory.Hash ?? inventoryHistory.GetHash(),
-                    created = inventoryHistory.Created
-                }, dbTransaction);
+
+            var result = await inventoryHistory.Insert(DbConnection, GetOrBeginTransaction);
 
             if (request.CommitOnCompletion)
             {

@@ -29,13 +29,12 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
                 request.User.Created = DateTimeOffset.UtcNow;
             }
 
-            return DbConnection.ExecuteScalarAsync<Guid>(Commands.InsertUser, new {
-                userId = request.User!.UserId,
-                emailAddress = request.User.EmailAddress,
-                userName = request.User.Username,
-                hash = request.User.Hash ?? request.User.GetHash(),
-                created = request.User.Created,
-            }, GetOrBeginTransaction);
+            if (string.IsNullOrWhiteSpace(request.User.Hash))
+            {
+                request.User.Hash = request.User.GetHash();
+            }
+
+            return request.User.Insert(DbConnection, GetOrBeginTransaction);
         }
     }
 }

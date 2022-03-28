@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
+using DiabetesManagement.Shared.Extensions;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.User
@@ -23,12 +24,11 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
 
         protected override async Task<Models.User> HandleAsync(GetRequest request)
         {
-            var finalSql = Queries.GetUserQuery.Replace("@@whereClause", Queries.GetWhereClause(request));
+            var user = new Models.User();
 
-            return await DbConnection.QueryFirstOrDefaultAsync<Models.User>(finalSql, new { 
-                userId = request.UserId, 
-                emailAddress = request.EmailAddress, 
-                userName = request.Username }, GetOrBeginTransaction);
+            var result = await user.Get(DbConnection, request, transaction: GetOrBeginTransaction);
+
+            return result.FirstOrDefault()!;
         }
     }
 }

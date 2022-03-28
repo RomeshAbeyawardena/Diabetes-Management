@@ -1,4 +1,5 @@
 ﻿using DiabetesManagement.Shared.Contracts;
+using DiabetesManagement.Shared.Defaults;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Diagnostics.CodeAnalysis;
@@ -16,10 +17,28 @@ namespace DiabetesManagement.Shared.Base
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
 
+        private void UpdateModelCache()
+        {
+            var currentModelCache = DefaultDbModelCache.Current;
+//            currentModelCache.TryAdd(EntityType, this);
+        }
+
         protected virtual TableAttribute? TableAttribute => tableAttribute ??= EntityType.GetCustomAttribute<TableAttribute>();
-        protected virtual IEnumerable<string> Columns => columns ??= GetColumns();
+        protected virtual IEnumerable<string> Columns 
+        { 
+            get 
+            {
+                if (columns == null)
+                {
+                    columns = GetColumns();
+                }
+
+                return columns; 
+            } 
+        }
+
         protected virtual Type EntityType => type ??= GetType();
-        protected virtual string TableName => tableName ??= TableAttribute!.Name ?? EntityType.Name;
+        protected virtual string TableName => tableName ??= TableAttribute?.Name ?? EntityType.Name;
         protected virtual string Schema => schema ??= TableAttribute?.Schema ?? "dbo";
 
         protected IEnumerable<string> GetColumns()
