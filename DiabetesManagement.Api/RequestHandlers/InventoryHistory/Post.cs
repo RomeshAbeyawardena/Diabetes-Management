@@ -84,9 +84,6 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                         Inventory = new Models.Inventory
                         {
                             InventoryId = inventoryId.Value,
-                            Key = command.Key,
-                            DefaultType = command.Type,
-                            UserId = command.UserId,
                             Modified = DateTimeOffset.UtcNow
                         }
                     });
