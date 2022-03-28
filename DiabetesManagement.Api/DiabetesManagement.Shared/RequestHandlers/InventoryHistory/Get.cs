@@ -25,8 +25,15 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
         {
             var inventoryHistory = new Models.InventoryHistory();
 
-            var inventoryHistoryItems = await inventoryHistory.Get(DbConnection, request, 
-                builder: builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId), 
+            string? orderBy = default;
+            if (request.IsLatest)
+            {
+                orderBy = "ORDER BY [VERSION] DESC";
+            }
+
+            var inventoryHistoryItems = await inventoryHistory.Get(DbConnection, request,
+                orderByQuery: orderBy!,
+                builder: builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId),
                 transaction: GetOrBeginTransaction);
 
             TryOpenConnection();

@@ -93,7 +93,7 @@ CREATE TABLE [dbo].[API_TOKEN_CLAIM] (
 
 select * FROM [INVENTORY]
 
-insert into [dbo].[Inventory].
+select * FROM [dbo].[Inventory_History]
 
 SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
                     [I].[HASH], [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],

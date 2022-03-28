@@ -9,5 +9,6 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
         public string? Type { get; set; }
         public Guid UserId { get; set; }
         public int? Version { get; set; }
+        public bool IsLatest { get; set; }
     }
 }

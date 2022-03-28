@@ -130,20 +130,25 @@ namespace DiabetesManagement.Shared.Extensions
         public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this TResponse model,
             IDbConnection dbConnection,
             TRequest request, int topAmount = 1,
+            string orderByQuery = default,
             Action<IJoinDefinitionBuilder>? builder = null,
             IDbTransaction? transaction = null)
             where TResponse : class, IDbModel
         {
-            return await Get<TRequest, TResponse>((IDbModel)model, dbConnection, request, topAmount, builder, transaction);
+            return await Get<TRequest, TResponse>((IDbModel)model, dbConnection, request, topAmount, orderByQuery, builder, transaction);
         }
 
-        public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this IDbModel model, 
-            IDbConnection dbConnection, 
-            TRequest request, int topAmount = 1,  
+        public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this IDbModel model,
+            IDbConnection dbConnection,
+            TRequest request, int topAmount = 1,
+            string? orderByQuery = default,
             Action<IJoinDefinitionBuilder>? builder = null,
             IDbTransaction? transaction = null)
         {
             var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
+
+            if (!string.IsNullOrWhiteSpace(orderByQuery))
+                query += orderByQuery;
             return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
         }
 
