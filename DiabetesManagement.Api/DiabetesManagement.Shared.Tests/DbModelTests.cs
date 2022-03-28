@@ -21,7 +21,7 @@ namespace DiabetesManagement.Shared.Tests
         {
             var inventory = new Models.Inventory();
             Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) " +
-                "VALUES (@InventoryId, @UserId, @Key, @DEFAULT_TYPE, @Hash, @Created, @Modified); SELECT @InventoryId", inventory.Build(Enumerations.BuildMode.Insert));
+                "VALUES (@InventoryId, @UserId, @Key, @DefaultType, @Hash, @Created, @Modified); SELECT @InventoryId", inventory.Build(Enumerations.BuildMode.Insert));
         }
 
         [Test]
@@ -39,7 +39,7 @@ namespace DiabetesManagement.Shared.Tests
             Assert.AreEqual("SELECT TOP(20) [INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified], " +
                 "[INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created] " +
                 "FROM [dbo].[INVENTORY] " +
-                "INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]", 
+                "INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId] ", 
                 inventory.Build(20, "", b => b.Add<Models.Inventory, Models.InventoryHistory>(p => p.InventoryId, c => c.InventoryId)));
 
             
@@ -58,6 +58,18 @@ namespace DiabetesManagement.Shared.Tests
                 inventory.GenerateWhereClause(new GetRequest { InventoryId = Guid.NewGuid(), Key = "A key", Type = "Banana" }));
             Assert.AreEqual("[INVENTORY].[InventoryId] = @InventoryId AND [INVENTORY].[DEFAULT_TYPE] = @Type AND [INVENTORY].[Key] = @Key AND [INVENTORY].[UserId] = @UserId",
                 inventory.GenerateWhereClause(new GetRequest { InventoryId = Guid.NewGuid(), Key = "A key", Type = "Banana", UserId = Guid.NewGuid() }));
+
+            var model = new Models.InventoryHistory();
+            int topAmount = 1;
+            var request = new RequestHandlers.InventoryHistory.GetRequest
+            {
+                InventoryHistoryId = Guid.NewGuid()
+            };
+
+            var query = model.Build(topAmount, model.GenerateWhereClause(request),
+                builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId));
+            Assert.AreEqual("SELECT TOP(1) [INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created], [INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified] " +
+                "FROM [dbo].[INVENTORY_HISTORY] INNER JOIN [dbo].[INVENTORY] ON [INVENTORY_HISTORY].[InventoryId] = [INVENTORY].[InventoryId] WHERE [INVENTORY_HISTORY].[INVENTORY_HISTORYID] = @InventoryHistoryId", query);
         }
     }
 }

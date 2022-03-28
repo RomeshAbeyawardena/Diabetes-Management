@@ -90,23 +90,3 @@ CREATE TABLE [dbo].[API_TOKEN_CLAIM] (
     [CLAIM] NVARCHAR(200) NOT NULL,
     [CREATED] [DATETIMEOFFSET](7) NOT NULL
 )
-
-select * FROM [INVENTORY]
-
-select * FROM [dbo].[Inventory_History]
-
-SELECT TOP(1) [I].[INVENTORYID], [I].[KEY], [I].[USERID],
-                    [I].[HASH], [I].[CREATED], [I].[MODIFIED], [I].[DEFAULT_TYPE] [DefaultType],
-                    [IH].[INVENTORY_HISTORYID] [InventoryHistoryId], [IH].[VERSION],
-                    [IH].[ITEMS], [IH].[TYPE], [IH].[HASH] [InventoryHistoryHash], 
-                    [IH].[CREATED] [InventoryHistoryCreated]
-                FROM [dbo].[INVENTORY_HISTORY] [IH]
-                INNER JOIN [dbo].[INVENTORY][I]
-                ON [IH].[INVENTORYID] = [I].[INVENTORYID]
-
-			SELECT TOP(1) [INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created], [INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified] FROM [dbo].[INVENTORY_HISTORY] INNER JOIN [dbo].[INVENTORY] ON [INVENTORY_HISTORY].[InventoryId] = [INVENTORY].[InventoryId]
-
-
-
-
-			SELECT TOP(1) [User].[UserId], [User].[Username], [User].[EmailAddress], [User].[Hash], [User].[Created], [User].[Modified] FROM [dbo].[User] WHERE [User].[UserId] = @UserId

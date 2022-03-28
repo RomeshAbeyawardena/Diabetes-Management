@@ -8,6 +8,7 @@ namespace DiabetesManagement.Shared.Extensions
     using DiabetesManagement.Shared.Contracts;
     using DiabetesManagement.Shared.Defaults;
     using DiabetesManagement.Shared.Enumerations;
+    using System.Diagnostics;
     using System.Dynamic;
 
     public static class DbModelExtensions
@@ -55,6 +56,11 @@ namespace DiabetesManagement.Shared.Extensions
             string? whereClause = default, 
             Action<IJoinDefinitionBuilder>? builder = null)
         {
+            string GetWhereClause()
+            {
+                return !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : string.Empty;
+            }
+
             var query = "SELECT ";
             var otherColumns = string.Empty;
             string GetQuery()
@@ -75,12 +81,10 @@ namespace DiabetesManagement.Shared.Extensions
                 query += $" {joinDefinitionBuilder.Build(out string otherCols)}";
 
                 otherColumns += otherCols;
-                return GetQuery();
+                return $"{GetQuery()} {GetWhereClause()}";
             }
 
-            whereClause = !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : string.Empty;
-
-            return $"{GetQuery()} FROM {model.TableName} " + whereClause;
+            return $"{GetQuery()} FROM {model.TableName} {GetWhereClause()}";
         }
 
         public static IJoinDefinitionBuilder JoinDefinitionsBuilder(this IDbModel model, Action<IJoinDefinitionBuilder> builder)
@@ -130,7 +134,7 @@ namespace DiabetesManagement.Shared.Extensions
         public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this TResponse model,
             IDbConnection dbConnection,
             TRequest request, int topAmount = 1,
-            string orderByQuery = default,
+            string? orderByQuery = default,
             Action<IJoinDefinitionBuilder>? builder = null,
             IDbTransaction? transaction = null)
             where TResponse : class, IDbModel
@@ -146,7 +150,7 @@ namespace DiabetesManagement.Shared.Extensions
             IDbTransaction? transaction = null)
         {
             var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
-
+            Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
                 query += orderByQuery;
             return await dbConnection.QueryAsync<TResponse>(query, request, transaction);
@@ -168,6 +172,7 @@ namespace DiabetesManagement.Shared.Extensions
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Insert);
+            Debug.WriteLine(query, nameof(Insert));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
@@ -178,6 +183,7 @@ namespace DiabetesManagement.Shared.Extensions
             IDbTransaction? transaction)
         {
             var query = model.Build(BuildMode.Update, request);
+            Debug.WriteLine(query, nameof(Update));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
