@@ -11,6 +11,13 @@ namespace DiabetesManagement.Shared.Extensions
 
     public static class DbModelExtensions
     {
+        public static IChangeSet<TSource, TDestination> GetChangeSet<TSource, TDestination>(this TDestination model, TSource source)
+            where TDestination : IDbModel
+        {
+            var changeSetDetector = new DefaultChangeSetDetector(model.Properties);
+            return changeSetDetector.DetectChanges(source, model);
+        }
+
         public static string Build<TRequest>(
             this IDbModel model, 
             BuildMode buildMode, 

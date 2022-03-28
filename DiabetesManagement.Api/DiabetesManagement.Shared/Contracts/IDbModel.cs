@@ -4,6 +4,7 @@ namespace DiabetesManagement.Shared.Contracts
 {
     public interface IDbModel
     {
+        IEnumerable<PropertyInfo> Properties { get; }
         string IdProperty { get; }
         IEnumerable<string> Columns { get; }
         string TableName { get; }

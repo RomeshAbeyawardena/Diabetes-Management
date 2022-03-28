@@ -15,11 +15,10 @@ namespace DiabetesManagement.Shared.Base
         private readonly IDictionary<PropertyInfo, string> columnResolutionDictionary;
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
-        
+
         protected virtual TableAttribute? TableAttribute => tableAttribute ??= EntityType.GetCustomAttribute<TableAttribute>();
         protected virtual IEnumerable<string> Columns => columns ??= GetColumns();
         protected virtual Type EntityType => type ??= GetType();
-        protected virtual IEnumerable<PropertyInfo> Properties => properties ??= EntityType.GetProperties();
         protected virtual string TableName => tableName ??= TableAttribute!.Name ?? EntityType.Name;
         protected virtual string Schema => schema ??= TableAttribute?.Schema ?? "dbo";
 
@@ -94,6 +93,7 @@ namespace DiabetesManagement.Shared.Base
         IEnumerable<string> IDbModel.Columns => Columns;
 
         string IDbModel.TableName => $"[{Schema}].[{TableName}]";
+        public virtual IEnumerable<PropertyInfo> Properties => properties ??= EntityType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         public string FullyQualifiedColumnDelimitedList => $"[{TableName}].[{string.Join($"], [{TableName}].[", Columns)}]";
         public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
         public virtual string WhereClause => $"WHERE [{IdProperty}]= @{IdProperty}";

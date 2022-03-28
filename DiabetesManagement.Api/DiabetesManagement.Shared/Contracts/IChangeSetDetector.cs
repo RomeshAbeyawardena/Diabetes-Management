@@ -2,6 +2,6 @@
 {
     public interface IChangeSetDetector
     {
-        IChangeSet DetectChanges<TSource, TDestination>(TSource source, TDestination destination);
+        IChangeSet<TSource, TDestination> DetectChanges<TSource, TDestination>(TSource source, TDestination destination);
     }
 }

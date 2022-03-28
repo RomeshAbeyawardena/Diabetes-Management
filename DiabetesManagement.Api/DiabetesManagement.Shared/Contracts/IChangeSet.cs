@@ -4,6 +4,7 @@ namespace DiabetesManagement.Shared.Contracts
 {
     public interface IChangeSet
     {
+        IChangeSetDetector ChangeSetDetector { get; }
         IDictionary<string, PropertyInfo> SourceProperties { get; }
         IDictionary<string, PropertyInfo> DestinationProperties { get; }
         IDictionary<PropertyInfo, PropertyInfo> ChangedProperties { get; }

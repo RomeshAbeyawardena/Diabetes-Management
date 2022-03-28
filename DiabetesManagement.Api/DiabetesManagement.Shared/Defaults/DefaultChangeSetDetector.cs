@@ -6,14 +6,26 @@ namespace DiabetesManagement.Shared.Defaults
 {
     public class DefaultChangeSetDetector : IChangeSetDetector
     {
-        public IChangeSet DetectChanges<TSource, TDestination>(TSource source, TDestination destination)
+        private IEnumerable<PropertyInfo>? sourceProperties;
+
+        public DefaultChangeSetDetector()
         {
-            static IDictionary<string, PropertyInfo> GetProperties(Type type)
+
+        }
+
+        public DefaultChangeSetDetector(IEnumerable<PropertyInfo> sourceProperties)
+        {
+            this.sourceProperties = sourceProperties;
+        }
+
+        public IChangeSet<TSource, TDestination> DetectChanges<TSource, TDestination>(TSource source, TDestination destination)
+        {
+            IDictionary<string, PropertyInfo> GetProperties(Type type)
             {
-                return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly).ToDictionary(k => k.Name, v => v);
+                return (sourceProperties ??= type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)).ToDictionary(k => k.Name, v => v);
             }
 
-            var changeSet = new DefaultChangeSet<TSource, TDestination>(source, destination);
+            var changeSet = new DefaultChangeSet<TSource, TDestination>(this, source, destination);
 
             var sourceType = typeof(TSource);
             var destinationType = typeof(TDestination);
@@ -38,11 +50,11 @@ namespace DiabetesManagement.Shared.Defaults
                 {
                    var destinationValue = destinationProperty.GetValue(destination);
 
-                    if(sourceValue == null || destinationValue == null && sourceValue != destinationValue)
+                    if(sourceValue == null && destinationValue == null)
                     {
-                        changeSet.ChangedProperties.Add(property, destinationProperty);
+                        continue;
                     }
-                    else if (sourceValue!.Equals(destinationValue))
+                    else if (!sourceValue!.Equals(destinationValue))
                     {
                         changeSet.ChangedProperties.Add(property, destinationProperty);
                     }

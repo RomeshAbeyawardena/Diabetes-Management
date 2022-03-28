@@ -42,35 +42,18 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                 throw new DataException("Inventory record not found");
             }
 
-            Models.InventoryHistory inventoryHistory = new();
-
             var putRequest = new PutRequest();
 
-            bool hasChanges = false;
+            var changeSet = inventoryRecord.GetChangeSet(putRequest);
 
-            if(request.Inventory!.DefaultType != inventoryRecord.DefaultType)
+            if(!changeSet.HasChanges)
             {
-                putRequest.DefaultType = request.Inventory.DefaultType;
-                hasChanges = true;
-            }
-
-            if (request.Inventory.DefaultType != inventoryRecord.DefaultType)
-            {
-                putRequest.DefaultType = request.Inventory.DefaultType;
-                hasChanges = true;
-            }
-
-            if (request.Inventory.DefaultType != inventoryRecord.DefaultType)
-            {
-                putRequest.DefaultType = request.Inventory.DefaultType;
-                hasChanges = true;
-            }
-
-            if(hasChanges != true){
                 return inventoryRecord.InventoryId;
             }
 
-            var result = await inventoryHistory.Update(putRequest, DbConnection, transaction);
+            inventoryRecord = changeSet.CommitChanges(putRequest);
+
+            var result = await inventoryRecord.Update(inventoryRecord, DbConnection, transaction);
             
             if (request.CommitOnCompletion)
             {
