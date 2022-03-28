@@ -42,16 +42,14 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
                 throw new DataException("Inventory record not found");
             }
 
-            var putRequest = new PutRequest();
-
-            var changeSet = inventoryRecord.GetChangeSet(putRequest);
+            var changeSet = inventoryRecord.GetChangeSet(inventory);
 
             if(!changeSet.HasChanges)
             {
                 return inventoryRecord.InventoryId;
             }
 
-            inventoryRecord = changeSet.CommitChanges(putRequest);
+            inventoryRecord = changeSet.CommitChanges(inventory);
 
             var result = await inventoryRecord.Update(inventoryRecord, DbConnection, transaction);
             

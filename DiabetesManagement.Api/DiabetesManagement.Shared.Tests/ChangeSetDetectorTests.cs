@@ -31,7 +31,7 @@ namespace DiabetesManagement.Shared.Tests
             var source = new Models.Inventory { Modified = System.DateTimeOffset.Now };
             var destination = new Models.Inventory { };
             var changes = defaultChangeSetDetector!.DetectChanges(source, destination);
-            destination = (Models.Inventory)changes.CommitChanges(source);
+            destination = changes.CommitChanges(source);
 
             Assert.True(changes.HasChanges);
             Assert.AreEqual(source.Modified, destination.Modified);
