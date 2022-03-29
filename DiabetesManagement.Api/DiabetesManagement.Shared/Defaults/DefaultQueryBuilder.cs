@@ -1,17 +1,21 @@
-﻿using DiabetesManagement.Shared.Contracts;
-using DiabetesManagement.Shared.Enumerations;
-using DiabetesManagement.Shared.Extensions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 
 namespace DiabetesManagement.Shared.Defaults
 {
+    using DiabetesManagement.Shared.Contracts;
+    using DiabetesManagement.Shared.Enumerations;
+    using DiabetesManagement.Shared.Extensions;
+
     public class DefaultQueryBuilder<TModel> : IQueryBuilder<TModel>
         where TModel : IDbModel
     {
         private readonly IJoinDefinitionBuilder? joinDefinitions;
         private string? columns;
-
-        private string GetColumns(IEnumerable<IJoinDefinition> joinDefinitions)
+        private string whereClause = string.Empty;
+        private static string GetColumns(IEnumerable<IJoinDefinition> joinDefinitions)
         {
             var columnList = new StringBuilder();
             
@@ -19,7 +23,7 @@ namespace DiabetesManagement.Shared.Defaults
             {
                 if (columnList.Length != 0)
                 {
-                    columnList.Append(",");
+                    columnList.Append(',');
                 }
 
                 columnList.Append($"{model.FullyQualifiedColumnDelimitedList}");
@@ -53,11 +57,52 @@ namespace DiabetesManagement.Shared.Defaults
                     : $"FROM {Model.TableName}"
                 ));
 
+            if (!string.IsNullOrWhiteSpace(whereClause))
+            {
+                query.Append($" WHERE {whereClause}");
+            }
 
             return query.ToString();
         }
 
-        private string GetQueryEntry(BuildMode buildMode)
+        private static string ResolveColumnByJoin(IJoinDefinition joinDefinition, string name)
+        {
+            if (joinDefinition.Parent is IDbModel parent)
+            {
+                var columnName = parent.ResolveColumnName(name, true);
+                if (!string.IsNullOrWhiteSpace(columnName))
+                {
+                    return columnName;
+                }
+            }
+
+            if (joinDefinition.Child is IDbModel child)
+            {
+                var columnName = child.ResolveColumnName(name, true);
+                if (!string.IsNullOrWhiteSpace(columnName))
+                {
+                    return columnName;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private string ResolveColumn(string name)
+        {
+            foreach (var joinDefinition in joinDefinitions!)
+            {
+                var columnName = ResolveColumnByJoin(joinDefinition, name);
+                if (!string.IsNullOrWhiteSpace(columnName))
+                {
+                    return columnName;
+                }
+            }
+
+            return string.Empty;
+        }
+
+        private static string GetQueryEntry(BuildMode buildMode)
         {
             return buildMode switch
             {
@@ -82,5 +127,53 @@ namespace DiabetesManagement.Shared.Defaults
         public BuildMode BuildMode { get; set; }
         public TModel Model { get; }
         public string Query => GenerateQuery();
+
+        public void GenerateWhereClause<TRequest>(TRequest request, string defaultLogicalOperator = " AND ")
+        {
+            string query = string.Empty;
+
+            foreach (var property in typeof(TRequest).GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
+            {
+                var ignoreDataMemberAttribute = property.GetCustomAttribute<IgnoreDataMemberAttribute>();
+
+                if (ignoreDataMemberAttribute != null)
+                {
+                    continue;
+                }
+
+                var propertyValue = property.GetValue(request);
+
+                var defaultValue = property.PropertyType.GetDefaultValue();
+                if (propertyValue == null || propertyValue.Equals(defaultValue))
+                {
+                    continue;
+                }
+
+                if (!string.IsNullOrWhiteSpace(query))
+                {
+                    query += defaultLogicalOperator;
+                }
+
+                var name = property.Name;
+                var columnAttribute = property.GetCustomAttribute<ColumnAttribute>();
+
+                if (columnAttribute != null)
+                {
+                    name = columnAttribute.Name;
+                }
+
+                var columnName = Model.ResolveColumnName(name!, true);
+
+                if (string.IsNullOrEmpty(columnName))
+                {
+                    columnName = ResolveColumn(name!);
+                }
+
+                query += $"{columnName} = @{property.Name}";
+            }
+
+            whereClause = query;
+        }
+
     }
 }

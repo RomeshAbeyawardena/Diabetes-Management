@@ -7,6 +7,7 @@ namespace DiabetesManagement.Shared.Contracts
     {
         TModel Model { get;  }
         BuildMode BuildMode { get; set; }
+
         int? TopAmount { get; set; }
         string Query { get; }
     }
