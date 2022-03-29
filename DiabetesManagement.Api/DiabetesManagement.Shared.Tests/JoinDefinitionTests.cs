@@ -30,7 +30,7 @@ namespace DiabetesManagement.Shared.Tests
 
             var definitionBuilder = new DefaultJoinDefinitionBuilder();
             definitionBuilder.Add<Inventory, InventoryHistory>(b => { b.ParentRelationProperty = i => i.InventoryId; b.ChildRelationProperty = iH => iH.InventoryId; });
-            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]", definitionBuilder.Build(out string columns));
+            Assert.AreEqual("FROM [dbo].[INVENTORY] INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]", definitionBuilder.Build(out var columns));
             Assert.AreEqual("[INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created]", columns);
 
             definitionBuilder = new DefaultJoinDefinitionBuilder();

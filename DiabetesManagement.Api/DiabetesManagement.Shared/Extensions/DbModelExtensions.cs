@@ -81,7 +81,7 @@ namespace DiabetesManagement.Shared.Extensions
 
             if (joinDefinitionBuilder.Any())
             {
-                query += $" {joinDefinitionBuilder.Build(out string otherCols)}";
+                query += $" {joinDefinitionBuilder.Build(out var otherCols)}";
 
                 otherColumns += otherCols;
                 return $"{GetQuery()} {GetWhereClause(whereClause)} ";

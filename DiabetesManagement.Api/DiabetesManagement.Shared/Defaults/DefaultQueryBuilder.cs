@@ -47,19 +47,34 @@ namespace DiabetesManagement.Shared.Defaults
 
         private string GenerateQuery()
         {
+            IEnumerable<PropertyInfo> properties = Model.Properties;
             var query = new StringBuilder();
             query.Append(GetQueryEntry(BuildMode)
                 .Replace("{Pre}", TopAmount.HasValue ? $"TOP({TopAmount})" : string.Empty)
                 .Replace("{ColumnsDelimitedList}", Columns)
                 .Replace("{TableName}", 
                 (joinDefinitions != null && BuildMode == BuildMode.Select)
-                    ? joinDefinitions.Build(out var columns)
-                    : $"FROM {Model.TableName}"
+                    ? joinDefinitions.Build(out properties)
+                    : BuildMode == BuildMode.Insert 
+                        ? Model.TableName 
+                        : $"FROM {Model.TableName}"
                 ));
 
-            if (!string.IsNullOrWhiteSpace(whereClause))
+            if (BuildMode != BuildMode.Insert && !string.IsNullOrWhiteSpace(whereClause))
             {
                 query.Append($" WHERE {whereClause}");
+            }
+            
+            if(BuildMode == BuildMode.Insert)
+            {
+                query.Append("@");
+                query.Append(string.Join(", @", properties.Select(p => p.Name)));
+                query.Append(")");
+            }
+
+            if(BuildMode == BuildMode.Update)
+            {
+
             }
 
             return query.ToString();

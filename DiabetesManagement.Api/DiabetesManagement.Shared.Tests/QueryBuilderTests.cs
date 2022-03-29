@@ -19,6 +19,28 @@ namespace DiabetesManagement.Shared.Tests
         }
 
         [Test]
+        public void UpdateQuery()
+        {
+            defaultQueryBuilder!.BuildMode = Enumerations.BuildMode.Update;
+
+            var request = new GetRequest
+            {
+                InventoryId = Guid.NewGuid(),
+            };
+
+            defaultQueryBuilder.GenerateWhereClause(request);
+
+            Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) VALUES ( @InventoryId, @UserId, @Key, @DefaultType, @Hash, @Created, @Modified)", defaultQueryBuilder.Query);
+        }
+
+        [Test]
+        public void InsertQuery()
+        {
+            defaultQueryBuilder!.BuildMode = Enumerations.BuildMode.Insert;
+            Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) VALUES ( @InventoryId, @UserId, @Key, @DefaultType, @Hash, @Created, @Modified)", defaultQueryBuilder.Query);
+        }
+
+        [Test]
         public void SelectQuery()
         {
             defaultQueryBuilder!.BuildMode = Enumerations.BuildMode.Select;
