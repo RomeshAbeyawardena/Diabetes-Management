@@ -3,6 +3,7 @@
     public enum BuildMode
     {
         Insert,
+        Select,
         Update
     }
 }

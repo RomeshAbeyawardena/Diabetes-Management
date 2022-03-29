@@ -21,7 +21,7 @@ namespace DiabetesManagement.Shared.Extensions
             return changeSetDetector.DetectChanges(source, model);
         }
 
-        public static string Build<TRequest>(
+        public static string BuildUpdate<TRequest>(
             this IDbModel model, 
             BuildMode buildMode, 
             TRequest request)
@@ -38,7 +38,7 @@ namespace DiabetesManagement.Shared.Extensions
             throw new NotSupportedException();
         }
         
-        public static string Build(this IDbModel model, BuildMode buildMode)
+        public static string BuildInsert(this IDbModel model, BuildMode buildMode)
         {
             var columnsDelimitedList = model.FullyQualifiedColumnDelimitedList;
 
@@ -52,12 +52,12 @@ namespace DiabetesManagement.Shared.Extensions
             throw new NotSupportedException();
         }
 
-        public static string Build(this IDbModel model, 
+        public static string Build<TRequest>(this IDbModel model, 
             int? topAmount = null, 
-            string? whereClause = default, 
+            TRequest? request = default,
             Action<IJoinDefinitionBuilder>? builder = null)
         {
-            string GetWhereClause()
+            string GetWhereClause(string whereClause)
             {
                 return !string.IsNullOrWhiteSpace(whereClause) ? $"WHERE {whereClause}" : string.Empty;
             }
@@ -75,17 +75,19 @@ namespace DiabetesManagement.Shared.Extensions
             }
 
             query += model.FullyQualifiedColumnDelimitedList + "@@otherColumns";
-            
             var joinDefinitionBuilder = model.JoinDefinitionsBuilder(builder!);
+
+            var whereClause = GenerateWhereClause(model, request, joinDefinitions: joinDefinitionBuilder);
+
             if (joinDefinitionBuilder.Any())
             {
                 query += $" {joinDefinitionBuilder.Build(out string otherCols)}";
 
                 otherColumns += otherCols;
-                return $"{GetQuery()} {GetWhereClause()} ";
+                return $"{GetQuery()} {GetWhereClause(whereClause)} ";
             }
 
-            return $"{GetQuery()} FROM {model.TableName} {GetWhereClause()}";
+            return $"{GetQuery()} FROM {model.TableName} {GetWhereClause(whereClause)}";
         }
 
         public static IJoinDefinitionBuilder JoinDefinitionsBuilder(this IDbModel model, Action<IJoinDefinitionBuilder> builder)
@@ -97,8 +99,45 @@ namespace DiabetesManagement.Shared.Extensions
             return joinDefinitionBuilder;
         }
 
-        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request, string defaultLogicalOperator = " AND ", params IDbModel[] dbModels)
+        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request, string defaultLogicalOperator = " AND ", IJoinDefinitionBuilder? joinDefinitions = null)
         {
+            string ResolveColumnByJoin(IJoinDefinition joinDefinition, string name)
+            {
+                if(joinDefinition.Parent is IDbModel parent)
+                {
+                    var columnName = parent.ResolveColumnName(name, true);
+                    if (!string.IsNullOrWhiteSpace(columnName))
+                    {
+                        return columnName;
+                    }
+                }
+
+                if (joinDefinition.Child is IDbModel child)
+                {
+                    var columnName = child.ResolveColumnName(name, true);
+                    if (!string.IsNullOrWhiteSpace(columnName))
+                    {
+                        return columnName;
+                    }
+                }
+
+                return string.Empty;
+            }
+
+            string ResolveColumn(string name)
+            {
+                foreach(var joinDefinition in joinDefinitions!)
+                {
+                    var columnName = ResolveColumnByJoin(joinDefinition, name);
+                    if (!string.IsNullOrWhiteSpace(columnName))
+                    {
+                        return columnName;
+                    }
+                }
+
+                return string.Empty;
+            }
+
             string query = string.Empty;
 
             foreach (var property in typeof(TRequest).GetProperties(BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance))
@@ -132,6 +171,11 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var columnName = model.ResolveColumnName(name!, true);
+
+                if (string.IsNullOrEmpty(columnName))
+                {
+                    columnName = ResolveColumn(name!);
+                }
 
                 query += $"{columnName} = @{property.Name}";
             }
@@ -196,7 +240,7 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
-            var query = model.Build(BuildMode.Insert);
+            var query = string.Empty; //model.Build(BuildMode.Insert);
             Debug.WriteLine(query, nameof(Insert));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
@@ -207,7 +251,7 @@ namespace DiabetesManagement.Shared.Extensions
             IDbConnection dbConnection, 
             IDbTransaction? transaction)
         {
-            var query = model.Build(BuildMode.Update, request);
+            var query = string.Empty; //model.Build(BuildMode.Update, request);
             Debug.WriteLine(query, nameof(Update));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
