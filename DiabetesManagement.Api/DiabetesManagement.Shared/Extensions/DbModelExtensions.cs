@@ -97,7 +97,7 @@ namespace DiabetesManagement.Shared.Extensions
             return joinDefinitionBuilder;
         }
 
-        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request, string defaultLogicalOperator = " AND ")
+        public static string GenerateWhereClause<TRequest>(this IDbModel model, TRequest request, string defaultLogicalOperator = " AND ", params IDbModel[] dbModels)
         {
             string query = string.Empty;
 
@@ -182,6 +182,7 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var val = property.GetValue(value);
+                Debug.WriteLine("{0} {1}:{2}", nameof(ToDynamic), property, val);
                 dynamic.TryAdd(property.Name, val);
             }
 

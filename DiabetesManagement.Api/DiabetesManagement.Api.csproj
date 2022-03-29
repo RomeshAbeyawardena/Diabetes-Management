@@ -4,6 +4,10 @@
     <AzureFunctionsVersion>v4</AzureFunctionsVersion>
     <UserSecretsId>517ac3b2-6c52-4be8-bfe4-cb134bf43132</UserSecretsId>
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
+    <AnalysisLevel>latest-minimum</AnalysisLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="DiabetesManagement.Api.Tests\**" />

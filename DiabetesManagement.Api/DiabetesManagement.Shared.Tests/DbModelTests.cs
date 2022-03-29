@@ -39,7 +39,7 @@ namespace DiabetesManagement.Shared.Tests
             Assert.AreEqual("SELECT TOP(20) [INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified], " +
                 "[INVENTORY_HISTORY].[INVENTORY_HISTORYID], [INVENTORY_HISTORY].[InventoryId], [INVENTORY_HISTORY].[Version], [INVENTORY_HISTORY].[Type], [INVENTORY_HISTORY].[Items], [INVENTORY_HISTORY].[Hash], [INVENTORY_HISTORY].[Created] " +
                 "FROM [dbo].[INVENTORY] " +
-                "INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId] ", 
+                "INNER JOIN [dbo].[INVENTORY_HISTORY] ON [INVENTORY].[InventoryId] = [INVENTORY_HISTORY].[InventoryId]  ", 
                 inventory.Build(20, "", b => b.Add<Models.Inventory, Models.InventoryHistory>(p => p.InventoryId, c => c.InventoryId)));
 
             

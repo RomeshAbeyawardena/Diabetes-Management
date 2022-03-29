@@ -81,9 +81,14 @@ namespace DiabetesManagement.Shared.Base
                 GetColumns();
             }
 
-            var kv = columnResolutionDictionary.FirstOrDefault(c => c.Key.Name == propertyName);
+            var kv = columnResolutionDictionary.FirstOrDefault(c => c.Key.Name == propertyName || c.Value == propertyName);
 
-            return ResolveColumnName(kv.Key!, fullyQualified) ?? (fullyQualified ? $"[{TableName}].[{propertyName}]" : $"[{propertyName}]");
+            if (kv.Equals(default(KeyValuePair<PropertyInfo, string>)))
+            {
+                return string.Empty;
+            }
+
+            return ResolveColumnName(kv.Key!, fullyQualified);
         }
 
         public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
