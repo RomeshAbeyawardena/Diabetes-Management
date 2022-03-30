@@ -36,7 +36,7 @@ namespace DiabetesManagement.Shared.Tests
             defaultQueryBuilder.GenerateUpdateBody(request2);
             defaultQueryBuilder.GenerateWhereClause(request);
 
-            Assert.AreEqual("UPDATE FROM [dbo].[INVENTORY] SET [INVENTORY].[Modified] = @Modified WHERE [INVENTORY].[InventoryId] = @InventoryId", defaultQueryBuilder.Query);
+            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[Modified] = @Modified WHERE [INVENTORY].[InventoryId] = @InventoryId", defaultQueryBuilder.Query);
 
             request2 = new PutRequest
             {
@@ -47,14 +47,14 @@ namespace DiabetesManagement.Shared.Tests
             defaultQueryBuilder.GenerateUpdateBody(request2);
             defaultQueryBuilder.GenerateWhereClause(request);
 
-            Assert.AreEqual("UPDATE FROM [dbo].[INVENTORY] SET [INVENTORY].[DEFAULT_TYPE] = @DefaultType, [INVENTORY].[Modified] = @Modified WHERE [INVENTORY].[InventoryId] = @InventoryId", defaultQueryBuilder.Query);
+            Assert.AreEqual("UPDATE [dbo].[INVENTORY] SET [INVENTORY].[DEFAULT_TYPE] = @DefaultType, [INVENTORY].[Modified] = @Modified WHERE [INVENTORY].[InventoryId] = @InventoryId", defaultQueryBuilder.Query);
         }
 
         [Test]
         public void InsertQuery()
         {
             defaultQueryBuilder!.BuildMode = Enumerations.BuildMode.Insert;
-            Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) VALUES ( @InventoryId, @UserId, @Key, @DefaultType, @Hash, @Created, @Modified)", defaultQueryBuilder.Query);
+            Assert.AreEqual("INSERT INTO [dbo].[INVENTORY] ([INVENTORY].[InventoryId], [INVENTORY].[UserId], [INVENTORY].[Key], [INVENTORY].[DEFAULT_TYPE], [INVENTORY].[Hash], [INVENTORY].[Created], [INVENTORY].[Modified]) VALUES ( @InventoryId, @UserId, @Key, @DefaultType, @Hash, @Created, @Modified); SELECT @InventoryId", defaultQueryBuilder.Query);
         }
 
         [Test]
