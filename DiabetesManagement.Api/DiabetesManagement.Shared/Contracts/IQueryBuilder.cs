@@ -2,13 +2,19 @@
 
 namespace DiabetesManagement.Shared.Contracts
 {
-    public interface IQueryBuilder<TModel>
-        where TModel : IDbModel
+    public interface IQueryBuilder
     {
-        TModel Model { get;  }
         BuildMode BuildMode { get; set; }
-
         int? TopAmount { get; set; }
         string Query { get; }
+
+        void GenerateUpdateBody<TRequest>(TRequest request);
+        void GenerateWhereClause<TRequest>(TRequest request);
+    }
+
+    public interface IQueryBuilder<TModel> : IQueryBuilder
+        where TModel : IDbModel
+    {
+        TModel Model { get; }
     }
 }
