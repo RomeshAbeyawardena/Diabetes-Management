@@ -193,14 +193,22 @@ namespace DiabetesManagement.Shared.Defaults
         public TModel Model { get; }
         public string Query => GenerateQuery();
 
-        public void GenerateUpdateBody<TRequest>(TRequest request)
+        public IQueryBuilder SetBuildMode(BuildMode buildMode)
         {
-            updateBody = GenerateWhereClause(request, ", ");
+            BuildMode = BuildMode;
+            return this;
         }
 
-        public void GenerateWhereClause<TRequest>(TRequest request)
+        public IQueryBuilder GenerateUpdateBody<TRequest>(TRequest request)
+        {
+            updateBody = GenerateWhereClause(request, ", ");
+            return this;
+        }
+
+        public IQueryBuilder GenerateWhereClause<TRequest>(TRequest request)
         {
             whereClause = GenerateWhereClause(request, " AND ");
+            return this;
         }
 
     }

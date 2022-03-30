@@ -8,8 +8,9 @@ namespace DiabetesManagement.Shared.Contracts
         int? TopAmount { get; set; }
         string Query { get; }
 
-        void GenerateUpdateBody<TRequest>(TRequest request);
-        void GenerateWhereClause<TRequest>(TRequest request);
+        IQueryBuilder SetBuildMode(BuildMode buildMode);
+        IQueryBuilder GenerateUpdateBody<TRequest>(TRequest request);
+        IQueryBuilder GenerateWhereClause<TRequest>(TRequest request);
     }
 
     public interface IQueryBuilder<TModel> : IQueryBuilder

@@ -16,7 +16,7 @@ namespace DiabetesManagement.Shared.Base
         private readonly IDictionary<PropertyInfo, string> columnResolutionDictionary;
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
-
+        
         private void UpdateModelCache()
         {
             var currentModelCache = DefaultDbModelCache.Current;
@@ -111,7 +111,6 @@ namespace DiabetesManagement.Shared.Base
             return string.Empty;
         }
 
-
         [AllowNull] public string IdProperty { get; protected set; }
 
         IEnumerable<string> IDbModel.Columns => Columns;
@@ -121,5 +120,7 @@ namespace DiabetesManagement.Shared.Base
         public string FullyQualifiedColumnDelimitedList => $"[{TableName}].[{string.Join($"], [{TableName}].[", Columns)}]";
         public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
         public virtual string WhereClause => $"WHERE [{IdProperty}]= @{IdProperty}";
+
+        IQueryBuilder IDbModel.QueryBuilder { get; set; }
     }
 }

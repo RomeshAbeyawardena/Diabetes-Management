@@ -35,7 +35,11 @@ namespace DiabetesManagement.Shared.Extensions
             Action<IQueryBuilder<TModel>>? builder = default)
             where TModel : IDbModel
         {
-            return new DefaultQueryBuilder<TModel>(model, joinDefinitions);
+            var queryBuilder = new DefaultQueryBuilder<TModel>(model, joinDefinitions);
+
+            builder?.Invoke(queryBuilder);
+
+            return queryBuilder!;
         }
 
         public static async Task<IEnumerable<TResponse>> Get<TRequest, TResponse>(this TResponse model,
@@ -57,7 +61,10 @@ namespace DiabetesManagement.Shared.Extensions
             IDbTransaction? transaction = null)
         {
             
-            var query = model.Build(topAmount, GenerateWhereClause(model, request), builder);
+            var query = model
+                .QueryBuilder(model.JoinDefinitionsBuilder(builder!), 
+                    b => b.SetBuildMode(BuildMode.Select).GenerateWhereClause(request)).Query;
+            
             Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
                 query = $"{query} {orderByQuery}";
@@ -96,7 +103,7 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
-            var query = string.Empty; //model.Build(BuildMode.Insert);
+            var query = model.QueryBuilder(builder: b => b.SetBuildMode(BuildMode.Insert)).Query; //model.Build(BuildMode.Insert);
             Debug.WriteLine(query, nameof(Insert));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
@@ -104,10 +111,13 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static async Task<Guid> Update<TRequest>(this IDbModel model, 
             TRequest request, 
+            TRequest whereRequest,
             IDbConnection dbConnection, 
             IDbTransaction? transaction)
         {
-            var query = string.Empty; //model.Build(BuildMode.Update, request);
+            var query = model.QueryBuilder(builder: b => b
+                .SetBuildMode(BuildMode.Update)
+                .GenerateUpdateBody(request).GenerateWhereClause(whereRequest)).Query; //model.Build(BuildMode.Update, request);
             Debug.WriteLine(query, nameof(Update));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);

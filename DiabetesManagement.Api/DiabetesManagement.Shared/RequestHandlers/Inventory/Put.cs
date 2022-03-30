@@ -51,7 +51,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 
             inventoryRecord = changeSet.CommitChanges(inventory);
 
-            var result = await inventoryRecord.Update(inventoryRecord, DbConnection, transaction);
+            var result = await inventoryRecord.Update(inventoryRecord, new Models.Inventory { InventoryId = inventoryRecord.InventoryId }, DbConnection, transaction);
             
             if (request.CommitOnCompletion)
             {
