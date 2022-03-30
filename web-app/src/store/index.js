@@ -5,12 +5,16 @@ Vue.use(Vuex)
 
 export const Store = {
   mutations: {
+    toggleSideBar: "toggleSidebar",
     setDialogOptions: "setDialogOptions"
   }
 }
 
 export default new Vuex.Store({
   state: {
+    sideBar: {
+      display: false
+    },
     dialog: {
       header: null,
       display: false,
@@ -24,6 +28,9 @@ export default new Vuex.Store({
   mutations: {
     setDialogOptions(state, dialogOptions) {
       Vue.set(state, "dialog", dialogOptions);
+    },
+    toggleSideBar(state, display){
+      state.sideBar.display = display;
     }
   },
   actions: {

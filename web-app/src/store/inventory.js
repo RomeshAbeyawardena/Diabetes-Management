@@ -1,8 +1,14 @@
 import Vue from 'vue';
-
+import inventoryApi from "../api/inventory";
 import inventoryDb from '../db/inventory';
 import { State } from '../db/inventory';
 import dayjs from "dayjs";
+
+let element = document.getElementById("app");
+let attributeValue = element.getAttribute("data-base-url");
+
+inventoryApi.create(attributeValue);
+
 export const Inventory = {
     mutations: {
         setPreviousUnitsCount: "setPreviousUnitsCount",
@@ -20,7 +26,8 @@ export const Inventory = {
         getLastId: "getLastId",
         getItems: "getItems",
         commitItems: "commitItems",
-        rebuild: "rebuild"
+        rebuild: "rebuild",
+        sync: "sync"
     },
     getters: {
         filteredItems: "filteredItems",
@@ -150,6 +157,16 @@ export default {
         },
         async rebuild(context) {
             await inventoryDb.rebuild(context);
+        },
+        async sync(){
+            console.log("sync called");
+            let items = await inventoryDb.getItems();
+            console.log(items);
+
+            if(items && items.length)
+            {
+                await inventoryApi.inventory.post({ items: JSON.stringify(items), key: "diabetes.unitmanager", userId:"c55d2555-dc9a-4583-ada2-d68f9c21b184", type:"unitdate" });
+            }
         }
     }
 }

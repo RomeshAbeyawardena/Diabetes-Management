@@ -2,7 +2,7 @@
   "profiles": {
     "DiabetesManagement.Api": {
       "commandName": "Project",
-      "commandLineArgs": "--verbose"
+      "commandLineArgs": "--verbose --cors *"
     }
   }
 }
