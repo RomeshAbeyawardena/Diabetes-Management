@@ -102,9 +102,9 @@ namespace DiabetesManagement.Shared.Defaults
                 .Replace("{Pre}", TopAmount.HasValue ? $"TOP({TopAmount})" : string.Empty)
                 .Replace("{ColumnsDelimitedList}", Columns)
                 .Replace("{TableName}", 
-                (joinDefinitions != null && BuildMode == BuildMode.Select)
+                (joinDefinitions != null && joinDefinitions.Any() && BuildMode == BuildMode.Select)
                     ? joinDefinitions.Build(out properties)
-                    : BuildMode == BuildMode.Insert 
+                    : BuildMode != BuildMode.Select 
                         ? Model.TableName 
                         : $"FROM {Model.TableName}"
                 ));
@@ -124,7 +124,7 @@ namespace DiabetesManagement.Shared.Defaults
             {
                 query.Append("@");
                 query.Append(string.Join(", @", properties.Select(p => p.Name)));
-                query.Append(")");
+                query.Append($"); SELECT @{Model.IdProperty}");
             }
 
             return query.ToString();
@@ -184,7 +184,7 @@ namespace DiabetesManagement.Shared.Defaults
             this.joinDefinitions = joinDefinitions;
         }
 
-        public string Columns => columns ??= (joinDefinitions == null
+        public string Columns => columns ??= (joinDefinitions == null || !joinDefinitions.Any()
             ? Model.FullyQualifiedColumnDelimitedList
             : GetColumns(joinDefinitions));
 
@@ -193,9 +193,15 @@ namespace DiabetesManagement.Shared.Defaults
         public TModel Model { get; }
         public string Query => GenerateQuery();
 
+        public IQueryBuilder SetTopAmount(int topAmount)
+        {
+            TopAmount = topAmount;
+            return this;
+        }
+
         public IQueryBuilder SetBuildMode(BuildMode buildMode)
         {
-            BuildMode = BuildMode;
+            BuildMode = buildMode;
             return this;
         }
 

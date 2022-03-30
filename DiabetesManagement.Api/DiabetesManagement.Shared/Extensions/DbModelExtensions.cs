@@ -63,7 +63,7 @@ namespace DiabetesManagement.Shared.Extensions
             
             var query = model
                 .QueryBuilder(model.JoinDefinitionsBuilder(builder!), 
-                    b => b.SetBuildMode(BuildMode.Select).GenerateWhereClause(request)).Query;
+                    b => b.SetBuildMode(BuildMode.Select).SetTopAmount(topAmount).GenerateWhereClause(request)).Query;
             
             Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
@@ -98,6 +98,9 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static ExpandoObject ToDynamic(this IDbModel model)
         {
+            if (model == null)
+                return new ExpandoObject();
+
             return model.ToDynamic(model.Properties);
         }
 

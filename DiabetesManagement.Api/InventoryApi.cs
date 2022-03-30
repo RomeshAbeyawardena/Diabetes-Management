@@ -98,7 +98,7 @@ namespace DiabetesManagement.Api
                             Version = versionNumber
                         });
 
-                return new OkObjectResult(inventory);
+                return new OkObjectResult(inventory.ToDynamic());
             }
 
             return new BadRequestResult();

@@ -9,6 +9,7 @@ namespace DiabetesManagement.Shared.Contracts
         string Query { get; }
 
         IQueryBuilder SetBuildMode(BuildMode buildMode);
+        IQueryBuilder SetTopAmount(int topAmount);
         IQueryBuilder GenerateUpdateBody<TRequest>(TRequest request);
         IQueryBuilder GenerateWhereClause<TRequest>(TRequest request);
     }
