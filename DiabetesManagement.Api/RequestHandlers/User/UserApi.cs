@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using DiabetesManagement.Shared.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
@@ -18,8 +19,39 @@ namespace DiabetesManagement.Api
 
         }
 
+        [FunctionName("Login")]
+        public async Task<IActionResult> Login([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+            HttpRequest request)
+        {
+            var requiredConditions = new[]
+            {
+                request.Query.TryGetValue("emailAddress", out var emailAddress),
+                request.Query.TryGetValue("password", out var password)
+            };
+
+            if (requiredConditions.All(a => a))
+            {
+                var requestedUser = await HandlerFactory.Execute<UserFeature.GetRequest, Shared.Models.User>(UserFeature.Queries.GetUser, new UserFeature.GetRequest
+                {
+                    EmailAddress = emailAddress,
+                    AuthenticateUser = true,
+                    Password = password
+                });
+
+                if (requestedUser == null)
+                {
+                    return new UnauthorizedResult();
+                }
+
+                return new OkObjectResult(requestedUser.ToDynamic());
+            }
+
+            return new BadRequestResult();
+        }
+
+
         [FunctionName("Register")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] 
+        public async Task<IActionResult> Register([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] 
             HttpRequest request)
         {
             var requiredConditions = new[]
@@ -31,10 +63,18 @@ namespace DiabetesManagement.Api
 
             if(requiredConditions.All(a => a))
             {
-                await HandlerFactory.Execute<UserFeature.GetRequest>("", new UserFeature.GetRequest { });
+                var savedUser = await HandlerFactory.Execute<UserFeature.SaveRequest, Shared.Models.User>(
+                    UserFeature.Queries.GetUser, 
+                    new UserFeature.SaveRequest { 
+                        DisplayName = displayName, 
+                        EmailAddress = emailAddress, 
+                        Password = password 
+                    });
+
+                return new OkObjectResult(savedUser.ToDynamic());
             }
 
-            return new OkResult();
+            return new BadRequestResult();
         }
     }
 }

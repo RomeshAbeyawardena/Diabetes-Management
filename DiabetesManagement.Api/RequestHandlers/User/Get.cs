@@ -18,17 +18,28 @@ namespace DiabetesManagement.Api.RequestHandlers.User
 
         protected override void Dispose(bool disposing)
         {
-            
+
         }
 
         protected override Task<Shared.Models.User> HandleAsync(GetRequest request)
         {
+            if (request.AuthenticateUser)
+            {
+                return HandlerFactory.Execute<UserFeature.GetRequest, Shared.Models.User>(
+                    UserFeature.Queries.GetUser,
+                    new UserFeature.GetRequest
+                    {
+                        EmailAddress = request.EmailAddress,
+                        Password = request.Password
+                    });
+            }
+
             return HandlerFactory.Execute<UserFeature.GetRequest, Shared.Models.User>(
-                UserFeature.Queries.GetUser, 
-                new UserFeature.GetRequest { 
-                    EmailAddress = request.EmailAddress,
-                    Password = request.Password
-                });
+                    UserFeature.Queries.GetUser,
+                    new UserFeature.GetRequest
+                    {
+                        EmailAddress = request.EmailAddress
+                    });
         }
     }
 }
