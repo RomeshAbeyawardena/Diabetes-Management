@@ -5,9 +5,11 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
 {
+    using UserFeature = RequestHandlers.User;
     public class UserApi : ApiBase
     {
         public UserApi(ILogger<UserApi> logger, IConfiguration configuration)
@@ -17,7 +19,7 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("Register")]
-        public IActionResult Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] 
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] 
             HttpRequest request)
         {
             var requiredConditions = new[]
@@ -29,7 +31,7 @@ namespace DiabetesManagement.Api
 
             if(requiredConditions.All(a => a))
             {
-                
+                await HandlerFactory.Execute<UserFeature.GetRequest>("", new UserFeature.GetRequest { });
             }
 
             return new OkResult();

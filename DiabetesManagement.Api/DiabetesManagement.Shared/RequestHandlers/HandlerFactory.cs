@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Shared.Attributes;
+﻿using AutoMapper;
+using DiabetesManagement.Shared.Attributes;
 using DiabetesManagement.Shared.Base;
 using DiabetesManagement.Shared.Contracts;
 using Microsoft.Extensions.Logging;
@@ -88,19 +89,23 @@ namespace DiabetesManagement.Shared.RequestHandlers
 
         }
 
-        public HandlerFactory(string connectionString, ILogger logger, IEnumerable<Assembly>? assemblies = null)
+        public HandlerFactory(string connectionString, ILogger logger, IMapper mapper, IEnumerable<Assembly>? assemblies = null)
            : base(connectionString)
         {
             base.SetLogger = logger;
+            Mapper = mapper;
             Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
 
-        public HandlerFactory(ILogger logger, IDbConnection dbConnection, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null)
+        public HandlerFactory(ILogger logger, IDbConnection dbConnection, IMapper mapper, IDbTransaction? dbTransaction = null, IEnumerable<Assembly>? assemblies = null)
             : base(dbConnection, dbTransaction)
         {
             base.SetLogger = logger;
+            Mapper = mapper;
             Init(assemblies ?? new[] { typeof(HandlerFactory).Assembly });
         }
+
+        public IMapper Mapper { get; }
 
         public async Task Execute(string queryOrCommand, object request)
         {

@@ -17,7 +17,7 @@ namespace DiabetesManagement.Api.RequestHandlers.ApiToken
     [HandlerDescriptor(Queries.GetValidatedApiToken)]
     public class Get : HandlerBase<GetRequest, Models.ApiToken>
     {
-        private async Task<TokenValidationResult> ReadJwt(string token, TokenValidationParameters tokenValidationParameters)
+        private static async Task<TokenValidationResult> ReadJwt(string token, TokenValidationParameters tokenValidationParameters)
         {
             var tokenHandler = new JsonWebTokenHandler();
             if (!tokenHandler.CanReadToken(token))

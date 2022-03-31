@@ -1,3 +1,4 @@
+using AutoMapper;
 using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -16,7 +17,7 @@ public class HandlerFactoryTests
     private HandlerFactory? handlerFactory;
     private Mock<ILogger>? loggerMock;
     private Mock<IDbConnection>? dbConnectionMock;
-
+    private Mock<IMapper>? mapperMock;
     private async Task VerifyIsNotNull(IEnumerable<string> queries)
     {
         foreach (var query in queries)
@@ -33,7 +34,8 @@ public class HandlerFactoryTests
     {
         loggerMock = new();
         dbConnectionMock = new();
-        handlerFactory = new(loggerMock.Object, dbConnectionMock.Object);
+        mapperMock = new();
+        handlerFactory = new(loggerMock.Object, dbConnectionMock.Object, mapperMock.Object);
     }
 
     [Test] public async Task Ensure_QueryHandlers_exist()

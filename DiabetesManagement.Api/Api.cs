@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Shared;
+﻿using AutoMapper;
+using DiabetesManagement.Shared;
 using DiabetesManagement.Shared.Contracts;
 using DiabetesManagement.Shared.RequestHandlers;
 using Microsoft.AspNetCore.Http;
@@ -51,11 +52,16 @@ namespace DiabetesManagement.Api
         protected ILogger Logger { get; }
         protected ApplicationSettings ApplicationSettings { get; }
         protected IAuthenticatedHandlerFactory HandlerFactory { get; }
+        protected IMapper Mapper { get; }
 
         public ApiBase(ILogger log, IConfiguration configuration)
         {
+            var assemblies = Shared.RequestHandlers.HandlerFactory.GetAssemblies(typeof(ApiBase).Assembly);
+
             var connectionString = configuration.GetConnectionString("Default");
-            HandlerFactory = new AuthenticatedHandlerFactory(connectionString, log, Shared.RequestHandlers.HandlerFactory.GetAssemblies(typeof(ApiBase).Assembly));
+            Mapper = new MapperConfiguration(cfg => cfg.AddMaps(assemblies)).CreateMapper();
+            HandlerFactory = new AuthenticatedHandlerFactory(connectionString, log, Mapper, assemblies);
+            
         }
 
         public virtual void Dispose()
