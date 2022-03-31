@@ -34,14 +34,14 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
             {
                 request.User.EmailAddress = request.User.EmailAddress.ToUpper().Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
-                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
             }
 
             if (!string.IsNullOrEmpty(request.User.DisplayName))
             {
                 request.User.DisplayName = request.User.DisplayName.ToUpper().Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.PersonalDataServerKey!),
-                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
             }
 
             if (!string.IsNullOrEmpty(request.User.Password))
