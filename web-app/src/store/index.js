@@ -1,11 +1,12 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import Inventory from "./inventory";
+import User from "./user";
 Vue.use(Vuex)
 
 export const Store = {
   mutations: {
-    toggleSideBar: "toggleSidebar",
+    setSideBarDisplay: "setSideBarDisplay",
     setDialogOptions: "setDialogOptions"
   }
 }
@@ -29,7 +30,7 @@ export default new Vuex.Store({
     setDialogOptions(state, dialogOptions) {
       Vue.set(state, "dialog", dialogOptions);
     },
-    toggleSideBar(state, display){
+    setSideBarDisplay(state, display){
       state.sideBar.display = display;
     }
   },
@@ -37,6 +38,7 @@ export default new Vuex.Store({
     
   },
   modules: {
-    Inventory
+    Inventory,
+    User
   }
 })

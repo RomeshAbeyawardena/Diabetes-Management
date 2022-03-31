@@ -19,49 +19,12 @@ namespace DiabetesManagement.Api
     using DiabetesManagement.Shared;
     using DiabetesManagement.Shared.Extensions;
 
-    public class InventoryApi : IDisposable
+    public class InventoryApi : ApiBase
     {
-        private readonly IAuthenticatedHandlerFactory handlerFactory;
-        private readonly ApplicationSettings applicationSettings;
-        private readonly ILogger<InventoryApi> _logger;
-        
-        private async Task<bool> AuthenticateRequest(HttpRequest httpRequest)
-        {
-            httpRequest.Headers.TryGetValue("X-API-KEY", out var apiKey);
-            httpRequest.Headers.TryGetValue("X-API-CHALLENGE", out var apiChallenge);
-
-            var apiToken = await handlerFactory
-                .Execute<ApiKeyFeature.GetRequest, DbModels.ApiToken>(
-                    ApiKeyFeature.Queries.GetValidatedApiToken, 
-                    new ApiKeyFeature.GetRequest { 
-                        Key = Convert.FromBase64String(applicationSettings.SigningKey),
-                        ValidAudience = applicationSettings.Audience,
-                        ValidIssuer = applicationSettings.Issuer,
-                        ApiKey = apiKey, 
-                        ApiKeyChallenge = apiChallenge,
-                        UseAuthenticatedContext = false,
-                    });
-
-            if (await handlerFactory.IsAuthenticated(apiToken))
-            {
-                return true;
-            }
-
-            throw new UnauthorizedAccessException();
-        }
-
-        private IActionResult HandleException(Exception exception)
-        {
-            _logger.LogError(exception, "A handled error has occurred");
-            return new BadRequestObjectResult(exception.Message);
-        }
-
         public InventoryApi(ILogger<InventoryApi> log, IConfiguration configuration)
+            : base(log, configuration)
         {
-            _logger = log;
-            this.applicationSettings = new ApplicationSettings(configuration);
-            var connectionString = configuration.GetConnectionString("Default");
-            handlerFactory = new AuthenticatedHandlerFactory(connectionString, log, HandlerFactory.GetAssemblies(typeof(InventoryApi).Assembly));
+            
         }
 
         [FunctionName("GetInventory")]
@@ -87,7 +50,7 @@ namespace DiabetesManagement.Api
                     versionNumber = versionNum;
                 }
 
-                var inventory = await handlerFactory
+                var inventory = await HandlerFactory
                     .Execute<GetRequest, DbModels.InventoryHistory>(
                         Queries.GetInventoryItems, 
                         new GetRequest
@@ -122,7 +85,7 @@ namespace DiabetesManagement.Api
                 {
                     if (Guid.TryParse(userIdValue, out var userId))
                     {
-                        savedEntity = await handlerFactory
+                        savedEntity = await HandlerFactory
                             .Execute<SaveRequest, DbModels.InventoryHistory>(
                                 Commands.SaveInventoryPayload, 
                                 new SaveRequest
@@ -168,13 +131,13 @@ namespace DiabetesManagement.Api
 
             if(requiredFields.All(a => a))
             {
-                var result = await handlerFactory.Execute<ApiKeyFeature.SaveRequest, string>(ApiKeyFeature.Commands.SaveApiTokenChallenge, new ApiKeyFeature.SaveRequest
+                var result = await HandlerFactory.Execute<ApiKeyFeature.SaveRequest, string>(ApiKeyFeature.Commands.SaveApiTokenChallenge, new ApiKeyFeature.SaveRequest
                 {
                     ApiKey = apiKey,
                     Secret = secret,
-                    Key = Convert.FromBase64String(applicationSettings.SigningKey),
-                    Audience = applicationSettings.Audience,
-                    Issuer = applicationSettings.Issuer,
+                    Key = Convert.FromBase64String(ApplicationSettings.SigningKey),
+                    Audience = ApplicationSettings.Audience,
+                    Issuer = ApplicationSettings.Issuer,
 
                 });
 
@@ -182,12 +145,6 @@ namespace DiabetesManagement.Api
             }
 
             return new BadRequestResult();
-        }
-
-        public void Dispose()
-        {
-            handlerFactory?.Dispose();
-            GC.SuppressFinalize(this);
         }
     }
 }
