@@ -25,8 +25,8 @@ namespace DiabetesManagement.Api.RequestHandlers.User
         {
             var requiredConditions = new[]
             {
-                request.Query.TryGetValue("emailAddress", out var emailAddress),
-                request.Query.TryGetValue("password", out var password)
+                request.Form.TryGetValue("emailAddress", out var emailAddress),
+                request.Form.TryGetValue("password", out var password)
             };
 
             if (requiredConditions.All(a => a))
@@ -56,15 +56,15 @@ namespace DiabetesManagement.Api.RequestHandlers.User
         {
             var requiredConditions = new[]
             {
-                request.Query.TryGetValue("emailAddress", out var emailAddress),
-                request.Query.TryGetValue("displayName", out var displayName),
-                request.Query.TryGetValue("password", out var password)
+                request.Form.TryGetValue("emailAddress", out var emailAddress),
+                request.Form.TryGetValue("displayName", out var displayName),
+                request.Form.TryGetValue("password", out var password)
             };
 
             if(requiredConditions.All(a => a))
             {
                 var savedUser = await HandlerFactory.Execute<SaveRequest, Shared.Models.User>(
-                    Queries.GetUser, 
+                    Commands.RegisterUser, 
                     new SaveRequest { 
                         DisplayName = displayName, 
                         EmailAddress = emailAddress, 

@@ -22,8 +22,26 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
             
         }
 
-        protected override Task<Guid> HandleAsync(SaveCommand request)
+        protected override async Task<Guid> HandleAsync(SaveCommand request)
         {
+            var transaction = GetOrBeginTransaction;
+            if(request.User!.UserId == default)
+            {
+                request.User.UserId = Guid.NewGuid();
+            }
+
+            if (!string.IsNullOrEmpty(request.User.EmailAddress))
+            {
+                request.User.EmailAddress = request.User.EmailAddress.ToUpper().Encrypt("AES",
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerKey!),
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+            }
+
+            if (!string.IsNullOrEmpty(request.User.Password))
+            {
+                request.User.Password = request.User.Password.Hash("SHA512", ApplicationSettings.Instance!.ServerKey!);
+            }
+
             if(request.User!.Created == default)
             {
                 request.User.Created = DateTimeOffset.UtcNow;
@@ -34,7 +52,14 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
                 request.User.Hash = request.User.GetHash();
             }
 
-            return request.User.Insert(DbConnection, GetOrBeginTransaction);
+            var result = await request.User.Insert(DbConnection, transaction);
+
+            if (request.CommitChanges)
+            {
+                transaction.Commit();
+            }
+
+            return result;
         }
     }
 }

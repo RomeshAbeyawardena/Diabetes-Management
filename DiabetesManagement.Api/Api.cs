@@ -57,7 +57,7 @@ namespace DiabetesManagement.Api
         public ApiBase(ILogger log, IConfiguration configuration)
         {
             var assemblies = Shared.RequestHandlers.HandlerFactory.GetAssemblies(typeof(ApiBase).Assembly);
-
+            ApplicationSettings = new ApplicationSettings(configuration);
             var connectionString = configuration.GetConnectionString("Default");
             Mapper = new MapperConfiguration(cfg => cfg.AddMaps(assemblies)).CreateMapper();
             HandlerFactory = new AuthenticatedHandlerFactory(connectionString, log, Mapper, assemblies);

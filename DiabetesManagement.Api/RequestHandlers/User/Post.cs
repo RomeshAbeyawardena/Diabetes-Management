@@ -36,10 +36,10 @@ namespace DiabetesManagement.Api.RequestHandlers.User
             var userId = await HandlerFactory.Execute<UserFeature.SaveCommand, Guid>(
                 UserFeature.Commands.SaveUser, 
                 new UserFeature.SaveCommand { User = new Shared.Models.User {
-                    DisplayName = request.DisplayName,
-                    EmailAddress = request.EmailAddress,
-                    Password = request.Password
-                }});
+                        DisplayName = request.DisplayName,
+                        EmailAddress = request.EmailAddress,
+                        Password = request.Password
+                    }, CommitChanges = true });
 
             return await HandlerFactory.Execute<UserFeature.GetRequest, Shared.Models.User>(
                 UserFeature.Queries.GetUser, new UserFeature.GetRequest { UserId = userId });
