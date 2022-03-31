@@ -47,6 +47,7 @@ namespace DiabetesManagement.Api
             return new BadRequestObjectResult(exception.Message);
         }
 
+
         protected ILogger Logger { get; }
         protected ApplicationSettings ApplicationSettings { get; }
         protected IAuthenticatedHandlerFactory HandlerFactory { get; }
