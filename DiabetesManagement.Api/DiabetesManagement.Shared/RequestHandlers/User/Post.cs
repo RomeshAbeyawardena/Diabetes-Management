@@ -33,13 +33,20 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
             if (!string.IsNullOrEmpty(request.User.EmailAddress))
             {
                 request.User.EmailAddress = request.User.EmailAddress.ToUpper().Encrypt("AES",
-                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerKey!),
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+            }
+
+            if (!string.IsNullOrEmpty(request.User.DisplayName))
+            {
+                request.User.DisplayName = request.User.DisplayName.ToUpper().Encrypt("AES",
+                    Convert.FromBase64String(ApplicationSettings.Instance!.PersonalDataServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
             }
 
             if (!string.IsNullOrEmpty(request.User.Password))
             {
-                request.User.Password = request.User.Password.Hash("SHA512", ApplicationSettings.Instance!.ServerKey!);
+                request.User.Password = request.User.Password.Hash("SHA512", ApplicationSettings.Instance!.ConfidentialServerKey!);
             }
 
             if(request.User!.Created == default)

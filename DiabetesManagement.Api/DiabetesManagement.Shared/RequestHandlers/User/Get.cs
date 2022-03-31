@@ -28,18 +28,35 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
             if (!string.IsNullOrWhiteSpace(request.EmailAddress))
             {
                 request.EmailAddress = request.EmailAddress.ToUpper().Encrypt("AES",
-                    Convert.FromBase64String(ApplicationSettings.Instance!.ServerKey!),
+                    Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
             }
 
             if (!string.IsNullOrEmpty(request.Password))
             {
-                request.Password = request.Password.Hash("SHA512", ApplicationSettings.Instance!.ServerKey!);
+                request.Password = request.Password.Hash("SHA512", ApplicationSettings.Instance!.ConfidentialServerKey!);
             }
 
-            var result = await user.Get(DbConnection, request, transaction: GetOrBeginTransaction);
+            var results = await user.Get(DbConnection, request, transaction: GetOrBeginTransaction);
 
-            return result.FirstOrDefault()!;
+            foreach(var result in results)
+            {
+                if (!string.IsNullOrWhiteSpace(result.EmailAddress))
+                {
+                    result.EmailAddress = result.EmailAddress.Decrypt("AES",
+                        Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
+                        Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+                }
+
+                if (!string.IsNullOrEmpty(result.DisplayName))
+                {
+                    result.DisplayName = result.DisplayName.Decrypt("AES",
+                        Convert.FromBase64String(ApplicationSettings.Instance!.PersonalDataServerKey!),
+                        Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!));
+                }
+            }
+
+            return results.FirstOrDefault()!;
         }
     }
 }
