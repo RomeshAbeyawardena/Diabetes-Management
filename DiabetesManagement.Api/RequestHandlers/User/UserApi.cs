@@ -8,11 +8,11 @@ using Microsoft.Extensions.Logging;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Api
+namespace DiabetesManagement.Api.RequestHandlers.User
 {
-    using UserFeature = RequestHandlers.User;
     public class UserApi : ApiBase
     {
+        public const string BaseUrl = "User";
         public UserApi(ILogger<UserApi> logger, IConfiguration configuration)
             : base(logger, configuration)
         {
@@ -20,7 +20,7 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("Login")]
-        public async Task<IActionResult> Login([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)]
+        public async Task<IActionResult> Login([HttpTrigger(AuthorizationLevel.Function, "post", Route = BaseUrl)]
             HttpRequest request)
         {
             var requiredConditions = new[]
@@ -31,7 +31,7 @@ namespace DiabetesManagement.Api
 
             if (requiredConditions.All(a => a))
             {
-                var requestedUser = await HandlerFactory.Execute<UserFeature.GetRequest, Shared.Models.User>(UserFeature.Queries.GetUser, new UserFeature.GetRequest
+                var requestedUser = await HandlerFactory.Execute<GetRequest, Shared.Models.User>(Queries.GetUser, new GetRequest
                 {
                     EmailAddress = emailAddress,
                     AuthenticateUser = true,
@@ -51,7 +51,7 @@ namespace DiabetesManagement.Api
 
 
         [FunctionName("Register")]
-        public async Task<IActionResult> Register([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] 
+        public async Task<IActionResult> Register([HttpTrigger(AuthorizationLevel.Function, "post", Route = $"{BaseUrl}/{nameof(Register)}")] 
             HttpRequest request)
         {
             var requiredConditions = new[]
@@ -63,9 +63,9 @@ namespace DiabetesManagement.Api
 
             if(requiredConditions.All(a => a))
             {
-                var savedUser = await HandlerFactory.Execute<UserFeature.SaveRequest, Shared.Models.User>(
-                    UserFeature.Queries.GetUser, 
-                    new UserFeature.SaveRequest { 
+                var savedUser = await HandlerFactory.Execute<SaveRequest, Shared.Models.User>(
+                    Queries.GetUser, 
+                    new SaveRequest { 
                         DisplayName = displayName, 
                         EmailAddress = emailAddress, 
                         Password = password 

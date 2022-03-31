@@ -9,18 +9,14 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Api
+namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
-    using DiabetesManagement.Api.RequestHandlers.InventoryHistory;
-    using DiabetesManagement.Shared.Contracts;
-    using DiabetesManagement.Shared.RequestHandlers;
     using DbModels = Shared.Models;
-    using ApiKeyFeature = RequestHandlers.ApiToken;
-    using DiabetesManagement.Shared;
     using DiabetesManagement.Shared.Extensions;
 
     public class InventoryApi : ApiBase
     {
+        public const string BaseUrl = "Inventory";
         public InventoryApi(ILogger<InventoryApi> log, IConfiguration configuration)
             : base(log, configuration)
         {
@@ -28,8 +24,8 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("GetInventory")]
-        public async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest request)
+        public async Task<IActionResult> GetInventory(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = BaseUrl)] HttpRequest request)
         {
             //await AuthenticateRequest(request);
 
@@ -68,7 +64,7 @@ namespace DiabetesManagement.Api
         }
 
         [FunctionName("SaveInventory")]
-        public async Task<IActionResult> SaveInventory([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
+        public async Task<IActionResult> SaveInventory([HttpTrigger(AuthorizationLevel.Function, "post", Route = BaseUrl)] HttpRequest request)
         {
             try
             {
@@ -118,33 +114,6 @@ namespace DiabetesManagement.Api
             {
                 return HandleException(dataException);
             }
-        }
-
-        [FunctionName("Challenge")]
-        public async Task<IActionResult> Challenge([HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest request)
-        {
-            var requiredFields = new[]
-            {
-                request.Form.TryGetValue("apiKey", out var apiKey),
-                request.Form.TryGetValue("apiSecret", out var secret)
-            };
-
-            if(requiredFields.All(a => a))
-            {
-                var result = await HandlerFactory.Execute<ApiKeyFeature.SaveRequest, string>(ApiKeyFeature.Commands.SaveApiTokenChallenge, new ApiKeyFeature.SaveRequest
-                {
-                    ApiKey = apiKey,
-                    Secret = secret,
-                    Key = Convert.FromBase64String(ApplicationSettings.SigningKey),
-                    Audience = ApplicationSettings.Audience,
-                    Issuer = ApplicationSettings.Issuer,
-
-                });
-
-                return new OkObjectResult(result);
-            }
-
-            return new BadRequestResult();
         }
     }
 }
