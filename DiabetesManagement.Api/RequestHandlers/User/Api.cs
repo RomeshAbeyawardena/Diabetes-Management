@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api.RequestHandlers.User
 {
-    public class UserApi : ApiBase
+    public class Api : ApiBase
     {
         public const string BaseUrl = "User";
-        public UserApi(ILogger<UserApi> logger, IConfiguration configuration)
+        public Api(ILogger<Api> logger, IConfiguration configuration)
             : base(logger, configuration)
         {
 

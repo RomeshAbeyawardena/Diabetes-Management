@@ -10,10 +10,10 @@ using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api.RequestHandlers.ApiToken
 {
-    public class TokenApi : ApiBase
+    public class Api : ApiBase
     {
         public const string BaseUrl = "Token";
-        public TokenApi(ILogger log, IConfiguration configuration) : base(log, configuration)
+        public Api(ILogger log, IConfiguration configuration) : base(log, configuration)
         {
         }
 

@@ -14,10 +14,10 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
     using DbModels = Shared.Models;
     using DiabetesManagement.Shared.Extensions;
 
-    public class InventoryApi : ApiBase
+    public class Api : ApiBase
     {
         public const string BaseUrl = "Inventory";
-        public InventoryApi(ILogger<InventoryApi> log, IConfiguration configuration)
+        public Api(ILogger<Api> log, IConfiguration configuration)
             : base(log, configuration)
         {
             
