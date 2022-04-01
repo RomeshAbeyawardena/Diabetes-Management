@@ -16,25 +16,25 @@ namespace DiabetesManagement.Shared.Base
         private readonly IDictionary<PropertyInfo, string> columnResolutionDictionary;
         private TableAttribute? tableAttribute;
         private IEnumerable<string>? columns;
-        
+
         private void UpdateModelCache()
         {
             var currentModelCache = DefaultDbModelCache.Current;
-//            currentModelCache.TryAdd(EntityType, this);
+            //            currentModelCache.TryAdd(EntityType, this);
         }
 
         protected virtual TableAttribute? TableAttribute => tableAttribute ??= EntityType.GetCustomAttribute<TableAttribute>();
-        protected virtual IEnumerable<string> Columns 
-        { 
-            get 
+        protected virtual IEnumerable<string> Columns
+        {
+            get
             {
                 if (columns == null)
                 {
                     columns = GetColumns();
                 }
 
-                return columns; 
-            } 
+                return columns;
+            }
         }
 
         protected virtual Type EntityType => type ??= GetType();
@@ -44,7 +44,7 @@ namespace DiabetesManagement.Shared.Base
         protected IEnumerable<string> GetColumns()
         {
             var columnsList = new List<string>();
-            foreach(var property in Properties)
+            foreach (var property in Properties)
             {
                 if (!property.CanWrite || property.Name == nameof(IdProperty))
                 {
@@ -56,7 +56,7 @@ namespace DiabetesManagement.Shared.Base
 
                 var name = columnAttribute != null ? columnAttribute.Name : property.Name;
 
-                if(keyAttribute != null)
+                if (keyAttribute != null)
                 {
                     IdProperty = property.Name;
                 }
@@ -93,7 +93,7 @@ namespace DiabetesManagement.Shared.Base
 
         public string ResolveColumnName(PropertyInfo property, bool fullyQualified)
         {
-            if(property == null)
+            if (property == null)
             {
                 return null!;
             }
@@ -118,6 +118,26 @@ namespace DiabetesManagement.Shared.Base
         string IDbModel.TableName => $"[{Schema}].[{TableName}]";
         public virtual IEnumerable<PropertyInfo> Properties => properties ??= EntityType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
         public string FullyQualifiedColumnDelimitedList => $"[{TableName}].[{string.Join($"], [{TableName}].[", Columns)}]";
+        
+        public string FullyQualifiedColumnDelimitedListWithAlias 
+        {
+            get {
+                if (!columnResolutionDictionary.Any())
+                {
+                    GetColumns();
+                }
+
+                var items = new List<string>();
+
+                foreach(var (property, column) in columnResolutionDictionary)
+                {
+                    items.Add($"[{TableName}].[{column}] [{property.Name}]");
+                }
+
+                return string.Join(", ", items);
+            }
+        }
+
         public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
         public virtual string WhereClause => $"WHERE [{IdProperty}]= @{IdProperty}";
 

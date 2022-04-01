@@ -64,7 +64,7 @@ namespace DiabetesManagement.Shared.Defaults
             return query;
         }
 
-        private static string GetColumns(IEnumerable<IJoinDefinition> joinDefinitions)
+        private static string GetColumns(IEnumerable<IJoinDefinition> joinDefinitions, bool withAlias = false)
         {
             var columnList = new StringBuilder();
             
@@ -75,7 +75,7 @@ namespace DiabetesManagement.Shared.Defaults
                     columnList.Append(',');
                 }
 
-                columnList.Append($"{model.FullyQualifiedColumnDelimitedList}");
+                columnList.Append($"{(withAlias ? model.FullyQualifiedColumnDelimitedListWithAlias : model.FullyQualifiedColumnDelimitedList)}");
             }
 
             foreach(var joinDefinition in joinDefinitions)
@@ -100,7 +100,7 @@ namespace DiabetesManagement.Shared.Defaults
             var query = new StringBuilder();
             query.Append(GetQueryEntry(BuildMode)
                 .Replace("{Pre}", TopAmount.HasValue ? $"TOP({TopAmount})" : string.Empty)
-                .Replace("{ColumnsDelimitedList}", Columns)
+                .Replace("{ColumnsDelimitedList}", BuildMode == BuildMode.Insert ? Columns : ColumnsWithAlias)
                 .Replace("{TableName}", 
                 (joinDefinitions != null && joinDefinitions.Any() && BuildMode == BuildMode.Select)
                     ? joinDefinitions.Build(out properties)
@@ -183,6 +183,10 @@ namespace DiabetesManagement.Shared.Defaults
             Model = model;
             this.joinDefinitions = joinDefinitions;
         }
+
+        public string ColumnsWithAlias => columns ??= (joinDefinitions == null || !joinDefinitions.Any()
+            ? Model.FullyQualifiedColumnDelimitedListWithAlias
+            : GetColumns(joinDefinitions, true));
 
         public string Columns => columns ??= (joinDefinitions == null || !joinDefinitions.Any()
             ? Model.FullyQualifiedColumnDelimitedList
