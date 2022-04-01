@@ -1,4 +1,9 @@
 import Vue from "vue";
+import userApi from "../api/user";
+
+let element = document.getElementById("app");
+let attributeValue = element.getAttribute("data-base-url");
+userApi.create(attributeValue);
 
 export const UserState = {
     state: {
@@ -28,10 +33,11 @@ export default {
         }
     },
     actions: {
-        async login(context, login){
-            //do login
+        async login(context, login)
+        {
             console.log(login);
-            let data = {};
+            let data = await userApi.login(login.emailAddress, login.password);
+
             context.commit(UserState.mutations.setAccount, data);
             context.commit(UserState.mutations.setUserId, data.userId);
         }

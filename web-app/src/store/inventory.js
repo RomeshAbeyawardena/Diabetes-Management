@@ -165,7 +165,7 @@ export default {
 
             if(items && items.length)
             {
-                await inventoryApi.inventory.post({ items: JSON.stringify(items), key: "diabetes.unitmanager", userId:"c55d2555-dc9a-4583-ada2-d68f9c21b184", type:"unitdate" });
+                await inventoryApi.post({ items: JSON.stringify(items), key: "diabetes.unitmanager", userId:"c55d2555-dc9a-4583-ada2-d68f9c21b184", type:"unitdate" });
             }
         }
     }
