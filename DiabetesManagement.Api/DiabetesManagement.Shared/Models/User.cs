@@ -10,7 +10,7 @@ namespace DiabetesManagement.Shared.Models
         [Key]
         public Guid UserId { get; set; }
         public string? DisplayName { get; set; }
-        [Column("[DISPLAYNAME_CS]")]
+        [Column("DISPLAYNAME_CS")]
         public string? DisplayNameCaseSignature { get; set; }
 
         public string? EmailAddress { get; set; }

@@ -8,10 +8,17 @@ namespace DiabetesManagement.Shared.Tests
         [Test]
         public void Test()
         {
-            var expectedValue = "The blue Moon";
-            var caseSignature = expectedValue.GetCaseSignature();
-            Assert.AreEqual("AgQEBAQEBAQEAgQEBA==", caseSignature);
-            Assert.AreEqual(expectedValue, caseSignature.ProcessCaseSignature("the blue moon"));
+            //var expectedValue = "The blue Moon";
+            //var caseSignature = expectedValue.GetCaseSignature();
+            //Assert.AreEqual("AgQEBAQEBAQEAgQEBA==", caseSignature);
+            //Assert.AreEqual(expectedValue, caseSignature.ProcessCaseSignature("the blue moon"));
+
+            var expectedValue = "KRISH.ELLIS";
+            var expectedSignature = "AgQEBAQEAgQEBAQ=";
+
+            Assert.AreEqual("Krish.Ellis", expectedSignature.ProcessCaseSignature(expectedValue));
         }
+
+
     }
 }

@@ -32,7 +32,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
 
             if (!string.IsNullOrEmpty(request.User.EmailAddress))
             {
-                request.User.EmailAddress = request.User.EmailAddress.ToUpper().Encrypt("AES",
+                request.User.EmailAddress = request.User.EmailAddress.Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
                 request.User.EmailAddressCaseSignature = str;
@@ -40,7 +40,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
 
             if (!string.IsNullOrEmpty(request.User.DisplayName))
             {
-                request.User.DisplayName = request.User.DisplayName.ToUpper().Encrypt("AES",
+                request.User.DisplayName = request.User.DisplayName.Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.PersonalDataServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
                 

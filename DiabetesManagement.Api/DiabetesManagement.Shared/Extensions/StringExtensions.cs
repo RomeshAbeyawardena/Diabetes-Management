@@ -26,7 +26,7 @@ namespace DiabetesManagement.Shared.Extensions
             for(var i=0; i<value.Length; i++)
             {
                 var val = value[i];
-                array[i] = !char.IsNumber(val) && char.IsUpper(val) ? (byte)0x02 : (byte)0x04;
+                array[i] = char.IsUpper(val) ? (byte)0x02 : (byte)0x04;
             }
 
             return Convert.ToBase64String(array);
@@ -41,7 +41,9 @@ namespace DiabetesManagement.Shared.Extensions
             for(var j=0; j < array.Length; j++)
             {
                 var val = originalString[j];
-                str += array[j] == 0x02 ? char.ToUpper(val) : val;
+                str += array[j] == 0x02 
+                    ? char.ToUpper(val) 
+                    : char.ToLower(val);
             }
 
             return str;
@@ -56,7 +58,7 @@ namespace DiabetesManagement.Shared.Extensions
             {
                 using (var cryptoStream = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
                 using (var streamWriter = new StreamWriter(cryptoStream))
-                    streamWriter.Write(value);
+                    streamWriter.Write(value.ToUpper());
 
                 return Convert.ToBase64String(ms.ToArray());
             }
@@ -75,7 +77,7 @@ namespace DiabetesManagement.Shared.Extensions
 
                     if (!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(caseSignature))
                     {
-                        return result.ProcessCaseSignature(caseSignature)!;
+                        return caseSignature.ProcessCaseSignature(result)!;
                     }
                     return result;
                 }

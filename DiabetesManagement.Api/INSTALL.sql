@@ -93,3 +93,8 @@ CREATE TABLE [dbo].[API_TOKEN_CLAIM] (
     [CLAIM] NVARCHAR(200) NOT NULL,
     [CREATED] [DATETIMEOFFSET](7) NOT NULL
 )
+
+DELETE FROM [dbo].[User]
+SELECT TOP(1) [User].[UserId] [UserId], [User].[DisplayName] [DisplayName], [User].[DISPLAYNAME_CS] [DisplayNameCaseSignature], [User].[EmailAddress] [EmailAddress], 
+[User].[EMAILADDRESS_CS] [EmailAddressCaseSignature], [User].[Password] [Password], [User].[Hash] [Hash], [User].[Created] [Created], [User].[Modified] [Modified] 
+FROM [dbo].[User] WHERE [User].[Password] = @Password AND [User].[EmailAddress] = @EmailAddress
