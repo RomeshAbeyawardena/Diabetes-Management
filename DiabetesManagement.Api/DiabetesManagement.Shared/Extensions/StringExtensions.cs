@@ -62,7 +62,7 @@ namespace DiabetesManagement.Shared.Extensions
             }
         }
 
-        public static string Decrypt(this string value, string algorithm, byte[] rgbKey, byte[]? rgbIV, string caseSignature)
+        public static string Decrypt(this string value, string algorithm, byte[] rgbKey, byte[]? rgbIV, string? caseSignature = default)
         {
             using var algo = SymmetricAlgorithm.Create(algorithm);
             var encryptor = algo!.CreateDecryptor(rgbKey, rgbIV);
@@ -71,7 +71,13 @@ namespace DiabetesManagement.Shared.Extensions
                 using (var cryptoStream = new CryptoStream(ms, encryptor, CryptoStreamMode.Read))
                 using (var streamReader = new StreamReader(cryptoStream))
                 {
-                    return streamReader.ReadToEnd();
+                    var result = streamReader.ReadToEnd();
+
+                    if (!string.IsNullOrEmpty(result) && !string.IsNullOrWhiteSpace(caseSignature))
+                    {
+                        return result.ProcessCaseSignature(caseSignature)!;
+                    }
+                    return result;
                 }
             }
         }

@@ -35,6 +35,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
                 request.User.EmailAddress = request.User.EmailAddress.ToUpper().Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.ConfidentialServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
+                request.User.EmailAddressCaseSignature = str;
             }
 
             if (!string.IsNullOrEmpty(request.User.DisplayName))
@@ -42,6 +43,8 @@ namespace DiabetesManagement.Shared.RequestHandlers.User
                 request.User.DisplayName = request.User.DisplayName.ToUpper().Encrypt("AES",
                     Convert.FromBase64String(ApplicationSettings.Instance!.PersonalDataServerKey!),
                     Convert.FromBase64String(ApplicationSettings.Instance!.ServerInitialVector!), out var str);
+                
+                request.User.DisplayNameCaseSignature = str;
             }
 
             if (!string.IsNullOrEmpty(request.User.Password))
