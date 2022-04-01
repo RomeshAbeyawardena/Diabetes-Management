@@ -1,9 +1,14 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
 import HelloWorld from './components/HelloWorld.vue'
+import Dialog from 'primevue/dialog';
+import { ref } from 'vue'
+import { useStore } from './stores';
+
+const store = ref(useStore());
+
 </script>
 
 <template>
+  <Dialog />
   <HelloWorld msg="Hello Vue 3 + Vite" />
 </template>
