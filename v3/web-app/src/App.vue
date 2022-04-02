@@ -1,5 +1,6 @@
 <script setup>
 //components
+import ActionNavigation from './components/ActionNavigation.vue';
 import Dialogs from './components/dialogs/Dialogs.vue';
 import Grid from "./components/Grid.vue";
 import Navigation from "./components/Navigation.vue";
@@ -20,5 +21,6 @@ const entry = new Inventory(Date(), "", 0);
     <Title />
     <Navigation />
     <Grid />
+    <ActionNavigation />
   </div>
 </template>

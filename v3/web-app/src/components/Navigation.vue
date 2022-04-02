@@ -3,14 +3,14 @@
 </script>
 <template>
     <div id="navigation" class="grid justify-content-center align-items-center">
-        <div class="col-1">
+        <div class="col-2">
             <Button icon="pi pi-angle-double-left" 
                     class="p-button-rounded p-button-outlined" />
         </div>
-        <div class="col-10">
+        <div class="col-8">
             <h4>2nd April 2022</h4>
         </div>
-        <div class="col-1">
+        <div class="col-2">
             <Button icon="pi pi-angle-double-right" 
                     class="p-button-rounded p-button-outlined" />
         </div>

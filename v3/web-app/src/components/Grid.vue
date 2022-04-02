@@ -17,8 +17,7 @@
     }  
 </script>
 <template> 
-    <div v-bind:key="item.id" v-for="item in items">
-        <GridItem :entry="item" />
+    <div id="grid" >
+        <GridItem v-bind:key="item.id" v-for="item in items" :entry="item" />
     </div>
-    <Button label="Add" v-on:click="addNew" />
 </template>

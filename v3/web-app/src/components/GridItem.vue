@@ -50,10 +50,10 @@
 
 <template>
     <div class="grid" v-if="showHeader">
-        <div class="col-2">
+        <div class="col-4">
             <label for="inputDate">Date</label>
         </div>
-        <div class="col-8">
+        <div class="col-6">
             <label for="description">Description</label>
         </div>
         <div class="col-2">
@@ -61,12 +61,12 @@
         </div>
     </div>
     <div class="grid">
-        <div class="col-2">
+        <div class="col-4">
             <InputMask id="inputDate" style="width: 100%"
                     :mask="inputFormat"
                     v-model="inputDate" />
         </div>
-        <div class="col-8">
+        <div class="col-6">
             <InputText id="description" type="text" style="width: 100%"
                 v-model="localEntry.description" />
         </div>

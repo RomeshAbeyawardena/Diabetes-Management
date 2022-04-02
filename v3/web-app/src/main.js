@@ -10,8 +10,6 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./scss/index.scss";
 
-InventoryDb.getDbConnection();
-
 function inventoryDbPlugin() {
     return { inventoryDb: InventoryDb };
 }

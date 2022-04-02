@@ -7,3 +7,31 @@ div#navigation {
         }
     }
 }
+
+div#action-navigation {
+    .p-speeddial {
+        a {
+            text-decoration: none;
+        }
+
+        &.p-speeddial-opened{
+            .p-speeddial-list {
+                display: block;
+            }
+        }
+
+        .p-speeddial-list {
+            position: absolute;
+            display: none;
+            top: -10.8rem;
+        }
+    }
+}
+
+div#grid {
+    height: calc(100vh - 205px);
+    margin-top: 1rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 1rem;
+}
