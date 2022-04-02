@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Inventory } from '../models/Inventory';
+import { Inventory, State } from '../models/Inventory';
 export const useInventoryStore = defineStore('inventory', {
     state:() => {
         return {
@@ -21,7 +21,11 @@ export const useInventoryStore = defineStore('inventory', {
             this.lastStoredId = await this.inventoryDb.getLastIndex();
         },
         addNew() {
-            this.items.push(new Inventory(this.lastId + 1, Date(), "", Number(0)));
-        } 
+            this.items.push(
+                new Inventory(this.lastId + 1, Date(), "", Number(0), State.added));
+        },
+        async save() {
+            await this.inventoryDb.setItems(this.items);
+        }
     }
 });

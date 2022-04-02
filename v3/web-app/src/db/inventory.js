@@ -1,12 +1,5 @@
 import inventoryDb from "./index";
-import { Inventory } from "../models/Inventory";
-
-export const State = {
-    added: "Added",
-    modified: "Modified",
-    unchanged: "Unchanged",
-    deleted: "Deleted" 
-}
+import { Inventory, State } from "../models/Inventory";
 
 export default {
     dbConnection: null,
@@ -33,6 +26,10 @@ export default {
         
         for(let item of items) 
         {
+            if(item.state !== State.modified) {
+                continue;
+            }
+
             if(item.state === State.added)
             {
                 item.state = State.modified;

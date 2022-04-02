@@ -3,7 +3,7 @@
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
     import { ref, computed } from "vue";
-    import { Inventory } from "../models/Inventory";
+    import { Inventory, State } from "../models/Inventory";
     import dayjs from "dayjs";
     import customParseFormat from 'dayjs/plugin/customParseFormat';
     dayjs.extend(customParseFormat)
@@ -26,6 +26,7 @@
             if(newDate.isValid())
             {
                 localEntry.value.inputDate = newDate.toDate();
+                touchEntry();
             }
         }
     });
@@ -43,9 +44,16 @@
         set(value) {
             if((value != null || value != undefined) && !isNaN(value)) {
                 localEntry.value.value = Number(value);
+                touchEntry();
             }
         }
-    })
+    });
+
+    function touchEntry() {
+        if(localEntry.value.state === State.unchanged) {
+            localEntry.value.state = State.modified;
+        }
+    }
 </script>
 
 <template>
@@ -67,7 +75,7 @@
                     v-model="inputDate" />
         </div>
         <div class="col-6">
-            <InputText id="description" type="text" style="width: 100%"
+            <InputText id="description" v-on:input="touchEntry" type="text" style="width: 100%"
                 v-model="localEntry.description" />
         </div>
         <div class="col-2">

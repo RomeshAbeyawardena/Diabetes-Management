@@ -9,6 +9,16 @@ div#navigation {
 }
 
 div#action-navigation {
+    background: var(--surface-f);
+    height: 100px;
+    &.grid {
+        .col-3 {
+            .p-speeddial {
+                margin-left: 0.5rem;
+                margin-top: 0.6rem;
+            }
+        }
+    }
     .p-speeddial {
         a {
             text-decoration: none;
@@ -23,15 +33,7 @@ div#action-navigation {
         .p-speeddial-list {
             position: absolute;
             display: none;
-            top: -10.8rem;
+            top: -15rem;
         }
     }
-}
-
-div#grid {
-    height: calc(100vh - 205px);
-    margin-top: 1rem;
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin-bottom: 1rem;
 }
