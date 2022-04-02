@@ -9,3 +9,7 @@ body {
     color: var(--text-color);
     font-family: var(--font-family);
 }
+
+@import "./app.scss";
+@import "./title.scss";
+@import "./navigation.scss";

@@ -1,0 +1,9 @@
+div#navigation {
+    background: var(--surface-e);
+    &.grid {
+        text-align: center;
+        h4 {
+            margin: 0;
+        }
+    }
+}

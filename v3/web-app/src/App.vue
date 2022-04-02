@@ -1,14 +1,24 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import Dialog from 'primevue/dialog';
-import { ref } from 'vue'
-import { useStore } from './stores';
+//components
+import Dialogs from './components/dialogs/Dialogs.vue';
+import Grid from "./components/Grid.vue";
+import Navigation from "./components/Navigation.vue";
+import Sidebars from './components/side-bars/Sidebars.vue';
+import Title from './components/Title.vue';
 
-const store = ref(useStore());
+//references
+import { Inventory } from "./models/Inventory";
+
+const entry = new Inventory(Date(), "", 0);
 
 </script>
 
 <template>
-  <Dialog />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+  <div class="app">
+    <Sidebars />
+    <Dialogs />
+    <Title />
+    <Navigation />
+    <Grid />
+  </div>
 </template>
