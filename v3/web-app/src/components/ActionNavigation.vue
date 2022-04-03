@@ -36,8 +36,9 @@
             toast.add({ severity:"info", summary: "Delete mode deactivated", detail: "", life: 1500 })
     }
 
-    function save() {
-        inventoryStore.save();
+    async function save() {
+        await inventoryStore.save();
+        toast.add({ severity:"info", summary: "Items saved", detail: "Items have been saved locally successfully", life: 1500 })
     }
 
     function add() {
