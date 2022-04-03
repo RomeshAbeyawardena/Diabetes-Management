@@ -3,10 +3,21 @@ import { isDate } from "@vue/shared";
 export class Inventory {
     fromObject (state) {
         this.id = Number(state.id);
-        this.inputDate = Date(state.inputDate);
+        this.inputDate = new Date(state.inputDate);
         this.description = state.description;
         this.value = Number(state.value);
         this.state = state.state;
+        return this;
+    }
+
+    toObject () {
+        return {
+            id: this.id,
+            inputDate: this.inputDate,
+            description: this.description,
+            value: this.value,
+            state: this.state
+        } 
     }
 
     constructor(id, inputDate, description, value, state) {

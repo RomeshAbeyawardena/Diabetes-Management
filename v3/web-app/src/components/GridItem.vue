@@ -3,6 +3,8 @@
     import InputMask from 'primevue/inputmask';
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
+    import { useConfirm } from "primevue/useconfirm";
+
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
     import dayjs from "dayjs";
@@ -52,14 +54,27 @@
         }
     });
 
+     const confirm = useConfirm();
+
     function touchEntry() {
         if(localEntry.value.state === State.unchanged) {
             localEntry.value.state = State.modified;
         }
     }
 
-    function markAsDeleted() {
-
+    function markAsDeleted(event) {
+         confirm.require({
+                target: event.currentTarget,
+                message: 'Are you sure you want to proceed?',
+                icon: 'pi pi-exclamation-triangle',
+                accept: () => {
+                    localEntry.value.state = State.deleted;
+                },
+                reject: () => {
+                    //callback to execute when user rejects the action
+                }
+            });
+        
     }
 </script>
 
@@ -88,7 +103,7 @@
                     v-model="localEntry.description" />
             </div>
             <div class="col-2">
-                <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted"
+                <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
                 <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" 

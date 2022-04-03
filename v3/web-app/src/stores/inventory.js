@@ -24,8 +24,10 @@ export const useInventoryStore = defineStore('inventory', {
             
             if(this.items.length) {
                 return this.items.filter(i => i.inputDate >= dateRange.fromDate 
-                    && i.inputDate <= dateRange.toDate);
+                    && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
             }
+
+            return this.items;
         }
     },
     actions: {
@@ -37,10 +39,11 @@ export const useInventoryStore = defineStore('inventory', {
                 new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added));
         },
         async load() {
-            this.items = await this.inventoryDb.getItems();
+            let items = await this.inventoryDb.getItems();
+            this.items = items.map(i => new Inventory().fromObject(i));
         },
         async save() {
-            await this.inventoryDb.setItems(this.items);
+            await this.inventoryDb.setItems(this.items.map(i => i.toObject()));
         }
     }
 });

@@ -10,7 +10,6 @@
 </script>
 <template> 
     <div id="grid">
-        {{ isDeleteMode }}
         <div v-bind:key="item.id" v-for="item in items">
             <GridItem :is-delete-mode="isDeleteMode" :entry="item" />
         </div>

@@ -3,6 +3,8 @@ import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import App from './App.vue'
 import InventoryDb from "./db/inventory";
+import ConfirmationService from 'primevue/confirmationservice';
+import ToastService from 'primevue/toastservice';
 
 import "primevue/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -20,4 +22,6 @@ let pinia = createPinia()
 createApp(App)
     .use(pinia)
     .use(PrimeVue) 
+    .use(ConfirmationService)
+    .use(ToastService)
     .mount('#app');

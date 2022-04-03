@@ -1,10 +1,14 @@
 <script setup>
     import Button from 'primevue/button';
     import SpeedDial from 'primevue/speeddial';
+    import Toast from 'primevue/toast';
     import { useStore } from '../stores';
     import { useInventoryStore } from '../stores/inventory';
     import { storeToRefs } from 'pinia';
-    import { onMounted, ref } from 'vue';
+    import { ref } from 'vue';
+    import { useToast } from "primevue/usetoast";
+
+    const toast = useToast();
     const store = useStore();
     const inventoryStore = useInventoryStore();
     const { isDeleteMode } = storeToRefs(inventoryStore);
@@ -22,12 +26,14 @@
         { label: "Add", icon: "pi pi-plus", command: () => add()  },
     ]); 
     
-    onMounted(async() => {
-        await inventoryStore.getLastId();
-    });
-    
     function toggleDeleteMode() {
         isDeleteMode.value = !isDeleteMode.value;
+        if(isDeleteMode.value)
+        {
+            toast.add({ severity:"info", summary: "Delete mode activated", detail: "Tap the same option again to turn this mode off", life: 5000 })
+        }
+        else
+            toast.add({ severity:"info", summary: "Delete mode deactivated", detail: "", life: 1500 })
     }
 
     function save() {
@@ -39,6 +45,7 @@
     }
 </script>
 <template>
+    <Toast position="bottom-center" />
     <div id="action-navigation" class="grid justify-content-between">
         <div class="col-3 flex align-items-center justify-content-center">
             <SpeedDial  :transitionDelay="120" 
