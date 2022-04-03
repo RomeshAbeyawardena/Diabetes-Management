@@ -1,20 +1,23 @@
 <script setup>
+    import Button from 'primevue/button';
     import InputMask from 'primevue/inputmask';
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
-    import { ref, computed } from "vue";
+    import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
     import dayjs from "dayjs";
     import customParseFormat from 'dayjs/plugin/customParseFormat';
     dayjs.extend(customParseFormat)
 
     const props = defineProps({ 
+        isDeleteMode: Boolean,
         showHeader: Boolean, 
         entry: Inventory 
     });
 
     const showHeader = ref(props.showHeader);
     const localEntry = ref(props.entry);
+
     const format = "DD/MM/YYYY HH:mm";
     const inputFormat = "99/99/9999 99:99";
     const inputDate = computed({
@@ -54,34 +57,44 @@
             localEntry.value.state = State.modified;
         }
     }
+
+    function markAsDeleted() {
+
+    }
 </script>
 
 <template>
-    <div class="grid" v-if="showHeader">
-        <div class="col-4">
-            <label for="inputDate">Date</label>
+    <div>
+        <div class="grid" v-if="showHeader">
+            <div class="col-4">
+                <label for="inputDate">Date</label>
+            </div>
+            <div class="col-6">
+                <label for="description">Description</label>
+            </div>
+            <div class="col-2">
+                <label v-if="!props.isDeleteMode" for="value">Value</label>
+                <label v-if="props.isDeleteMode" for="value">Action</label>
+            </div>
         </div>
-        <div class="col-6">
-            <label for="description">Description</label>
-        </div>
-        <div class="col-2">
-            <label for="value">Value</label>
-        </div>
-    </div>
-    <div class="grid">
-        <div class="col-4">
-            <InputMask id="inputDate" style="width: 100%"
-                    :mask="inputFormat"
-                    v-model="inputDate" />
-        </div>
-        <div class="col-6">
-            <InputText id="description" v-on:input="touchEntry" type="text" style="width: 100%"
-                v-model="localEntry.description" />
-        </div>
-        <div class="col-2">
-            <InputText id="value"  v-model="inputValue" 
-                        type="number" 
-                        style="width: 100%" />
+        <div class="grid">
+            <div class="col-4">
+                <InputMask id="inputDate" style="width: 100%"
+                        :mask="inputFormat"
+                        v-model="inputDate" />
+            </div>
+            <div class="col-6">
+                <InputText id="description" v-on:input="touchEntry" type="text" style="width: 100%"
+                    v-model="localEntry.description" />
+            </div>
+            <div class="col-2">
+                <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted"
+                        class="p-button-rounded p-button-secondary">
+                </Button>
+                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" 
+                            type="number" 
+                            style="width: 100%" />
+            </div>
         </div>
     </div>
 </template>

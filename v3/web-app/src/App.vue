@@ -8,10 +8,10 @@ import Sidebars from './components/side-bars/Sidebars.vue';
 import Title from './components/Title.vue';
 
 //references
-import { Inventory } from "./models/Inventory";
+import { useInventoryStore } from './stores/inventory';
 
-const entry = new Inventory(Date(), "", 0);
-
+const store = useInventoryStore();
+store.load();
 </script>
 
 <template>

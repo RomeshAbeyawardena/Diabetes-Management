@@ -7,6 +7,7 @@ export const useInventoryStore = defineStore('inventory', {
         return {
             items: [],
             lastStoredId: 0,
+            isDeleteMode: false
         }
     },
     getters: {
@@ -19,10 +20,11 @@ export const useInventoryStore = defineStore('inventory', {
         },
         currentDateItems() {
             let store = useStore();
-            let fromDate = store.filters.dateRange.fromDate;
-            let toDate = store.filters.dateRange.toDate;
+            let dateRange = store.filters.dateRange;
+            
             if(this.items.length) {
-                return this.items.filter(i => i.inputDate >= fromDate && i.inputDate <= toDate);
+                return this.items.filter(i => i.inputDate >= dateRange.fromDate 
+                    && i.inputDate <= dateRange.toDate);
             }
         }
     },
@@ -33,6 +35,9 @@ export const useInventoryStore = defineStore('inventory', {
         addNew(fromDate) {
             this.items.push(
                 new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added));
+        },
+        async load() {
+            this.items = await this.inventoryDb.getItems();
         },
         async save() {
             await this.inventoryDb.setItems(this.items);

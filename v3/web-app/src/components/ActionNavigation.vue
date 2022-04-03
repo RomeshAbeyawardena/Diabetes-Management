@@ -3,10 +3,11 @@
     import SpeedDial from 'primevue/speeddial';
     import { useStore } from '../stores';
     import { useInventoryStore } from '../stores/inventory';
+    import { storeToRefs } from 'pinia';
     import { onMounted, ref } from 'vue';
     const store = useStore();
     const inventoryStore = useInventoryStore();
-
+    const { isDeleteMode } = storeToRefs(inventoryStore);
     let optionsMenuItems = ref([ 
         { label: "Version", icon: "pi pi-sign-in", command: () => register()  },
         { label: "About", icon: "pi pi-sign-in", command: () => login()  },
@@ -16,8 +17,8 @@
 
     let addMenuItems = ref([
         { label: "Reset", icon: "pi pi-refresh", command: () => login()  },
-        { label: "Delete mode", icon: "pi pi-times", command: () => login()  },
-        { label: "Save", icon: "pi pi-save", command: () => register()  },
+        { label: "Delete mode", icon: "pi pi-times", command: () => toggleDeleteMode()  },
+        { label: "Save", icon: "pi pi-save", command: () => save()  },
         { label: "Add", icon: "pi pi-plus", command: () => add()  },
     ]); 
     
@@ -25,6 +26,13 @@
         await inventoryStore.getLastId();
     });
     
+    function toggleDeleteMode() {
+        isDeleteMode.value = !isDeleteMode.value;
+    }
+
+    function save() {
+        inventoryStore.save();
+    }
 
     function add() {
         inventoryStore.addNew(store.filters.dateRange.fromDate);
