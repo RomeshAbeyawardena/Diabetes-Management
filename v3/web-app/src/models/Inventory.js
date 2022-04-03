@@ -1,5 +1,16 @@
 import { isDate } from "@vue/shared";
 
+export const InventoryHelper = {
+    getTotalValue(items) {
+        let sum = 0;
+        for(let item of items) {
+            sum += item.value;
+        }
+
+        return sum;
+    }
+}
+
 export class Inventory {
     fromObject (state) {
         this.id = Number(state.id);

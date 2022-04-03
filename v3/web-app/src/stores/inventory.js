@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { Inventory, State } from '../models/Inventory';
+import { Inventory, InventoryHelper, State } from '../models/Inventory';
 import { useStore } from "../stores";
 
 export const useInventoryStore = defineStore('inventory', {
@@ -19,20 +19,10 @@ export const useInventoryStore = defineStore('inventory', {
             return this.lastStoredId; 
         },
         previousTotalValue() {
-            let sum = 0;
-            for(let item of this.previousDateItems) {
-                sum += item.value;
-            }
-
-            return sum;
+            return InventoryHelper.getTotalValue(this.previousDateItems);
         },
         currentTotalValue() {
-            let sum = 0;
-            for(let item of this.currentDateItems) {
-                sum += item.value;
-            }
-
-            return sum;
+            return InventoryHelper.getTotalValue(this.currentDateItems);
         },
         previousDateItems() {
             let store = useStore();

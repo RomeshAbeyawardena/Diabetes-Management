@@ -20,7 +20,7 @@
     ]);
 
     let addMenuItems = ref([
-        { label: "Reset", icon: "pi pi-refresh", command: () => login()  },
+        { label: "Reset", icon: "pi pi-refresh", command: () => reset()  },
         { label: "Delete mode", icon: "pi pi-times", command: () => toggleDeleteMode()  },
         { label: "Save", icon: "pi pi-save", command: () => save()  },
         { label: "Add", icon: "pi pi-plus", command: () => add()  },
@@ -43,6 +43,10 @@
 
     function add() {
         inventoryStore.addNew(store.filters.dateRange.fromDate);
+    }
+
+    function reset() {
+
     }
 </script>
 <template>
