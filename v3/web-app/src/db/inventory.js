@@ -26,14 +26,12 @@ export default {
         
         for(let item of items) 
         {
-            if(item.state !== State.modified) {
-                continue;
-            }
-
             if(item.state === State.added)
             {
                 item.state = State.modified;
             }
+
+            item.published = true;
         }
 
         await connection.insert({

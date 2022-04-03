@@ -7,6 +7,7 @@ export class Inventory {
         this.description = state.description;
         this.value = Number(state.value);
         this.state = state.state;
+        this.published = state.published;
         return this;
     }
 
@@ -16,11 +17,12 @@ export class Inventory {
             inputDate: this.inputDate,
             description: this.description,
             value: this.value,
-            state: this.state
+            state: this.state,
+            published: this.published
         } 
     }
 
-    constructor(id, inputDate, description, value, state) {
+    constructor(id, inputDate, description, value, state, published) {
         if(!isDate(inputDate)) {
             inputDate = new Date(inputDate);
         }
@@ -30,6 +32,7 @@ export class Inventory {
         this.description = description;
         this.value = Number(value);
         this.state = state;
+        this.published = published;
     }
 }
 

@@ -18,6 +18,33 @@ export const useInventoryStore = defineStore('inventory', {
             }
             return this.lastStoredId; 
         },
+        previousTotalValue() {
+            let sum = 0;
+            for(let item of this.previousDateItems) {
+                sum += item.value;
+            }
+
+            return sum;
+        },
+        currentTotalValue() {
+            let sum = 0;
+            for(let item of this.currentDateItems) {
+                sum += item.value;
+            }
+
+            return sum;
+        },
+        previousDateItems() {
+            let store = useStore();
+            let dateRange = store.filters.dateRange.subtract(1, "day");
+            
+            if(this.items.length) {
+                return this.items.filter(i => i.inputDate >= dateRange.fromDate 
+                    && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
+            }
+
+            return this.items;
+        },
         currentDateItems() {
             let store = useStore();
             let dateRange = store.filters.dateRange;
@@ -36,7 +63,7 @@ export const useInventoryStore = defineStore('inventory', {
         },
         addNew(fromDate) {
             this.items.push(
-                new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added));
+                new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added, false));
         },
         async load() {
             let items = await this.inventoryDb.getItems();

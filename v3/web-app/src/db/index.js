@@ -7,9 +7,10 @@ const itemsDb = {
     columns: {
         id: { primaryKey: true, autoIncrement: false },
         description: { dataType: "string" },
-        unitValue: { dataType: "number" },
-        consumedDate: { dataType: "date_time" },
-        state: { dataType: "string" }
+        value: { dataType: "number" },
+        inputDate: { dataType: "date_time" },
+        state: { dataType: "string" },
+        published: { dataType: "boolean" }
     }
 };
 

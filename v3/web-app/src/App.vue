@@ -1,12 +1,14 @@
 <script setup>
 //components
 import ActionNavigation from './components/ActionNavigation.vue';
+import ConfirmPopup from 'primevue/confirmpopup';
 import Dialogs from './components/dialogs/Dialogs.vue';
 import Grid from "./components/Grid.vue";
 import Navigation from "./components/Navigation.vue";
 import Sidebars from './components/side-bars/Sidebars.vue';
+import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
-import ConfirmPopup from 'primevue/confirmpopup';
+
 //references
 import { useInventoryStore } from './stores/inventory';
 import { onMounted } from 'vue';
@@ -26,6 +28,7 @@ onMounted(async() => {
     <Title />
     <Navigation />
     <Grid />
+    <StatusBar />
     <ActionNavigation />
   </div>
 </template>
