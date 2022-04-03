@@ -1,4 +1,5 @@
-import { defineStore } from 'pinia'
+import { defineStore } from 'pinia';
+import { DateRange } from '../models/DateRange';
 
 export const useStore = defineStore('main', {
     state:() => {
@@ -14,6 +15,9 @@ export const useStore = defineStore('main', {
           title: "",
           value: Object(),
           visible: false
+        },
+        filters: {
+          dateRange: new DateRange(Date(), Date(), true) 
         }
       }
     }

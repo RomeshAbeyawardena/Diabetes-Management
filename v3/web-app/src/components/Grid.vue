@@ -1,10 +1,10 @@
 <script setup>
     import GridItem from './GridItem.vue';
-    import { storeToRefs } from "pinia";
+    import { computed } from 'vue';
     import { useInventoryStore } from '../stores/inventory';
 
     const store = useInventoryStore();
-    const { items } = storeToRefs(store);
+    const items = computed(() => store.currentDateItems);
 </script>
 <template> 
     <div id="grid" >

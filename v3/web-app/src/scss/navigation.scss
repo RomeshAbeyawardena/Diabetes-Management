@@ -11,14 +11,7 @@ div#navigation {
 div#action-navigation {
     background: var(--surface-f);
     height: 100px;
-    &.grid {
-        .col-3 {
-            .p-speeddial {
-                margin-left: 0.5rem;
-                margin-top: 0.6rem;
-            }
-        }
-    }
+    
     .p-speeddial {
         a {
             text-decoration: none;
