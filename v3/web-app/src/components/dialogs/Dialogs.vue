@@ -41,7 +41,7 @@ function acceptChanges() {
 }
 
 function rejectChanges() {
-
+    dialog.value.itemSubject.next(oldValue);
 }
 
 </script>

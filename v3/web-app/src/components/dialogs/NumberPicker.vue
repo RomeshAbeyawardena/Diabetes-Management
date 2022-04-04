@@ -12,6 +12,6 @@
 </script>
 <template>
     <div style="text-align:center">
-    <Knob v-model="value" :step="1" :min="1" :max="100" />
+    <Knob v-model="value" :size="250" :step="1" :min="1" :max="100" />
     </div>
 </template>
