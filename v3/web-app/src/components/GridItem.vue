@@ -8,12 +8,8 @@
     import { useStore } from '../stores';
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
-    import dayjs from "dayjs";
-    import customParseFormat from 'dayjs/plugin/customParseFormat';
     import { DialogTypes } from '../models/Dialogs';
     
-    dayjs.extend(customParseFormat);
-
     const store = useStore();
 
     const props = defineProps({ 
