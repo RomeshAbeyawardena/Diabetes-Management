@@ -24,27 +24,30 @@ export const useInventoryStore = defineStore('inventory', {
         currentTotalValue() {
             return InventoryHelper.getTotalValue(this.currentDateItems);
         },
-        previousDateItems() {
-            let store = useStore();
-            let dateRange = store.filters.dateRange.subtract(1, "day");
-            
-            if(this.items.length) {
-                return this.items.filter(i => i.inputDate >= dateRange.fromDate 
-                    && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
-            }
+        getItemsFromDateRange() {
+            return (action, value, unit) => {
+                let store = useStore();
 
-            return this.items;
+                let dateRange = store.filters.dateRange;
+                
+                if(action)
+                {
+                    dateRange = dateRange[action](value, unit);
+                }
+
+                if(this.items.length) {
+                    return this.items.filter(i => i.inputDate >= dateRange.fromDate 
+                        && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
+                }
+
+                return this.items;
+            }
+        },
+        previousDateItems() {
+            return this.getItemsFromDateRange("subtract", 1, "day");
         },
         currentDateItems() {
-            let store = useStore();
-            let dateRange = store.filters.dateRange;
-            
-            if(this.items.length) {
-                return this.items.filter(i => i.inputDate >= dateRange.fromDate 
-                    && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
-            }
-
-            return this.items;
+            return this.getItemsFromDateRange(null, 1, "day");
         }
     },
     actions: {
