@@ -21,7 +21,7 @@ function valueUpdated(newValue) {
 }
 
 function getDialogComponent() {
-    switch(this.dialog.component)
+    switch(dialog.value.component)
     {
         case DialogTypes.DatePicker:
             return DatePicker;
