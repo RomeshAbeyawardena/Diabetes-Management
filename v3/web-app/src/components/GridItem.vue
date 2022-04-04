@@ -8,7 +8,7 @@
     import { useStore } from '../stores';
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
-    import { DialogTypes } from '../models/Dialogs';
+    import { DialogTypes, getTitle } from '../models/Dialogs';
     
     const store = useStore();
 
@@ -20,10 +20,10 @@
 
     const showHeader = ref(props.showHeader);
     const localEntry = ref(props.entry);
-
-    const format = "DD/MM/YYYY HH:mm";
-    const mobileFormat = "HH:mm";
-    const inputFormat = "99/99/9999 99:99";
+    const dateFormat = ref("DD/MM/YYYY");
+    const format = ref("DD/MM/YYYY HH:mm");
+    const mobileFormat = ref("HH:mm");
+    const inputFormat = ref("99/99/9999 99:99");
 
     const inputValue = computed({
         get() {
@@ -63,22 +63,6 @@
                     //callback to execute when user rejects the action
                 }
             });
-    }
-
-    function getTitle(component) {
-        switch(component){
-            case DialogTypes.DatePicker:
-                return "Pick a date/time";
-            case DialogTypes.Login:
-                return "Sign in";
-            case DialogTypes.NumberPicker:
-                return "Pick a unit value";
-            case DialogTypes.Register:
-                return "Sign up"
-            case DialogTypes.TextEntry:
-                return "Description";
-        }
-        return "";
     }
 
     async function showDialog(component, value) {
@@ -128,9 +112,13 @@
         </div>
         <div class="grid">
             <div class="col-4">
-                    <ResponsiveDateInput    id="inputDate" format="DD/MM/YYYY HH:mm" mobile-format="HH:mm" date-format="DD/MM/YYYY"
-                                            v-on:input:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
-                                            v-model="localEntry.inputDate" />
+                    <ResponsiveDateInput    
+                        id="inputDate" 
+                        :format="format" 
+                        :mobile-format="mobileFormat" 
+                        :date-format="dateFormat"
+                        v-on:input:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
+                        v-model="localEntry.inputDate" />
             </div>
             <div class="col-6">
                 <div class="p-inputgroup">

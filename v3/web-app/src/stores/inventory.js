@@ -47,7 +47,9 @@ export const useInventoryStore = defineStore('inventory', {
             return this.getItemsFromDateRange("subtract", 1, "day");
         },
         currentDateItems() {
-            return this.getItemsFromDateRange(null, 1, "day");
+            let items = this.getItemsFromDateRange(null, 1, "day");
+            items.sort((a,b) => Number(a.inputDate) - Number(b.inputDate));
+            return items;
         }
     },
     actions: {
