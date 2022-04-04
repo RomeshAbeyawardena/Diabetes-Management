@@ -11,12 +11,14 @@ import Title from './components/Title.vue';
 //references
 import { useInventoryStore } from './stores/inventory';
 import { onMounted } from 'vue';
-
+import { ref } from 'vue';
 const store = useInventoryStore();
 onMounted(async() => { 
   await store.getLastId();
   await store.load() 
 });
+
+const date = ref(new Date());
 </script>
 
 <template>

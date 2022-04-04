@@ -1,8 +1,9 @@
 <script setup>
     import Button from 'primevue/button';
-    import InputMask from 'primevue/inputmask';
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
+    import ResponsiveDateInput from './ResponsiveDateInput.vue';
+
     import { useConfirm } from "primevue/useconfirm";
     import { useStore } from '../stores';
     import { ref, computed, watch } from "vue";
@@ -11,7 +12,7 @@
     import customParseFormat from 'dayjs/plugin/customParseFormat';
     import { DialogTypes } from '../models/Dialogs';
     
-    dayjs.extend(customParseFormat)
+    dayjs.extend(customParseFormat);
 
     const store = useStore();
 
@@ -25,20 +26,8 @@
     const localEntry = ref(props.entry);
 
     const format = "DD/MM/YYYY HH:mm";
+    const mobileFormat = "HH:mm";
     const inputFormat = "99/99/9999 99:99";
-    const inputDate = computed({
-        get() {
-            return dayjs(localEntry.value.inputDate).format(format);
-        },
-        set(value) {
-            let newDate = dayjs(value, format);
-            if(newDate.isValid())
-            {
-                localEntry.value.inputDate = newDate.toDate();
-                touchEntry();
-            }
-        }
-    });
 
     const inputValue = computed({
         get() {
@@ -101,12 +90,26 @@
         switch (component) {
             case DialogTypes.DatePicker:
                 localEntry.value.inputDate = result;
+                if(localEntry.value.inputDate !== result)
+                {
+                    touchEntry();
+                }
                 break;
             case DialogTypes.TextEntry:
                 localEntry.value.description = result;
+                
+                if(localEntry.value.description !== result)
+                {
+                    touchEntry();
+                }
                 break;
             case DialogTypes.NumberPicker:
                 localEntry.value.value = result;
+                
+                if(localEntry.value.value !== result)
+                {
+                    touchEntry();
+                }
                 break;
         }
     }
@@ -129,9 +132,9 @@
         </div>
         <div class="grid">
             <div class="col-4">
-                    <InputMask id="inputDate" style="width: 100%" v-on:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
-                        :mask="inputFormat"
-                        v-model="inputDate" />
+                    <ResponsiveDateInput    id="inputDate" format="DD/MM/YYYY HH:mm" mobile-format="HH:mm" date-format="DD/MM/YYYY"
+                                            v-on:input:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
+                                            v-model="localEntry.inputDate" />
             </div>
             <div class="col-6">
                 <div class="p-inputgroup">
