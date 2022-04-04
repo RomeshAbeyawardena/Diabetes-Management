@@ -21,19 +21,25 @@
 
     let addMenuItems = ref([
         { label: "Reset", icon: "pi pi-refresh", command: () => reset()  },
-        { label: "Delete mode", icon: "pi pi-times", command: () => toggleDeleteMode()  },
+        { label: "Delete mode", icon: "pi pi-trash", command: () => toggleDeleteMode()  },
         { label: "Save", icon: "pi pi-save", command: () => save()  },
         { label: "Add", icon: "pi pi-plus", command: () => add()  },
     ]); 
     
     function toggleDeleteMode() {
         isDeleteMode.value = !isDeleteMode.value;
+
         if(isDeleteMode.value)
         {
             toast.add({ severity:"info", summary: "Delete mode activated", detail: "Tap the same option again to turn this mode off", life: 5000 })
+
+            addMenuItems.value[1].icon = "pi pi-times";
         }
-        else
+        else {
             toast.add({ severity:"info", summary: "Delete mode deactivated", detail: "", life: 1500 })
+
+            addMenuItems.value[1].icon = "pi pi-trash";
+        }
     }
 
     async function save() {
