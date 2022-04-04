@@ -1,0 +1,32 @@
+div#navigation {
+    background: var(--surface-e);
+    &.grid {
+        text-align: center;
+        h4 {
+            margin: 0;
+        }
+    }
+}
+
+div#action-navigation {
+    background: var(--surface-f);
+    height: 100px;
+    
+    .p-speeddial {
+        a {
+            text-decoration: none;
+        }
+
+        &.p-speeddial-opened{
+            .p-speeddial-list {
+                display: block;
+            }
+        }
+
+        .p-speeddial-list {
+            position: absolute;
+            display: none;
+            top: -15rem;
+        }
+    }
+}

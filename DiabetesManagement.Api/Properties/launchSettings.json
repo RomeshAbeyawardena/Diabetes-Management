@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DiabetesManagement.Api": {
+      "commandName": "Project",
+      "commandLineArgs": "--verbose --cors *"
+    }
+  }
+}

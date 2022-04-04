@@ -1,0 +1,20 @@
+div.p-dialog {
+    width: 100%;
+
+    div.p-carousel {
+        width: 100%;
+        button.p-carousel-prev,
+        button.p-carousel-next
+        {
+            &.p-link {
+                width: 1rem;
+            }
+        }
+        
+    }
+}
+
+@import "./title.scss";
+@import "./navigation.scss";
+@import "./grid.scss";
+@import "./status-bar.scss";

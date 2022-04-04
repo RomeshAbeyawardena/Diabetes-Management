@@ -1,0 +1,13 @@
+html {
+    background-color: var(--surface-ground);
+    max-width: 1024px;
+    margin:auto;
+}
+
+body {
+    background-color: var(--surface-b);
+    color: var(--text-color);
+    font-family: var(--font-family);
+}
+
+@import "./app.scss";

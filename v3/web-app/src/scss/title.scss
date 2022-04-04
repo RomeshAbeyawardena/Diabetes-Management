@@ -1,0 +1,10 @@
+div#title {
+    background: var(--surface-d);
+    margin-bottom: 0.5rem;
+    &.grid {
+        text-align: center;
+        h3 {
+            margin: 0;
+        }
+    }
+}

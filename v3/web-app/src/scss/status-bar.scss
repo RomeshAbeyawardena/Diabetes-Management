@@ -1,0 +1,13 @@
+div#status-bar {
+    h3 {
+        margin: 0;
+        margin-bottom: 0.5rem;
+    }
+    i.current-value {
+        color: var(--yellow-500);
+    }
+
+    i.historic-value {
+        color: var(--green-500);
+    }
+}

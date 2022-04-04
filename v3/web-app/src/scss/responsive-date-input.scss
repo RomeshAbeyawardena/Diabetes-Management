@@ -1,0 +1,13 @@
+div.responsive-date-input {
+    @media (max-width: 546px) {
+        input.inputDate {
+            display:none;
+        }
+    }
+
+    @media (min-width: 546px) {
+        input.inputMobileDate {
+            display:none;
+        }
+    }
+}

@@ -2,6 +2,9 @@
   <div id="app">
     <confirm-popup />
     <TitleNavigation />
+    <Sidebar :visible="sideBar.display">
+      <SideBarVue />
+    </Sidebar>
     <Dialog
       :header="dialog.header"
       :visible.sync="dialog.display"
@@ -31,7 +34,8 @@ import DateNavigation from "./components/Date-navigation.vue";
 import Toast from "primevue/toast";
 import { mapGetters } from "vuex";
 import Dialog from "primevue/dialog";
-
+import Sidebar from 'primevue/sidebar';
+import SideBarVue from "./components/Side-bar.vue";
 import dayjs from "dayjs";
 export default {
   name: "App",
@@ -41,6 +45,8 @@ export default {
     Dialog,
     DialogCalendar,
     InventoryVue,
+    Sidebar,
+    SideBarVue,
     TitleNavigation,
     Toast,
   },
@@ -52,6 +58,9 @@ export default {
   computed: {
     dialog() {
       return this.$store.state.dialog;
+    },
+    sideBar() {
+      return this.$store.state.sideBar
     },
     ...mapGetters([Inventory.getters.filteredItems]),
   },
@@ -68,7 +77,7 @@ export default {
       this.$store.commit(Store.mutations.setDialogOptions, dialog);
     },
   },
-  created() {
+  async created() {
     return this.$store.commit(Inventory.mutations.setFilters, {
       fromDate: dayjs().startOf("day").toDate(),
       toDate: dayjs().endOf("day").toDate(),

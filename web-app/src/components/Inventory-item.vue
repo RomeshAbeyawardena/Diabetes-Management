@@ -42,7 +42,7 @@
             </div>
         </div>
         <div class="col-2">
-            <input-number id="unit-value" 
+            <input-number type="number" id="unit-value" 
                             v-model="item.unitValue" 
                             v-on:blur="updateParent" 
                             class="full-width" />
