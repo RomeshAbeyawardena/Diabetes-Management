@@ -2,10 +2,10 @@
     import Carousel from 'primevue/carousel';
     import Calendar from "primevue/calendar";
 
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     
     const props = defineProps({ value: Date });
-
+    const emit = defineEmits(['value:updated']);
     const value = ref(props.value);
 
     const responsiveOptions = ref([
@@ -30,6 +30,10 @@
         { timeOnly: true, style: { "margin-top": "-50px", display:"block", top:"50%", width: "calc(100% - 10px)"  } },
         { timeOnly: false, style: { width: "100%", display:"block"  } }
     ]);
+
+    watch(value, (newValue) => {
+        emit("value:updated", newValue);
+    });
 
 </script>
 <template>

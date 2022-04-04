@@ -4,12 +4,16 @@
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
     import { useConfirm } from "primevue/useconfirm";
-
+    import { useStore } from '../stores';
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
     import dayjs from "dayjs";
     import customParseFormat from 'dayjs/plugin/customParseFormat';
+    import { DialogTypes } from '../models/Dialogs';
+    
     dayjs.extend(customParseFormat)
+
+    const store = useStore();
 
     const props = defineProps({ 
         isDeleteMode: Boolean,
@@ -74,8 +78,39 @@
                     //callback to execute when user rejects the action
                 }
             });
-        
     }
+
+    function getTitle(component) {
+        switch(component){
+            case DialogTypes.DatePicker:
+                return "Pick a date/time";
+            case DialogTypes.Login:
+                return "Sign in";
+            case DialogTypes.NumberPicker:
+                return "Pick a unit value";
+            case DialogTypes.Register:
+                return "Sign up"
+            case DialogTypes.TextEntry:
+                return "Description";
+        }
+        return "";
+    }
+
+    async function showDialog(component, value) {
+        let result = await store.showDialog(component, getTitle(component), value);
+        switch (component) {
+            case DialogTypes.DatePicker:
+                localEntry.value.inputDate = result;
+                break;
+            case DialogTypes.TextEntry:
+                localEntry.value.description = result;
+                break;
+            case DialogTypes.NumberPicker:
+                localEntry.value.value = result;
+                break;
+        }
+    }
+
 </script>
 
 <template>
@@ -94,19 +129,25 @@
         </div>
         <div class="grid">
             <div class="col-4">
-                <InputMask id="inputDate" style="width: 100%"
+                    <InputMask id="inputDate" style="width: 100%" v-on:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
                         :mask="inputFormat"
                         v-model="inputDate" />
             </div>
             <div class="col-6">
-                <InputText id="description" v-on:input="touchEntry" type="text" style="width: 100%"
-                    v-model="localEntry.description" />
+                <div class="p-inputgroup">
+                    <InputText id="description" 
+                        v-on:input="touchEntry" 
+                        type="text" 
+                        style="width: 100%"
+                        v-model="localEntry.description" />
+                    <Button icon="pi pi-pencil" v-on:click="showDialog(DialogTypes.TextEntry, localEntry.description)" class="p-button-primary"/>
+                </div>
             </div>
             <div class="col-2">
                 <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
-                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" 
+                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" v-on:click="showDialog(DialogTypes.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />
             </div>
