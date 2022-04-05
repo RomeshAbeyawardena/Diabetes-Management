@@ -40,7 +40,6 @@ export class CookieHelper implements ICookieHelper {
     }
     
     setCookie(cookie: ICookie) : void {
-        console.log(cookie.toString());
         document.cookie = cookie.toString();
     }
 

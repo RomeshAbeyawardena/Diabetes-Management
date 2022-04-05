@@ -13,7 +13,6 @@ import { DialogType, DialogDef } from '../../models/Dialogs';
 import { storeToRefs } from "pinia";
 import { useStore } from '../../stores';
 
-
 const store = useStore();
 const { dialog } = storeToRefs(store);
 const value  = ref(dialog.value.value);
@@ -43,8 +42,6 @@ onBeforeMount(() => {
             new DialogDef(DialogType.NumberPicker, "number-picker", "Select a value", NumberPicker))
         .addDialog(
             new DialogDef(DialogType.TextEntry, "text-entry", "Select a value", TextEntry));
- 
-    console.log(store.dialogHelper);
 })
 
 </script>

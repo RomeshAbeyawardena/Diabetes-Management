@@ -22,7 +22,7 @@ onMounted(async() => {
   store.getConsent();
   if(!store.consent.hasConsented)
   {
-    store.showDialog(DialogType.CookiePolicy, "Cookie policy", undefined, false);
+    store.showDialog(DialogType.CookiePolicy, undefined, false); 
   }
 });
 
