@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import { DateRange } from '../models/DateRange';
 import { Subject } from 'rxjs';
 import Promise from "promise";
+import { CookieHelper, Cookie } from '../models/Cookies';
 
 const cancelDialogOption = "dialog.cancel";
 
@@ -33,6 +34,10 @@ export const useStore = defineStore('main', {
       }
     },
     actions: {
+      getCookies() {
+        let cookieHelper = new CookieHelper();
+        return cookieHelper.getCookies();
+      },
       resetDialog() {
         this.dialog.component = "";
         this.dialog.title = "";
