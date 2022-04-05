@@ -48,7 +48,9 @@
     }
 
     function add() {
-        inventoryStore.addNew(store.filters.dateRange.fromDate);
+        let c = store.filters.dateRange.getDateWithCurrentTime();
+        
+        inventoryStore.addNew(c);
     }
 
     function reset() {

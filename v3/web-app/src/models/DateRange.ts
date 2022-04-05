@@ -7,6 +7,7 @@ export interface IDateRange {
     add(value:number, unit:string) : IDateRange;
     subtract(value:number, unit:string) : IDateRange;
     display(format: string, showFromDate: boolean, showToDate: boolean) : string;
+    getDateWithCurrentTime() : Date;
 }
 
 export class DateRange implements IDateRange {
@@ -61,6 +62,18 @@ export class DateRange implements IDateRange {
             }
  
             return display;
+    }
+
+    getDateWithCurrentTime(): Date {
+        let d = dayjs(this.fromDate);
+        
+        let c = dayjs();
+        
+        d = d.set("hour", c.hour())
+            .set("minute", c.minute())
+            .set("second", c.second());
+        
+        return d.toDate();
     }
 
     subtract(value: number, unit: string): IDateRange {
