@@ -59,7 +59,7 @@ export class DateRange implements IDateRange {
             if(showToDate) {
                 display += toDate.format(format);
             }
-
+ 
             return display;
     }
 

@@ -11,10 +11,10 @@
         <div class="grid">
             <div class="col-3">
                 <div>
-                    <h3>
+                    <h2>
                         <i class="pi pi-clock historic-value"></i>
                         {{previousTotalValue}}
-                    </h3>
+                    </h2>
                 </div>
             </div>
             <div class="col-6">
@@ -22,9 +22,9 @@
             </div>
             <div class="col-3" style="text-align:right">
                 <div>
-                    <h3>
+                    <h2>
                         {{currentTotalValue}}
-                        <i class="pi pi-bolt current-value"></i></h3>
+                        <i class="pi pi-bolt current-value"></i></h2>
                 </div>
             </div>
         </div>
