@@ -8,7 +8,7 @@
     import { useStore } from '../stores';
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
-    import { DialogTypes, getTitle } from '../models/Dialogs';
+    import { DialogType } from '../models/Dialogs';
     
     const store = useStore();
 
@@ -66,16 +66,16 @@
     }
 
     async function showDialog(component, value) {
-        let result = await store.showDialog(component, getTitle(component), value);
+        let result = await store.showDialog(component, value, true);
         switch (component) {
-            case DialogTypes.DatePicker:
+            case DialogType.DatePicker:
                 localEntry.value.inputDate = result;
                 if(localEntry.value.inputDate !== result)
                 {
                     touchEntry();
                 }
                 break;
-            case DialogTypes.TextEntry:
+            case DialogType.TextEntry:
                 localEntry.value.description = result;
                 
                 if(localEntry.value.description !== result)
@@ -83,7 +83,7 @@
                     touchEntry();
                 }
                 break;
-            case DialogTypes.NumberPicker:
+            case DialogType.NumberPicker:
                 localEntry.value.value = result;
                 
                 if(localEntry.value.value !== result)
@@ -117,7 +117,7 @@
                         :format="format" 
                         :mobile-format="mobileFormat" 
                         :date-format="dateFormat"
-                        v-on:input:click="showDialog(DialogTypes.DatePicker, localEntry.inputDate)"
+                        v-on:input:click="showDialog(DialogType.DatePicker, localEntry.inputDate)"
                         v-model="localEntry.inputDate" />
             </div>
             <div class="col-6">
@@ -127,14 +127,14 @@
                         type="text" 
                         style="width: 100%"
                         v-model="localEntry.description" />
-                    <Button icon="pi pi-pencil" v-on:click="showDialog(DialogTypes.TextEntry, localEntry.description)" class="p-button-primary"/>
+                    <Button icon="pi pi-pencil" v-on:click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
                 </div>
             </div>
             <div class="col-2">
                 <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
-                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" v-on:click="showDialog(DialogTypes.NumberPicker, localEntry.value)"
+                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" v-on:click="showDialog(DialogType.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />
             </div>

@@ -19,10 +19,10 @@ export const useInventoryStore = defineStore('inventory', {
             return this.lastStoredId; 
         },
         previousTotalValue() {
-            return InventoryHelper.getTotalValue(this.previousDateItems);
+            return this.inventoryHelper.getTotalValue(this.previousDateItems);
         },
         currentTotalValue() {
-            return InventoryHelper.getTotalValue(this.currentDateItems);
+            return this.inventoryHelper.getTotalValue(this.currentDateItems);
         },
         getItemsFromDateRange() {
             return (action, value, unit) => {
