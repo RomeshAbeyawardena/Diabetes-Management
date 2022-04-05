@@ -66,7 +66,7 @@
     }
 
     async function showDialog(component, value) {
-        let result = await store.showDialog(component, getTitle(component), value);
+        let result = await store.showDialog(component, getTitle(component), value, true);
         switch (component) {
             case DialogTypes.DatePicker:
                 localEntry.value.inputDate = result;

@@ -9,7 +9,7 @@
 
     import "../../scss/cookie-policy.scss";
     const store = useStore();
-    const { consent, dialog } = storeToRefs(store);
+    const { consent } = storeToRefs(store);
     const activeIndex = ref(0);
     
     function editConsent() {
@@ -23,7 +23,7 @@
 
     function acceptConsent() {
         consent.value.hasConsented = true;
-        dialog.value.itemSubject.next("dialog.cancel");
+        store.voidDialogValue();
     }
 
     function denyConsent() {
@@ -75,12 +75,12 @@
         </TabPanel>
     </TabView>
     <div style="text-align:right">
-        <Button class="p-button-danger" icon="pi pi-times" label="Deny" v-on:click="denyConsent" v-if="!consent.hasConsented"></Button>
-        <Button icon="pi pi-pencil" label="Customise" v-on:click="customiseConsent" v-if="!consent.hasConsented && activeIndex !== 1"></Button>
-        <Button class="p-button-success" icon="pi pi-check" label="Accept all" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex !== 1"></Button>
-        <Button class="p-button-success" icon="pi pi-check" label="Save" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex === 1"></Button>
-        <Button label="Edit" v-if="consent.hasConsented"></Button>
-        <Button label="Close" v-if="consent.hasConsented"></Button>
+        <Button class="p-button-danger" icon="pi pi-times" label="Deny" v-on:click="denyConsent" v-if="!consent.hasConsented" />
+        <Button icon="pi pi-pencil" label="Customise" v-on:click="customiseConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
+        <Button class="p-button-success" icon="pi pi-check" label="Accept all" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
+        <Button class="p-button-success" icon="pi pi-check" label="Save" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex === 1" />
+        <Button label="Edit" v-if="consent.hasConsented" />
+        <Button label="Close" v-if="consent.hasConsented" />
     </div>
 </div>
 </template>

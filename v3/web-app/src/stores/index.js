@@ -3,6 +3,8 @@ import { DateRange } from '../models/DateRange';
 import { Subject } from 'rxjs';
 import Promise from "promise";
 
+const cancelDialogOption = "dialog.cancel";
+
 export const useStore = defineStore('main', {
     state:() => {
       return {
@@ -37,19 +39,26 @@ export const useStore = defineStore('main', {
         this.dialog.value = "";
         this.dialog.visible = false;
       },
+      setDialogValue(value) {
+        this.dialog.value = value;
+        this.dialog.itemSubject.next(value);
+      },
+      voidDialogValue() {
+        this.setDialogValue(cancelDialogOption);
+      },
       showDialog(component, title, value, showControls) {
         this.dialog.component = component;
         this.dialog.title = title;
         this.dialog.value = value;
         this.dialog.visible = true;
 
-        if(showControls !== undefined){
+        if(showControls !== undefined) {
           this.dialog.showControls= showControls;
         }
 
         return new Promise((resolve) => {
           let subscriber = this.dialog.itemSubject.asObservable().subscribe(a => {
-            if(a !== "dialog.cancel")
+            if(a !== cancelDialogOption)
             {
               resolve(a);
             }

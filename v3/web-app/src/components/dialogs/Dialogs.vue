@@ -8,16 +8,18 @@ import NumberPicker from './NumberPicker.vue';
 import Register from './Login.vue';
 import TextEntry from './TextEntry.vue';
 
+import { ref } from 'vue';
 import { DialogTypes } from '../../models/Dialogs';
 import { storeToRefs } from "pinia";
 import { useStore } from '../../stores';
 
 
 const store = useStore();
-const { dialog, showControls } = storeToRefs(store);
+const { dialog } = storeToRefs(store);
+const value  = ref(dialog.value.value);
 
 function valueUpdated(newValue) {
-    dialog.value.value = newValue;
+    value.value = newValue;
 }
 
 function getDialogComponent() {
@@ -39,18 +41,18 @@ function getDialogComponent() {
 }
 
 function acceptChanges() {
-    dialog.value.itemSubject.next(dialog.value.value);
+    store.setDialogValue(value.value)
 }
 
 function rejectChanges() {
-    dialog.value.itemSubject.next("dialog.cancel");
+    store.voidDialogValue();
 }
 
 </script>
 <template>
     <Dialog :header="dialog.title" v-model:visible="dialog.visible">
         <component :is="getDialogComponent()" v-on:value:updated="valueUpdated" :value="dialog.value" />
-        <div v-if="showControls" style="text-align:right">
+        <div v-if="dialog.showControls" style="text-align:right">
             <Button v-on:click="acceptChanges" class="p-button-success" style="margin-right:1rem" label="Accept" icon="pi pi-check" />
             <Button v-on:click="rejectChanges" class="p-button-danger" label="Cancel" icon="pi pi-times" />
         </div>
