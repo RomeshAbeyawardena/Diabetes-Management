@@ -3,16 +3,22 @@
     import InputSwitch from 'primevue/inputswitch';
     import TabView from 'primevue/tabview';
     import TabPanel from 'primevue/tabpanel';
+    import { ref } from "vue";
     import { storeToRefs } from "pinia";
     import { useStore } from "../../stores";
 
     import "../../scss/cookie-policy.scss";
     const store = useStore();
     const { consent, dialog } = storeToRefs(store);
-
+    const activeIndex = ref(0);
+    
     function editConsent() {
         consent.value.hasConsented = false;
         consent.value.enableMarketing = false;        
+    }
+
+    function customiseConsent() {
+        activeIndex.value = 1;
     }
 
     function acceptConsent() {
@@ -27,7 +33,7 @@
 </script>
 <template>
 <div class="cookie-policy">
-    <TabView>
+    <TabView v-model:activeIndex="activeIndex">
         <TabPanel header="Consent">
             <h2>This website uses cookies</h2>
             <p>We use cookies to personalise content and ads, to provide social media features and to analyse our traffic. </p>
@@ -38,7 +44,7 @@
         <TabPanel header="Details">
             <div class="grid">
                 <div class="col-3">
-                    <InputSwitch class="p-disabled" />
+                    <InputSwitch v-model="consent.enableNecessary" class="p-disabled" />
                 </div>
                 <div class="col-9">
                     <h3>Necessary</h3>
@@ -69,9 +75,10 @@
         </TabPanel>
     </TabView>
     <div style="text-align:right">
-        <Button label="Deny" v-on:click="denyConsent" v-if="!consent.hasConsented"></Button>
-        <Button label="Customise" v-if="!consent.hasConsented"></Button>
-        <Button label="Accept all" v-on:click="acceptConsent" v-if="!consent.hasConsented"></Button>
+        <Button class="p-button-danger" icon="pi pi-times" label="Deny" v-on:click="denyConsent" v-if="!consent.hasConsented"></Button>
+        <Button icon="pi pi-pencil" label="Customise" v-on:click="customiseConsent" v-if="!consent.hasConsented && activeIndex !== 1"></Button>
+        <Button class="p-button-success" icon="pi pi-check" label="Accept all" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex !== 1"></Button>
+        <Button class="p-button-success" icon="pi pi-check" label="Save" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex === 1"></Button>
         <Button label="Edit" v-if="consent.hasConsented"></Button>
         <Button label="Close" v-if="consent.hasConsented"></Button>
     </div>

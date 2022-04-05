@@ -9,7 +9,8 @@ export const useStore = defineStore('main', {
         showWelcome: false,
         consent: {
           hasConsented: false,
-          enableMarketing: false
+          enableNecessary: true,
+          enableMarketing: true
         },
         sideBar: {
           component: "Guest",
