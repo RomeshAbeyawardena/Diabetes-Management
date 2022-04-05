@@ -3,7 +3,7 @@ import { DateRange } from '../models/DateRange';
 import { Subject } from 'rxjs';
 import Promise from "promise";
 import { CookieHelper, Cookie } from '../models/Cookies';
-
+import dayjs from 'dayjs';
 const cancelDialogOption = "dialog.cancel";
 
 export const useStore = defineStore('main', {
@@ -34,9 +34,15 @@ export const useStore = defineStore('main', {
       }
     },
     actions: {
-      getCookies() {
-        let cookieHelper = new CookieHelper();
-        return cookieHelper.getCookies();
+      setConsent() {
+        this.cookieHelper.setCookie(new Cookie("CP_end_user.consent", JSON.stringify(this.consent), dayjs().add(1, "year").toDate()));
+      },
+      getConsent() {
+        let cookie = this.cookieHelper.getCookie("CP_end_user.consent");
+
+        if(cookie) {
+          this.consent = JSON.parse(cookie.value);
+        }
       },
       resetDialog() {
         this.dialog.component = "";

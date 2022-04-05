@@ -23,6 +23,7 @@
 
     function acceptConsent() {
         consent.value.hasConsented = true;
+        store.setConsent();
         store.voidDialogValue();
     }
 

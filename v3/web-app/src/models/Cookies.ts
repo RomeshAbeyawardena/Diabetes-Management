@@ -1,22 +1,30 @@
 export interface ICookieHelper {
     getCookies() : ICookie[];
     setCookie(cookie: ICookie) : void;
-    getCookie(name: String, value: String) : ICookie;
+    getCookie(name: string, value: string) : ICookie;
 }
 
 export interface ICookie {
-    name: String;
-    value: String;
+    name: string;
+    value: string;
+    expires: Date;
+    toString() : string
 }
 
 export class Cookie implements ICookie {
-    constructor(name: String, value: String) {
+    constructor(name: string, value: string, expires: Date) {
         this.name = name;
         this.value = value;
+        this.expires = expires;
     }
 
-    name: String;
-    value: String;
+    name: string;
+    value: string;
+    expires: Date;
+
+    toString(): string {
+        return this.name.concat("=", this.value).concat(";expires=" + this.expires);
+    }
 }
 
 export class CookieHelper implements ICookieHelper {
@@ -32,11 +40,18 @@ export class CookieHelper implements ICookieHelper {
     }
     
     setCookie(cookie: ICookie) : void {
-
+        console.log(cookie.toString());
+        document.cookie = cookie.toString();
     }
 
-    getCookie(name: String, value?: String): ICookie {
-        return new Cookie(name, value);
+    getCookie(name: string, value?: string): ICookie {
+        if(value)
+        {
+            return new Cookie(name, value);
+        }
+
+        let cookies = this.getCookies();
+        return cookies.find(c => c.name == name);
     }
     
     

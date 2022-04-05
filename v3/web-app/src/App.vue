@@ -19,9 +19,11 @@ const inventoryStore = useInventoryStore();
 onMounted(async() => { 
   await inventoryStore.getLastId();
   await inventoryStore.load();
-  let cookies = store.getCookies();
-  console.log(cookies);
-  store.showDialog(DialogTypes.CookiePolicy, "Cookie policy", undefined, false);
+  store.getConsent();
+  if(!store.consent.hasConsented)
+  {
+    store.showDialog(DialogTypes.CookiePolicy, "Cookie policy", undefined, false);
+  }
 });
 
 const date = ref(new Date());
