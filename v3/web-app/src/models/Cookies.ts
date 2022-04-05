@@ -30,10 +30,17 @@ export class Cookie implements ICookie {
 export class CookieHelper implements ICookieHelper {
     getCookies(): ICookie[] {
         let cookies = new Array<Cookie>();
-        let entries = document.cookie.split("; ");
-        for(let entry of entries) {
-            let splitEntry = entry.split("=");
-            cookies.push(this.getCookie(splitEntry[0], splitEntry[1]));
+
+        if(document.cookie.length) {
+            let entries = document.cookie.split("; ");    
+            if(!entries || !entries.length)
+                return cookies;
+
+                for(let entry of entries) {
+                    let splitEntry = entry.split("=");
+                    
+                    cookies.push(this.getCookie(splitEntry[0], splitEntry[1]));
+                }
         }
 
         return cookies;
@@ -44,11 +51,11 @@ export class CookieHelper implements ICookieHelper {
     }
 
     getCookie(name: string, value?: string): ICookie {
-        if(value)
+        if(value !== undefined)
         {
             return new Cookie(name, value, undefined);
         }
-
+        
         let cookies = this.getCookies();
         return cookies.find(c => c.name === name);
     }

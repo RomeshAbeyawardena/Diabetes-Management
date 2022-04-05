@@ -45,8 +45,8 @@ export const useStore = defineStore('main', {
       },
       getConsent() {
         let cookie = this.cookieHelper.getCookie("CP_end_user.consent");
-
-        if(cookie) {
+        
+        if(cookie && cookie.value) {
           this.consent = JSON.parse(cookie.value);
         }
       },
