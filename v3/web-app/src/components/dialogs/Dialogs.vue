@@ -51,7 +51,4 @@ function rejectChanges() {
             <Button v-on:click="rejectChanges" class="p-button-danger" label="Cancel" icon="pi pi-times" />
         </div>
     </Dialog>
-    
-
-    
 </template>
