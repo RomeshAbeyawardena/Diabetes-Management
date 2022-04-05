@@ -9,7 +9,7 @@ const store = useStore();
 const { sideBar } = storeToRefs(store);
 
 function getSideBarComponent() {
-    switch(this.sideBar.component)
+    switch(sideBar.value.component)
     {
         case "Authenticated":
             return Authenticated;
