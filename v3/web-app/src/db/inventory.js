@@ -24,20 +24,28 @@ export default {
     async setItems(items) {
         let connection = await this.getDbConnection();
         
+        let itemsToPush = [];
+
         for(let item of items) 
         {
-            if(item.state === State.added)
-            {
+            if(item.state === State.added) {
                 item.state = State.modified;
             }
 
-            item.published = true;
+            //don't push items marked as deleted that haven't been published
+            if(item.state === State.deleted && !item.published) {
+                continue;
+            }
+
+            if(!item.published) {
+                item.published = true;
+            }
         }
 
         await connection.insert({
             into: "items",
             upsert: true,
-            values: items
+            values: itemsToPush
         });
     },
     async searchItems(query) {

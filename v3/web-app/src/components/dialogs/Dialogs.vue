@@ -14,8 +14,6 @@ import { useStore } from '../../stores';
 const store = useStore();
 const { dialog } = storeToRefs(store);
 
-let oldValue = dialog.value.value;
-
 function valueUpdated(newValue) {
     dialog.value.value = newValue;
 }
@@ -41,7 +39,7 @@ function acceptChanges() {
 }
 
 function rejectChanges() {
-    dialog.value.itemSubject.next(oldValue);
+    store.resetDialog();
 }
 
 </script>
