@@ -38,7 +38,10 @@ export const useStore = defineStore('main', {
         this.dialog.visible = true;
         return new Promise((resolve) => {
           let subscriber = this.dialog.itemSubject.asObservable().subscribe(a => {
-            resolve(a);
+            if(a !== "dialog.cancel")
+            {
+              resolve(a);
+            }
             subscriber.unsubscribe();
             subscriber.remove();
             this.resetDialog();
