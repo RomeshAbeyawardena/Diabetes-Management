@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { DateRange } from '../models/DateRange';
 import { Subject } from 'rxjs';
 import Promise from "promise";
-import { CookieHelper, Cookie } from '../models/Cookies';
+import { Cookie } from '../models/Cookies';
 import dayjs from 'dayjs';
 const cancelDialogOption = "dialog.cancel";
 
@@ -34,6 +34,12 @@ export const useStore = defineStore('main', {
       }
     },
     actions: {
+      addDialog(dialog) {
+        return this.dialogHelper.addDialog(dialog);
+      },
+      getDialog(dialogType) {
+        return this.dialogHelper.getDialog(dialogType);
+      },
       setConsent() {
         this.cookieHelper.setCookie(new Cookie("CP_end_user.consent", JSON.stringify(this.consent), dayjs().add(1, "year").toDate()));
       },
@@ -57,9 +63,9 @@ export const useStore = defineStore('main', {
       voidDialogValue() {
         this.setDialogValue(cancelDialogOption);
       },
-      showDialog(component, title, value, showControls) {
+      showDialog(component, value, showControls) {
         this.dialog.component = component;
-        this.dialog.title = title;
+        this.dialog.title = this.getDialog(component).type;
         this.dialog.value = value;
         this.dialog.visible = true;
 

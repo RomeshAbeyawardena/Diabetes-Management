@@ -9,7 +9,7 @@ import Sidebars from './components/side-bars/Sidebars.vue';
 import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
 //references
-import { DialogTypes } from './models/Dialogs';
+import { DialogType } from './models/Dialogs';
 import { useStore } from './stores';
 import { useInventoryStore } from './stores/inventory';
 import { onMounted } from 'vue';
@@ -22,7 +22,7 @@ onMounted(async() => {
   store.getConsent();
   if(!store.consent.hasConsented)
   {
-    store.showDialog(DialogTypes.CookiePolicy, "Cookie policy", undefined, false);
+    store.showDialog(DialogType.CookiePolicy, "Cookie policy", undefined, false);
   }
 });
 

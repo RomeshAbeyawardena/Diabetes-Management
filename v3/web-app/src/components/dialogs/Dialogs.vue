@@ -8,8 +8,8 @@ import NumberPicker from './NumberPicker.vue';
 import Register from './Login.vue';
 import TextEntry from './TextEntry.vue';
 
-import { ref } from 'vue';
-import { DialogTypes } from '../../models/Dialogs';
+import { ref, onBeforeMount, markRaw } from 'vue';
+import { DialogType, DialogDef } from '../../models/Dialogs';
 import { storeToRefs } from "pinia";
 import { useStore } from '../../stores';
 
@@ -23,21 +23,7 @@ function valueUpdated(newValue) {
 }
 
 function getDialogComponent() {
-    switch(dialog.value.component)
-    {
-        case DialogTypes.CookiePolicy:
-            return CookiePolicy;
-        case DialogTypes.DatePicker:
-            return DatePicker;
-        case DialogTypes.Login:
-            return Login;
-        case DialogTypes.Register:
-            return Register;
-        case DialogTypes.TextEntry:
-            return TextEntry;
-        case DialogTypes.NumberPicker:
-            return NumberPicker;
-    }
+    return markRaw(store.getDialog(dialog.value.component).component);
 }
 
 function acceptChanges() {
@@ -47,6 +33,19 @@ function acceptChanges() {
 function rejectChanges() {
     store.voidDialogValue();
 }
+
+onBeforeMount(() => {
+    store.addDialog(
+            new DialogDef(DialogType.CookiePolicy, "cookie-policy", "Cookie policy", CookiePolicy))
+        .addDialog(
+            new DialogDef(DialogType.DatePicker, "date-picker", "Select a date", DatePicker))
+        .addDialog(
+            new DialogDef(DialogType.NumberPicker, "number-picker", "Select a value", NumberPicker))
+        .addDialog(
+            new DialogDef(DialogType.TextEntry, "text-entry", "Select a value", TextEntry));
+ 
+    console.log(store.dialogHelper);
+})
 
 </script>
 <template>

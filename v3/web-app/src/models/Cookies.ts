@@ -47,11 +47,11 @@ export class CookieHelper implements ICookieHelper {
     getCookie(name: string, value?: string): ICookie {
         if(value)
         {
-            return new Cookie(name, value);
+            return new Cookie(name, value, undefined);
         }
 
         let cookies = this.getCookies();
-        return cookies.find(c => c.name == name);
+        return cookies.find(c => c.name === name);
     }
     
     

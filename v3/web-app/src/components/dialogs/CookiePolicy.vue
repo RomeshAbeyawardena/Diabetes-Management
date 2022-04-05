@@ -30,7 +30,6 @@
     function denyConsent() {
         window.location.replace("https://www.google.co.uk/search?q=gdpr")
     }
-
 </script>
 <template>
 <div class="cookie-policy">
