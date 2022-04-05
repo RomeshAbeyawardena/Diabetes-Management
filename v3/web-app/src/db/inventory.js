@@ -40,6 +40,8 @@ export default {
             if(!item.published) {
                 item.published = true;
             }
+
+            itemsToPush.push(item);
         }
 
         await connection.insert({

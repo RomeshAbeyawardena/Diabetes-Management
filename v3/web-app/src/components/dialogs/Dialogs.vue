@@ -39,7 +39,7 @@ function acceptChanges() {
 }
 
 function rejectChanges() {
-    store.resetDialog();
+    dialog.value.itemSubject.next("dialog.cancel");
 }
 
 </script>
