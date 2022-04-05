@@ -1,4 +1,5 @@
 export const DialogTypes = {
+    CookiePolicy: "cookie-policy",
     DatePicker: "date-picker",
     Login: "login",
     Register: "register",
@@ -7,7 +8,9 @@ export const DialogTypes = {
 };
 
 export function getTitle(component) {
-    switch(component){
+    switch(component) {
+        case DialogTypes.CookiePolicy:
+            return "";
         case DialogTypes.DatePicker:
             return "Pick a date/time";
         case DialogTypes.Login:

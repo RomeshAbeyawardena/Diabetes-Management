@@ -7,12 +7,17 @@ export const useStore = defineStore('main', {
     state:() => {
       return {
         showWelcome: false,
+        consent: {
+          hasConsented: false,
+          enableMarketing: false
+        },
         sideBar: {
           component: "Guest",
           title: "",
           visible: false
         },
         dialog: {
+          showControls: true,
           itemSubject: new Subject(),
           component: "", 
           title: "",
@@ -31,11 +36,16 @@ export const useStore = defineStore('main', {
         this.dialog.value = "";
         this.dialog.visible = false;
       },
-      showDialog(component, title, value) {
+      showDialog(component, title, value, showControls) {
         this.dialog.component = component;
         this.dialog.title = title;
         this.dialog.value = value;
         this.dialog.visible = true;
+
+        if(showControls !== undefined){
+          this.dialog.showControls= showControls;
+        }
+
         return new Promise((resolve) => {
           let subscriber = this.dialog.itemSubject.asObservable().subscribe(a => {
             if(a !== "dialog.cancel")

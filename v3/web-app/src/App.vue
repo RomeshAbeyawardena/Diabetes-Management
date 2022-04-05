@@ -9,13 +9,18 @@ import Sidebars from './components/side-bars/Sidebars.vue';
 import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
 //references
+import { DialogTypes } from './models/Dialogs';
+import { useStore } from './stores';
 import { useInventoryStore } from './stores/inventory';
 import { onMounted } from 'vue';
 import { ref } from 'vue';
-const store = useInventoryStore();
+const store = useStore();
+const inventoryStore = useInventoryStore();
 onMounted(async() => { 
-  await store.getLastId();
-  await store.load() 
+  await inventoryStore.getLastId();
+  await inventoryStore.load();
+
+  store.showDialog(DialogTypes.CookiePolicy, "Cookie policy", undefined, false);
 });
 
 const date = ref(new Date());
