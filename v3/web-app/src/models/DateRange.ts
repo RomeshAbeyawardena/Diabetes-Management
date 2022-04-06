@@ -37,7 +37,7 @@ export class DateHelper implements IDateHelper {
             .set("minute", newMinute)
             .set("second", newSecond).toDate();
     }
-    
+
     appendTime(date: Date, time: string, format: string) : Date {
         let timeSpan = dayjs(time, format);
         
@@ -116,16 +116,7 @@ export class DateRange implements IDateRange {
     }
 
     getDateWithCurrentTime(): Date {
-        this.dateHelper.appendTimeFromDate(this.fromDate, new Date());
-        let d = dayjs(this.fromDate);
-        
-        let c = dayjs();
-        
-        d = d.set("hour", c.hour())
-            .set("minute", c.minute())
-            .set("second", c.second());
-        
-        return d.toDate();
+        return this.dateHelper.appendTimeFromDate(this.fromDate, new Date());
     }
 
     subtract(value: number, unit: string): IDateRange {
