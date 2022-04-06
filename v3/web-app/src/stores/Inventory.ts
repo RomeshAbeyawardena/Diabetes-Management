@@ -71,9 +71,9 @@ export const useInventoryStore = defineStore('inventory', {
         },
         async load() : Promise<void> {
             this.items = await this.inventoryDb.getItems();
-        },
+        }, 
         async save() : Promise<void> {
-            await this.inventoryDb.setItems(this.items.map((i: IInventory) => i.toObject()));
+            await this.inventoryDb.setItems(this.items);
         }
-    }
+    } 
 });

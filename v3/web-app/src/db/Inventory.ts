@@ -152,6 +152,7 @@ export class InventoryDb extends DbBase implements IInventoryDb {
 
         for(let item of items) 
         {
+            console.log(item);
             if(item.state === State.added) {
                 item.state = State.modified;
             }
@@ -165,7 +166,7 @@ export class InventoryDb extends DbBase implements IInventoryDb {
                 item.published = true;
             }
 
-            itemsToPush.push(item);
+            itemsToPush.push(item.toObject());
         }
 
         await connection.insert({

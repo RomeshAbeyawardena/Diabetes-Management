@@ -1,4 +1,4 @@
-import { IDateRange } from '../models/DateRange';
+import { IDateRange } from './DateRange';
 import { Subject } from 'rxjs';
 
 export enum DialogType {

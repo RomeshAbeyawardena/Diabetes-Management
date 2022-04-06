@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import App from './App.vue'
-import { InventoryDb  } from "./db/inventory";
+import { InventoryDb  } from "./db/Inventory";
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import { CookieHelper } from './models/Cookies';

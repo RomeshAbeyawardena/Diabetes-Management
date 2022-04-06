@@ -1,4 +1,4 @@
-import { IComponent, DialogType } from "../models";
+import { IComponent, DialogType } from ".";
 
 export interface IDialogHelper {
     dialogs : IComponent[];
