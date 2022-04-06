@@ -12,10 +12,15 @@ import Title from './components/Title.vue';
 import { DialogType } from './models/Dialogs';
 import { useStore } from './stores';
 import { useInventoryStore } from './stores/inventory';
-import { onMounted } from 'vue';
+import { onBeforeMount, onMounted } from 'vue';
 import { ref } from 'vue';
 const store = useStore();
 const inventoryStore = useInventoryStore();
+
+onBeforeMount(() => {
+  store.setFilterDateRange(new Date(), new Date());
+});
+
 onMounted(async() => { 
   await inventoryStore.getLastId();
   await inventoryStore.load();

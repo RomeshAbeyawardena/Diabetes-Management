@@ -8,7 +8,7 @@ import ToastService from 'primevue/toastservice';
 import { CookieHelper } from './models/Cookies';
 import { InventoryHelper } from './models/Inventory';
 import { DialogHelper } from './models/Dialogs';
-
+import { DateHelper } from './models/DateRange';
 import "primevue/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
@@ -20,7 +20,8 @@ function inventoryDbPlugin() {
         inventoryDb: InventoryDb, 
         cookieHelper: new CookieHelper(), 
         dialogHelper: new DialogHelper(),
-        inventoryHelper: new InventoryHelper(),
+        dateHelper: new DateHelper(),
+        inventoryHelper: new InventoryHelper()
     };
 }
 

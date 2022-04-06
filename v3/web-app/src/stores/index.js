@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { DateRange } from '../models/DateRange';
-import { Subject } from 'rxjs';
+import { from, Subject } from 'rxjs';
 import Promise from "promise";
 import { Cookie } from '../models/Cookies';
 import dayjs from 'dayjs';
@@ -29,13 +29,16 @@ export const useStore = defineStore('main', {
           visible: false
         },
         filters: {
-          dateRange: new DateRange(Date(), Date(), true) 
+          dateRange: {  }
         }
       }
     },
     actions: {
       addDialog(dialog) {
         return this.dialogHelper.addDialog(dialog);
+      },
+      setFilterDateRange(fromDate, toDate) {
+        this.filters.dateRange = this.dateHelper.dateRange(fromDate, toDate, true);
       },
       getDialog(dialogType) {
         return this.dialogHelper.getDialog(dialogType);

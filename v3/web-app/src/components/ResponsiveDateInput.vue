@@ -26,7 +26,6 @@
     function input(event) {
         let isValid = event !== val.value && event.length && !event.includes("_");
         if(isValid) {
-            console.log("Has changed and is valid");
             let newDate = dayjs(event, props.format);
             if(newDate.isValid())
             {
@@ -41,8 +40,6 @@
     function inputMobile(event) {
         let isValid = event !== mobileVal.value && event.length && !event.includes("_");
         if(isValid) {
-            console.log("Has changed and is valid");
-
             var date = dayjs(props.modelValue).format(props.dateFormat);
 
             let newDate = dayjs(date.concat(" ", event), props.format);
