@@ -16,11 +16,11 @@ import "primeflex/primeflex.css";
 import "./scss/index.scss";
 
 function inventoryDbPlugin() {
-    return { 
-        inventoryDb: InventoryDb, 
+    return {  
         cookieHelper: new CookieHelper(), 
         dialogHelper: new DialogHelper(),
         dateHelper: new DateHelper(),
+        inventoryDb: InventoryDb,
         inventoryHelper: new InventoryHelper()
     };
 }
