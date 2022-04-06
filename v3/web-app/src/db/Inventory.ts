@@ -1,22 +1,14 @@
 import { DATA_TYPE, IAlterQuery, IDataBase, ITable, TColumns } from "jsstore";
-import { State } from "../models/Inventory";
+import { State, IInventory } from "../models/Inventory";
 import { DbBase } from "./Db";
 
-export interface IItem {
-    id: number;
-    description: string;
-    value: number;
-    inputDate: Date;
-    state: State,
-    published: boolean
-}
 
 export interface IInventoryDb {
-    getItems() : Promise<IItem[]>;
+    getItems(fromDate: Date, toDate: Date) : Promise<IInventory[]>;
     getLastIndex() : Promise<number>;
     rebuild() : Promise<void>;
-    searchItems(query: string) : Promise<IItem[]>;
-    setItems() : Promise<void>;
+    searchItems(query: string) : Promise<IInventory[]>;
+    setItems(items: IInventory[]) : Promise<void>;
     sync() : Promise<void>;
 }
 
@@ -97,20 +89,90 @@ export class InventoryDb extends DbBase implements IInventoryDb {
     constructor() {
         super(new InventoryDatabase());
     }
-    getItems(): Promise<IItem[]> {
-        throw new Error("Method not implemented.");
+    async getItems(fromDate: Date, toDate: Date): Promise<IInventory[]> {
+        let connection = await this.getDbConnection();
+        
+        if (!fromDate && !toDate) {
+            return connection.select({ from: "items" });
+        }
+
+        return await connection.select<IInventory>({
+            from: "items",
+            where: {
+                state: {
+                    in: [State.unchanged, State.modified]
+                },
+                consumedDate: {
+                    '-': {
+                        low: fromDate,
+                        high: toDate
+                    }
+                }
+            }
+        });
     }
-    getLastIndex(): Promise<number> {
-        throw new Error("Method not implemented.");
+    async getLastIndex(): Promise<number> {
+        let connection = await this.getDbConnection();
+
+        let items =  await connection.select({
+            from: "items",
+            aggregate: {
+                max: "id"    
+            },
+        });
+        
+        if(!items.length){
+            return 0;
+        }
+
+        let maxId = items[0]["max(id)"];
+        return maxId;;
     }
-    rebuild(): Promise<void> {
-        throw new Error("Method not implemented.");
+    async rebuild(): Promise<void> {
+        await this.destroy();
+        this.connection = null;
+        window.location.reload();
     }
-    searchItems(query: string): Promise<IItem[]> {
-        throw new Error("Method not implemented.");
+    async searchItems(query: string): Promise<IInventory[]> {
+        let connection = await this.getDbConnection();
+        
+        return await connection.select({
+            from: "items",
+            where: {
+                description: {
+                    like: "%" + query + "%"
+                }
+            }
+        });
     }
-    setItems(): Promise<void> {
-        throw new Error("Method not implemented.");
+    async setItems(items: IInventory[]): Promise<void> {
+        let connection = await this.getDbConnection();
+        
+        let itemsToPush = [];
+
+        for(let item of items) 
+        {
+            if(item.state === State.added) {
+                item.state = State.modified;
+            }
+
+            //don't push items marked as deleted that haven't been published
+            if(item.state === State.deleted && !item.published) {
+                continue;
+            }
+
+            if(!item.published) {
+                item.published = true;
+            }
+
+            itemsToPush.push(item);
+        }
+
+        await connection.insert({
+            into: "items",
+            upsert: true,
+            values: itemsToPush
+        });
     }
     sync(): Promise<void> {
         throw new Error("Method not implemented.");
