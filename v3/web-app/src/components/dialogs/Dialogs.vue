@@ -9,9 +9,10 @@ import Register from './Login.vue';
 import TextEntry from './TextEntry.vue';
 
 import { ref, onBeforeMount, markRaw } from 'vue';
-import { DialogType, DialogDef } from '../../models/Dialogs';
+import { DialogDef } from '../../models/Dialogs';
+import { DialogType } from "../../models";
 import { storeToRefs } from "pinia";
-import { useStore } from '../../stores';
+import { useStore } from '../../stores/main';
 
 const store = useStore();
 const { dialog } = storeToRefs(store);

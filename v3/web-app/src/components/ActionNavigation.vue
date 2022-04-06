@@ -2,7 +2,7 @@
     import Button from 'primevue/button';
     import SpeedDial from 'primevue/speeddial';
     import Toast from 'primevue/toast';
-    import { useStore } from '../stores';
+    import { useStore } from '../stores/main';
     import { useInventoryStore } from '../stores/inventory';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';

@@ -1,31 +1,40 @@
+import { IInventory, Inventory } from '../models/Inventory';
 import { defineStore } from 'pinia'
-import { Inventory, InventoryHelper, State } from '../models/Inventory';
-import { useStore } from "../stores";
+import { State } from '../models/Inventory';
+import { useStore } from "../stores/main";
+
+export interface IInventoryStoreState {
+    items: IInventory[]
+    lastStoredId: number,
+    isDeleteMode: boolean
+}
+
+export interface IInventoryStoreGetters {
+
+}
 
 export const useInventoryStore = defineStore('inventory', {
-    state:() => {
-        return {
-            items: [],
-            lastStoredId: 0,
-            isDeleteMode: false
-        }
-    },
+    state: (): IInventoryStoreState => ({
+        items: new Array<IInventory>(),
+        lastStoredId: 0,
+        isDeleteMode: false
+    }),
     getters: {
-        lastId() { 
+        lastId(): number {
             if(this.items.length)
             {
                 return this.items[this.items.length - 1].id;
             }
             return this.lastStoredId; 
         },
-        previousTotalValue() {
+        previousTotalValue(): number {
             return this.inventoryHelper.getTotalValue(this.previousDateItems);
         },
-        currentTotalValue() {
+        currentTotalValue(): number {
             return this.inventoryHelper.getTotalValue(this.currentDateItems);
         },
         getItemsFromDateRange() {
-            return (action, value, unit) => {
+            return function(action: string, value: number, unit: string): IInventory[] {
                 let store = useStore();
 
                 let dateRange = store.filters.dateRange;
@@ -36,36 +45,35 @@ export const useInventoryStore = defineStore('inventory', {
                 }
 
                 if(this.items.length) {
-                    return this.items.filter(i => i.inputDate >= dateRange.fromDate 
+                    return this.items.filter((i: IInventory) => i.inputDate >= dateRange.fromDate 
                         && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
                 }
 
                 return this.items;
-            }
+            };
         },
-        previousDateItems() {
+        previousDateItems() : IInventory[] {
             return this.getItemsFromDateRange("subtract", 1, "day");
         },
-        currentDateItems() {
+        currentDateItems() : IInventory[] {
             let items = this.getItemsFromDateRange(null, 1, "day");
-            items.sort((a,b) => Number(a.inputDate) - Number(b.inputDate));
+            items.sort((a: IInventory, b: IInventory) => Number(a.inputDate) - Number(b.inputDate));
             return items;
         }
     },
     actions: {
-        async getLastId() {
+        async getLastId() : Promise<void> {
             this.lastStoredId = await this.inventoryDb.getLastIndex();
         },
-        addNew(fromDate) {
+        addNew(fromDate: Date) : void {
             this.items.push(
                 new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added, false));
         },
-        async load() {
-            let items = await this.inventoryDb.getItems();
-            this.items = items.map(i => new Inventory().fromObject(i));
+        async load() : Promise<void> {
+            this.items = await this.inventoryDb.getItems();
         },
-        async save() {
-            await this.inventoryDb.setItems(this.items.map(i => i.toObject()));
+        async save() : Promise<void> {
+            await this.inventoryDb.setItems(this.items.map((i: IInventory) => i.toObject()));
         }
     }
 });

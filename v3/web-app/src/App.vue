@@ -9,21 +9,23 @@ import Sidebars from './components/side-bars/Sidebars.vue';
 import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
 //references
-import { DialogType } from './models/Dialogs';
-import { useStore } from './stores';
+import { DialogType } from './models';
+import { useStore } from './stores/main';
 import { useInventoryStore } from './stores/inventory';
 import { onBeforeMount, onMounted } from 'vue';
 import { ref } from 'vue';
+
 const store = useStore();
 const inventoryStore = useInventoryStore();
+const { getLastId, load } = inventoryStore;
 
 onBeforeMount(() => {
   store.setFilterDateRange(new Date(), new Date());
 });
 
 onMounted(async() => { 
-  await inventoryStore.getLastId();
-  await inventoryStore.load();
+  await getLastId();
+  await load();
   store.getConsent();
   if(!store.consent.hasConsented)
   {

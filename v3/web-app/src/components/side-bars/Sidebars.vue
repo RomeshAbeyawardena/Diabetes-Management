@@ -4,7 +4,7 @@ import Guest from './Guest.vue';
 import Sidebar from 'primevue/sidebar';
 
 import { storeToRefs } from "pinia";
-import { useStore } from '../../stores';
+import { useStore } from '../../stores/main';
 const store = useStore();
 const { sideBar } = storeToRefs(store);
 

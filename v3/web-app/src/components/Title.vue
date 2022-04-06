@@ -1,6 +1,6 @@
 <script setup>
     import Button from 'primevue/button';
-    import { useStore } from '../stores';
+    import { useStore } from '../stores/main';
     import { storeToRefs } from 'pinia';
     const store = useStore();
     const { sideBar } = storeToRefs(store);

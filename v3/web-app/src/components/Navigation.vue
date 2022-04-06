@@ -1,7 +1,7 @@
 <script setup>
     import Button from 'primevue/button';
     import { computed } from 'vue';
-    import { useStore } from '../stores';
+    import { useStore } from '../stores/main';
     const store = useStore();
     const dateFormat = "ddd, DD MMMM YYYY";
     const currentDate = computed(() => store.filters.dateRange.display(dateFormat, true));

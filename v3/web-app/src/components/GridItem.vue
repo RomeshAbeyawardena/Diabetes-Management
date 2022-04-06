@@ -5,10 +5,10 @@
     import ResponsiveDateInput from './ResponsiveDateInput.vue';
 
     import { useConfirm } from "primevue/useconfirm";
-    import { useStore } from '../stores';
+    import { useStore } from '../stores/main';
     import { ref, computed, watch } from "vue";
     import { Inventory, State } from "../models/Inventory";
-    import { DialogType } from '../models/Dialogs';
+    import { DialogType } from '../models';
     
     const store = useStore();
 

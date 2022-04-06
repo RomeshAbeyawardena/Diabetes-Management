@@ -5,7 +5,7 @@
     import TabPanel from 'primevue/tabpanel';
     import { ref } from "vue";
     import { storeToRefs } from "pinia";
-    import { useStore } from "../../stores";
+    import { useStore } from "../../stores/main";
 
     import "../../scss/cookie-policy.scss";
     const store = useStore();
