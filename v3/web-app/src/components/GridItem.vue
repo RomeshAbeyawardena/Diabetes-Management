@@ -3,7 +3,7 @@
     import InputNumber from 'primevue/inputnumber';
     import InputText from 'primevue/inputtext';
     import ResponsiveDateInput from './ResponsiveDateInput.vue';
-
+    import { storeToRefs } from 'pinia';
     import { useConfirm } from "primevue/useconfirm";
     import { useStore } from '../stores/main';
     import { ref, computed, watch } from "vue";
@@ -11,7 +11,7 @@
     import { DialogType } from '../models';
     
     const store = useStore();
-
+    const { blockEvents } = storeToRefs(store);
     const props = defineProps({ 
         isDeleteMode: Boolean,
         showHeader: Boolean, 
@@ -114,6 +114,7 @@
         <div class="grid">
             <div class="col-4">
                     <ResponsiveDateInput    
+                        :disabled="blockEvents" 
                         id="inputDate" 
                         :format="format" 
                         :mobile-format="mobileFormat" 
@@ -127,15 +128,17 @@
                         v-on:input="touchEntry" 
                         type="text" 
                         style="width: 100%"
+                        :disabled="blockEvents"
                         v-model="localEntry.description" />
-                    <Button icon="pi pi-pencil" v-on:click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
+                    <Button icon="pi pi-pencil" :disabled="blockEvents" v-on:click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
                 </div>
             </div>
             <div class="col-2">
-                <Button icon="pi pi-trash" v-if="props.isDeleteMode"  v-on:click="markAsDeleted($event)"
+                <Button icon="pi pi-trash" v-if="props.isDeleteMode" :disabled="blockEvents" v-on:click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
-                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" v-on:click="showDialog(DialogType.NumberPicker, localEntry.value)"
+                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents" 
+                            v-on:click="showDialog(DialogType.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />
             </div>

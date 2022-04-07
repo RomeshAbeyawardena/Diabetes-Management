@@ -9,7 +9,7 @@
 
     import "../../scss/cookie-policy.scss";
     const store = useStore();
-    const { consent } = storeToRefs(store);
+    const { consent, blockEvents } = storeToRefs(store);
     const activeIndex = ref(0);
     
     function editConsent() {
@@ -23,6 +23,7 @@
 
     function acceptConsent() {
         consent.value.hasConsented = true;
+        blockEvents.value = false;
         store.setConsent();
         store.voidDialogValue();
     }

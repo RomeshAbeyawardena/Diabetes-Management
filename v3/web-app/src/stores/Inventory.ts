@@ -62,12 +62,12 @@ export const useInventoryStore = defineStore('inventory', {
         }
     },
     actions: {
-        async getLastId() : Promise<void> {
-            this.lastStoredId = await this.inventoryDb.getLastIndex();
-        },
         addNew(fromDate: Date) : void {
             this.items.push(
                 new Inventory(this.lastId + 1, fromDate, "", Number(0), State.added, false));
+        },
+        async getLastId() : Promise<void> {
+            this.lastStoredId = await this.inventoryDb.getLastIndex();
         },
         async load() : Promise<void> {
             this.items = await this.inventoryDb.getItems();

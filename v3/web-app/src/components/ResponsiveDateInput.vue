@@ -7,12 +7,14 @@
     dayjs.extend(customParseFormat);
 
     const props = defineProps({ 
+        disabled: Boolean,
         modelValue: Date, 
         dateFormat: String,
         format: String, 
         mobileFormat: String });
 
     const emit = defineEmits(['update:modelValue', 'input:click']);
+    const disabled = ref(props.disabled);
     const value = ref(props.modelValue);
     const val = ref(new dayjs(props.modelValue).format(props.format));
     const mobileVal = ref(new dayjs(props.modelValue).format(props.mobileFormat));
@@ -75,7 +77,7 @@
             v-on:click="inputClick($event)"
             :mask="getMask(props.format)"
             v-model="val" />
-        <InputMask class="inputMobileDate" 
+        <InputMask :disabled="disabled" class="inputMobileDate" 
             style="width: 100%" 
             v-on:update:model-value="inputMobile($event)" 
             v-on:click="inputClick($event)"

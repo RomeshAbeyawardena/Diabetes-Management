@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 const cancelDialogOption = "dialog.cancel";
 
 export interface IMainStoreState {
+    blockEvents: boolean,
     consent: IConsent;
     dialog: IDialogComponent,
     filters?: IFilters;
@@ -17,6 +18,7 @@ export interface IMainStoreState {
 
 export const useStore = defineStore('main', {
     state: (): IMainStoreState => ({
+        blockEvents: false,
         consent: {
             enableMarketing: true,
             enableNecessary: true,

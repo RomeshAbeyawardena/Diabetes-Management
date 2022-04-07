@@ -12,8 +12,7 @@ import Title from './components/Title.vue';
 import { DialogType } from './models';
 import { useStore } from './stores/main';
 import { useInventoryStore } from './stores/inventory';
-import { onBeforeMount, onMounted } from 'vue';
-import { ref } from 'vue';
+import { ref, onBeforeMount, onMounted } from 'vue';
 
 const store = useStore();
 const inventoryStore = useInventoryStore();
@@ -21,6 +20,7 @@ const { getLastId, load } = inventoryStore;
 
 onBeforeMount(() => {
   store.setFilterDateRange(new Date(), new Date());
+  
 });
 
 onMounted(async() => { 
@@ -31,21 +31,22 @@ onMounted(async() => {
   {
     const cookieDialog = store.getDialog(DialogType.CookiePolicy);
     store.showDialog(cookieDialog, undefined, false);
+    store.blockEvents = true;
   }
 });
-
-const date = ref(new Date());
 </script>
 
 <template>
   <div class="app">
-    <ConfirmPopup />
-    <Sidebars />
-    <Dialogs />
-    <Title />
-    <Navigation />
-    <Grid />
-    <StatusBar />
-    <ActionNavigation />
+    <div>
+      <ConfirmPopup />
+      <Sidebars />
+      <Dialogs />
+      <Title />
+      <Navigation />
+      <Grid />
+      <StatusBar />
+      <ActionNavigation />
+    </div>
   </div>
 </template>
