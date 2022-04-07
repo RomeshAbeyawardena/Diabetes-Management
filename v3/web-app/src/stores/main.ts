@@ -46,6 +46,29 @@ export const useStore = defineStore('main', {
         addDialog(dialog: IDialogComponent) {
           return this.dialogHelper.addDialog(dialog);
         },
+        getConsent() {
+          let cookie = this.cookieHelper.getCookie("CP_end_user.consent");
+          
+          if(cookie && cookie.value) {
+            this.consent = JSON.parse(cookie.value);
+          }
+        },
+        getDialog(dialogType: DialogType) {
+          return this.dialogHelper.getDialog(dialogType);
+        },
+        resetDialog() {
+          this.dialog.component = "";
+          this.dialog.title = "";
+          this.dialog.value = "";
+          this.dialog.visible = false;
+        },
+        setConsent() {
+          this.cookieHelper.setCookie(new Cookie("CP_end_user.consent", JSON.stringify(this.consent), dayjs().add(1, "year").toDate()));
+        },
+        setDialogValue(value: any) {
+          this.dialog.value = value;
+          this.dialog.valueSubject.next(value);
+        },
         setFilterDateRange(fromDate: Date, toDate: Date) {
           let dateRange = this.dateHelper.dateRange(fromDate, toDate, true);
           
@@ -56,37 +79,6 @@ export const useStore = defineStore('main', {
           }
           else
             this.filters.dateRange = dateRange;
-        },
-        getDialog(dialogType: DialogType) {
-          return this.dialogHelper.getDialog(dialogType);
-        },
-        setConsent() {
-          this.cookieHelper.setCookie(new Cookie("CP_end_user.consent", JSON.stringify(this.consent), dayjs().add(1, "year").toDate()));
-        },
-        getConsent() {
-          let cookie = this.cookieHelper.getCookie("CP_end_user.consent");
-          
-          if(cookie && cookie.value) {
-            this.consent = JSON.parse(cookie.value);
-          }
-        },
-        resetDialog() {
-          this.dialog.component = "";
-          this.dialog.title = "";
-          this.dialog.value = "";
-          this.dialog.visible = false;
-        },
-        setDialogValue(value: any) {
-          this.dialog.value = value;
-          this.dialog.valueSubject.next(value);
-        },
-        voidDialogValue() {
-          this.setDialogValue(cancelDialogOption);
-        },
-        showSidebar(dialog: IComponent) {
-          this.sideBar.component = dialog.component;
-          this.sideBar.title = dialog.type;
-          this.sideBar.visible = true;
         },
         showDialog(dialog: IDialogComponent, value: any, showControls: boolean) {
           this.dialog.component = dialog.component;
@@ -109,6 +101,15 @@ export const useStore = defineStore('main', {
               this.resetDialog();
             });
           }); 
-        }
+        },
+        showSidebar(dialog: IComponent) {
+          this.sideBar.component = dialog.component;
+          this.sideBar.title = dialog.type;
+          this.sideBar.visible = true;
+        },
+        voidDialogValue() {
+          this.setDialogValue(cancelDialogOption);
+        },
+        
       } 
 });
