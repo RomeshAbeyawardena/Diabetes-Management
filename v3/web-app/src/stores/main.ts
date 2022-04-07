@@ -44,7 +44,7 @@ export const useStore = defineStore('main', {
 
     },
     actions: {
-        addDialog(dialog) {
+        addDialog(dialog: IDialogComponent) {
           return this.dialogHelper.addDialog(dialog);
         },
         setFilterDateRange(fromDate: Date, toDate: Date) {
@@ -58,7 +58,7 @@ export const useStore = defineStore('main', {
           else
             this.filters.dateRange = dateRange;
         },
-        getDialog(dialogType) {
+        getDialog(dialogType: DialogType) {
           return this.dialogHelper.getDialog(dialogType);
         },
         setConsent() {
@@ -77,16 +77,21 @@ export const useStore = defineStore('main', {
           this.dialog.value = "";
           this.dialog.visible = false;
         },
-        setDialogValue(value) {
+        setDialogValue(value: any) {
           this.dialog.value = value;
           this.dialog.valueSubject.next(value);
         },
         voidDialogValue() {
           this.setDialogValue(cancelDialogOption);
         },
-        showDialog(component, value, showControls) {
-          this.dialog.component = component;
-          this.dialog.title = this.getDialog(component).type;
+        showSidebar(dialog: IComponent) {
+          this.sideBar.component = dialog.component;
+          this.sideBar.title = dialog.type;
+          this.sideBar.visible = true;
+        },
+        showDialog(dialog: IDialogComponent, value: any, showControls: boolean) {
+          this.dialog.component = dialog.component;
+          this.dialog.title = dialog.type;
           this.dialog.value = value;
           this.dialog.visible = true;
   
@@ -95,7 +100,7 @@ export const useStore = defineStore('main', {
           }
   
           return new Promise((resolve) => {
-            let subscriber = this.dialog.valueSubject.asObservable().subscribe(a => {
+            let subscriber = this.dialog.valueSubject.asObservable().subscribe((a:any) => {
               if(a !== cancelDialogOption)
               {
                 resolve(a);

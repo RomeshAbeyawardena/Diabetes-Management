@@ -65,9 +65,10 @@
             });
     }
 
-    async function showDialog(component, value) {
-        let result = await store.showDialog(component, value, true);
-        switch (component) {
+    async function showDialog(type, value) {
+        const dialog = store.getDialog(type);
+        const result = await store.showDialog(dialog, value, true);
+        switch (type) {
             case DialogType.DatePicker:
                 localEntry.value.inputDate = result;
                 if(localEntry.value.inputDate !== result)

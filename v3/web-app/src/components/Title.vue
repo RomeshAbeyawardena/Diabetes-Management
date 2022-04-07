@@ -2,11 +2,13 @@
     import Button from 'primevue/button';
     import { useStore } from '../stores/main';
     import { storeToRefs } from 'pinia';
+    import { DialogType } from '../models';
     const store = useStore();
     const { sideBar } = storeToRefs(store);
     
     function expandSidebar(){
-        sideBar.value.visible = true;
+        sideBar.value.type = DialogType.Guest;
+        store.showSidebar(store.getDialog(sideBar.value.type));
     }
 </script>
 <template>

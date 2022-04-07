@@ -23,7 +23,7 @@ function valueUpdated(newValue) {
 }
 
 function getDialogComponent() {
-    return markRaw(store.getDialog(dialog.value.component).component);
+    return markRaw(dialog.value.component);
 }
 
 function acceptChanges() {

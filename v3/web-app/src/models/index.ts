@@ -2,13 +2,17 @@ import { IDateRange } from './DateRange';
 import { Subject } from 'rxjs';
 
 export enum DialogType {
+    //dialogs
     None = "none",
     CookiePolicy = "cookie-policy",
     DatePicker = "date-picker",
     Login = "login",
     Register = "register",
     TextEntry = "text-entry",
-    NumberPicker = "number-picker"
+    NumberPicker = "number-picker",
+    //side bars
+    Authenticated = "authenticated",
+    Guest = "guest"
 }
 
 export interface IFilters {
@@ -26,6 +30,7 @@ export interface IComponent {
     title: string;
     type: DialogType;
     visible: boolean;
+    component?: any;
 }
 
 export interface IDialogComponent extends IComponent {
