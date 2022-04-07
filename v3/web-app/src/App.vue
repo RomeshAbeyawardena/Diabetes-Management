@@ -29,7 +29,8 @@ onMounted(async() => {
   store.getConsent();
   if(!store.consent.hasConsented)
   {
-    store.showDialog(DialogType.CookiePolicy, undefined, false); 
+    const cookieDialog = store.getDialog(DialogType.CookiePolicy);
+    store.showDialog(cookieDialog, undefined, false);
   }
 });
 
