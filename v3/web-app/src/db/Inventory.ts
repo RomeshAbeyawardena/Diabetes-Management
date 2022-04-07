@@ -1,9 +1,12 @@
-import { DATA_TYPE, IAlterQuery, IDataBase, ITable, TColumns } from "jsstore";
+import Dexie from "dexie";
 import { State, IInventory } from "../models/Inventory";
-import { DbBase } from "./Db";
 
+export interface IInventoryDatabase {
+    items: Dexie.Table<IInventory, number>;
+}
 
 export interface IInventoryDb {
+    inventoryDatabase: IInventoryDatabase;
     getItems(fromDate: Date, toDate: Date) : Promise<IInventory[]>;
     getLastIndex() : Promise<number>;
     rebuild() : Promise<void>;
@@ -12,147 +15,54 @@ export interface IInventoryDb {
     sync() : Promise<void>;
 }
 
-export class Items implements ITable {
-    name: string;
-    columns: TColumns;
-    alter?: IAlterQuery;
+export class InventoryDatabase extends Dexie implements IInventoryDatabase {
+    items: Dexie.Table<IInventory, number>;
 
     constructor() {
-        this.name = "items";
-        this.columns = {
-            "id" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.Number,
-                enableSearch: true,
-                keyPath: []
-            },
-            "description" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.String,
-                enableSearch: true,
-                keyPath: []
-            },
-            "value" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.Number,
-                enableSearch: true,
-                keyPath: []
-            },
-            "inputDate" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.DateTime,
-                enableSearch: true,
-                keyPath: []
-            },
-            "state" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.String,
-                enableSearch: true,
-                keyPath: []
-            },
-            "published" : {
-                primaryKey: true,
-                unique: true,
-                notNull: true,
-                dataType: DATA_TYPE.Boolean,
-                enableSearch: true,
-                keyPath: []
-            },
-        }
+        super("inventory");
+        this.version(1).stores({
+            items: 'id, description, value, inputDate, state, published'
+        });
     }
 }
 
-export class InventoryDatabase implements IDataBase {
-    name: string;
-    tables: ITable[];
-    version?: number;
-
-    constructor() {
-        this.name = "inventory";
-        this.version = 1;
-        this.tables = new Array<ITable>();
-        this.tables.push(new Items());
-    }
-}
-
-export class InventoryDb extends DbBase implements IInventoryDb {
-    constructor() {
-        super(new InventoryDatabase());
+export class InventoryDb implements IInventoryDb {
+    inventoryDatabase: IInventoryDatabase;
+    constructor(inventoryDatabase: IInventoryDatabase) {
+        this.inventoryDatabase = inventoryDatabase;
     }
     async getItems(fromDate: Date, toDate: Date): Promise<IInventory[]> {
-        let connection = await this.getDbConnection();
+        const query = this.inventoryDatabase.items
+            .where("state")
+            .notEqual(State.deleted);
+            
         
         if (!fromDate && !toDate) {
-            return connection.select({ from: "items" });
+            return await query.toArray();
         }
 
-        return await connection.select<IInventory>({
-            from: "items",
-            where: {
-                state: {
-                    in: [State.unchanged, State.modified]
-                },
-                consumedDate: {
-                    '-': {
-                        low: fromDate,
-                        high: toDate
-                    }
-                }
-            }
-        });
+        return await query.and(item => item.inputDate >= fromDate && item.inputDate <= toDate).toArray();
     }
     async getLastIndex(): Promise<number> {
-        let connection = await this.getDbConnection();
-
-        let items =  await connection.select({
-            from: "items",
-            aggregate: {
-                max: "id"    
-            },
-        });
-        
-        if(!items.length){
-            return 0;
-        }
-
-        let maxId = items[0]["max(id)"];
-        return maxId;;
+        const lastItem = await this.inventoryDatabase.items.orderBy("id").last();
+        return lastItem?.id ?? 0;
     }
     async rebuild(): Promise<void> {
-        await this.destroy();
-        this.connection = null;
-        window.location.reload();
+        // await this.destroy();
+        // this.connection = null;
+        // window.location.reload();
     }
     async searchItems(query: string): Promise<IInventory[]> {
-        let connection = await this.getDbConnection();
-        
-        return await connection.select({
-            from: "items",
-            where: {
-                description: {
-                    like: "%" + query + "%"
-                }
-            }
-        });
+        const collection = this.inventoryDatabase.items;
+        return await collection.where("description").startsWith(query).toArray();
     }
     async setItems(items: IInventory[]): Promise<void> {
-        let connection = await this.getDbConnection();
+        const collection = this.inventoryDatabase.items;
         
-        let itemsToPush = [];
+        let itemsToPush = new Array<IInventory>();
 
         for(let item of items) 
         {
-            console.log(item);
             if(item.state === State.added) {
                 item.state = State.modified;
             }
@@ -165,15 +75,11 @@ export class InventoryDb extends DbBase implements IInventoryDb {
             if(!item.published) {
                 item.published = true;
             }
-
-            itemsToPush.push(item.toObject());
+            
+            itemsToPush.push({ ...item } );
         }
-
-        await connection.insert({
-            into: "items",
-            upsert: true,
-            values: itemsToPush
-        });
+        
+        await collection.bulkPut(itemsToPush, { allKeys: false });
     }
     sync(): Promise<void> {
         throw new Error("Method not implemented.");

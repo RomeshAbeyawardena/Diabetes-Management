@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import PrimeVue from 'primevue/config';
 import App from './App.vue'
-import { InventoryDb  } from "./db/Inventory";
+import { InventoryDatabase, InventoryDb  } from "./db/Inventory";
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
 import { CookieHelper } from './models/Cookies';
@@ -16,11 +16,11 @@ import "primeflex/primeflex.css";
 import "./scss/index.scss";
 
 function inventoryDbPlugin() {
-    return {  
+    return {
         cookieHelper: new CookieHelper(), 
         dialogHelper: new DialogHelper(),
         dateHelper: new DateHelper(),
-        inventoryDb: new InventoryDb(),
+        inventoryDb: new InventoryDb(new InventoryDatabase()),
         inventoryHelper: new InventoryHelper()
     };
 }
