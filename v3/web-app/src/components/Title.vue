@@ -6,9 +6,12 @@
     const store = useStore();
     const { sideBar } = storeToRefs(store);
     
-    function expandSidebar(){
-        sideBar.value.type = DialogType.Guest;
-        store.showSidebar(store.getDialog(sideBar.value.type));
+    function expandSidebar() {
+        const component = store.getDialog(sideBar.value.type);
+        if(component)
+        {
+        store.showSidebar(component);
+        }
     }
 </script>
 <template>

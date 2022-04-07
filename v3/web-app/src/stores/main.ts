@@ -15,7 +15,6 @@ export interface IMainStoreState {
     showWelcome: boolean;
 }
 
-
 export const useStore = defineStore('main', {
     state: (): IMainStoreState => ({
         consent: {
@@ -35,7 +34,7 @@ export const useStore = defineStore('main', {
         sideBar: {
             name: "Guest",
             title: "",
-            type: DialogType.None,
+            type: DialogType.Guest,
             visible: false
         },
         showWelcome: false

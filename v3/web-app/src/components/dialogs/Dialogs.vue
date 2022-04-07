@@ -22,10 +22,6 @@ function valueUpdated(newValue) {
     value.value = newValue;
 }
 
-function getDialogComponent() {
-    return markRaw(dialog.value.component);
-}
-
 function acceptChanges() {
     store.setDialogValue(value.value)
 }
@@ -36,19 +32,19 @@ function rejectChanges() {
 
 onBeforeMount(() => {
     store.addDialog(
-            new DialogDef(DialogType.CookiePolicy, "cookie-policy", "Cookie policy", CookiePolicy))
+            new DialogDef(DialogType.CookiePolicy, "cookie-policy", "Cookie policy", markRaw(CookiePolicy)))
         .addDialog(
-            new DialogDef(DialogType.DatePicker, "date-picker", "Select a date", DatePicker))
+            new DialogDef(DialogType.DatePicker, "date-picker", "Select a date", markRaw(DatePicker)))
         .addDialog(
-            new DialogDef(DialogType.NumberPicker, "number-picker", "Select a value", NumberPicker))
+            new DialogDef(DialogType.NumberPicker, "number-picker", "Select a value", markRaw(NumberPicker)))
         .addDialog(
-            new DialogDef(DialogType.TextEntry, "text-entry", "Select a value", TextEntry));
+            new DialogDef(DialogType.TextEntry, "text-entry", "Select a value", markRaw(TextEntry)));
 })
 
 </script>
 <template>
     <Dialog :header="dialog.title" v-model:visible="dialog.visible">
-        <component :is="getDialogComponent()" v-on:value:updated="valueUpdated" :value="dialog.value" />
+        <component :is="dialog.component" v-on:value:updated="valueUpdated" :value="dialog.value" />
         <div v-if="dialog.showControls" style="text-align:right">
             <Button v-on:click="acceptChanges" class="p-button-success" style="margin-right:1rem" label="Accept" icon="pi pi-check" />
             <Button v-on:click="rejectChanges" class="p-button-danger" label="Cancel" icon="pi pi-times" />
