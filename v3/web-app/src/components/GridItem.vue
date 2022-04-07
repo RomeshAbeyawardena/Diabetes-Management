@@ -7,7 +7,7 @@
     import { useConfirm } from "primevue/useconfirm";
     import { useStore } from '../stores/main';
     import { ref, computed, watch } from "vue";
-    import { Inventory, State } from "../models/Inventory";
+    import { State } from "../models/Inventory";
     import { DialogType } from '../models';
     
     const store = useStore();
@@ -15,7 +15,7 @@
     const props = defineProps({ 
         isDeleteMode: Boolean,
         showHeader: Boolean, 
-        entry: Inventory 
+        entry: Object 
     });
 
     const showHeader = ref(props.showHeader);

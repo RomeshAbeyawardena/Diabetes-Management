@@ -17,7 +17,7 @@ export interface IInventory {
     state: State;
     published: Boolean;
 } 
-
+ 
 export class InventoryHelper implements IInventoryHelper {
     getTotalValue(items: IInventory[]): number {
         let sum: number = 0;
