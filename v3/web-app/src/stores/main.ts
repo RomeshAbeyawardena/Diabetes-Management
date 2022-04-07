@@ -90,7 +90,7 @@ export const useStore = defineStore('main', {
         },
         showDialog(dialog: IDialogComponent, value: any, showControls: boolean) {
           this.dialog.component = dialog.component;
-          this.dialog.title = dialog.type;
+          this.dialog.title = dialog.title;
           this.dialog.value = value;
           this.dialog.visible = true;
   

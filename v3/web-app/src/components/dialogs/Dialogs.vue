@@ -32,7 +32,7 @@ function rejectChanges() {
 
 onBeforeMount(() => {
     store.addDialog(
-            new DialogDef(DialogType.CookiePolicy, "cookie-policy", "Cookie policy", markRaw(CookiePolicy)))
+            new DialogDef(DialogType.CookiePolicy, "Cookie policy", "Cookie policy", markRaw(CookiePolicy)))
         .addDialog(
             new DialogDef(DialogType.DatePicker, "date-picker", "Select a date", markRaw(DatePicker)))
         .addDialog(
