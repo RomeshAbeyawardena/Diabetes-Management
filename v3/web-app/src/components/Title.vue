@@ -17,7 +17,7 @@
 <template>
     <div id="title" class="grid justify-content-center align-items-center">
         <div class="col-2">
-            <Button icon="pi pi-bars" :disabled="blockEvents" v-on:click="expandSidebar"
+            <Button icon="pi pi-bars" :disabled="blockEvents" @click="expandSidebar"
                     class="p-button-rounded p-button-secondary" />
         </div>
         <div class="col-8"><h3>Diabetic Unit Manager</h3></div>

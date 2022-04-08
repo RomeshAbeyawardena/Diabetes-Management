@@ -73,14 +73,14 @@
     <div class="responsive-date-input">
         <InputMask class="inputDate" 
             style="width: 100%" 
-            v-on:update:model-value="input($event)" 
-            v-on:click="inputClick($event)"
+            @update:model-value="input($event)" 
+            @click="inputClick($event)"
             :mask="getMask(props.format)"
             v-model="val" />
         <InputMask :disabled="disabled" class="inputMobileDate" 
             style="width: 100%" 
-            v-on:update:model-value="inputMobile($event)" 
-            v-on:click="inputClick($event)"
+            @update:model-value="inputMobile($event)" 
+            @click="inputClick($event)"
             :mask="getMask(props.mobileFormat)"
             v-model="mobileVal" />
     </div>

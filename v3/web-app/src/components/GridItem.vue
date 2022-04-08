@@ -119,26 +119,26 @@
                         :format="format" 
                         :mobile-format="mobileFormat" 
                         :date-format="dateFormat"
-                        v-on:input:click="showDialog(DialogType.DatePicker, localEntry.inputDate)"
+                        @input:click="showDialog(DialogType.DatePicker, localEntry.inputDate)"
                         v-model="localEntry.inputDate" />
             </div>
             <div class="col-6">
                 <div class="p-inputgroup">
                     <InputText id="description" 
-                        v-on:input="touchEntry" 
+                        @input="touchEntry" 
                         type="text" 
                         style="width: 100%"
                         :disabled="blockEvents"
                         v-model="localEntry.description" />
-                    <Button icon="pi pi-pencil" :disabled="blockEvents" v-on:click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
+                    <Button icon="pi pi-pencil" :disabled="blockEvents" @click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
                 </div>
             </div>
             <div class="col-2">
-                <Button icon="pi pi-trash" v-if="props.isDeleteMode" :disabled="blockEvents" v-on:click="markAsDeleted($event)"
+                <Button icon="pi pi-trash" v-if="props.isDeleteMode" :disabled="blockEvents" @click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
                 <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents" 
-                            v-on:click="showDialog(DialogType.NumberPicker, localEntry.value)"
+                            @click="showDialog(DialogType.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />
             </div>

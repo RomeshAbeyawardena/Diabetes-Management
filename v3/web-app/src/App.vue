@@ -32,6 +32,10 @@ function setDateFilter(action) {
 function touchEndMethod(e) {
   dragEndPosition.value = e.changedTouches[0].clientX;
   
+  const posDiff = dragStartPosition.value - dragEndPosition.value;
+  const negDiff = dragEndPosition.value - dragStartPosition.value;
+
+  console.log(posDiff, negDiff);
   if(dragStartPosition.value > dragEndPosition.value){
     setDateFilter("subtract");
   }

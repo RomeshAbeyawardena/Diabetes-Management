@@ -76,10 +76,10 @@
         </TabPanel>
     </TabView>
     <div style="text-align:right">
-        <Button class="p-button-danger" icon="pi pi-times" label="Deny" v-on:click="denyConsent" v-if="!consent.hasConsented" />
-        <Button icon="pi pi-pencil" label="Customise" v-on:click="customiseConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
-        <Button class="p-button-success" icon="pi pi-check" label="Accept all" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
-        <Button class="p-button-success" icon="pi pi-check" label="Save" v-on:click="acceptConsent" v-if="!consent.hasConsented && activeIndex === 1" />
+        <Button class="p-button-danger" icon="pi pi-times" label="Deny" @click="denyConsent" v-if="!consent.hasConsented" />
+        <Button icon="pi pi-pencil" label="Customise" @click="customiseConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
+        <Button class="p-button-success" icon="pi pi-check" label="Accept all" @click="acceptConsent" v-if="!consent.hasConsented && activeIndex !== 1" />
+        <Button class="p-button-success" icon="pi pi-check" label="Save" @click="acceptConsent" v-if="!consent.hasConsented && activeIndex === 1" />
         <Button label="Edit" v-if="consent.hasConsented" />
         <Button label="Close" v-if="consent.hasConsented" />
     </div>

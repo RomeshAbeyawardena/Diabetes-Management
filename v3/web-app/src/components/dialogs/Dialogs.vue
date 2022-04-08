@@ -70,19 +70,19 @@ onBeforeMount(() => {
   <Dialog :header="dialog.title" v-model:visible="dialog.visible">
     <component
       :is="dialog.component"
-      v-on:value:updated="valueUpdated"
+      @value:updated="valueUpdated"
       :value="dialog.value"
     />
     <div v-if="dialog.showControls" style="text-align: right">
       <Button
-        v-on:click="acceptChanges"
+        @click="acceptChanges"
         class="p-button-success"
         style="margin-right: 1rem"
         label="Accept"
         icon="pi pi-check"
       />
       <Button
-        v-on:click="rejectChanges"
+        @click="rejectChanges"
         class="p-button-danger"
         label="Cancel"
         icon="pi pi-times"
