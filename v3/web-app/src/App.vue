@@ -36,7 +36,7 @@ function touchEndMethod(e) {
   const negDiff = dragEndPosition.value - dragStartPosition.value;
 
   const diff = posDiff > negDiff ? posDiff : negDiff;
-  const offSet = 50;
+  const offSet = 100;
 
   if(dragStartPosition.value > dragEndPosition.value && diff > offSet){
     setDateFilter("subtract");

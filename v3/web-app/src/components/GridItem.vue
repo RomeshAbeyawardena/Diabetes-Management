@@ -67,7 +67,9 @@
 
     async function showDialog(type, value) {
         const dialog = store.getDialog(type);
+        store.blockEvents = true;
         const result = await store.showDialog(dialog, value, true);
+        store.blockEvents = false;
         switch (type) {
             case DialogType.DatePicker:
                 localEntry.value.inputDate = result;
