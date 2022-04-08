@@ -11,7 +11,7 @@ import Title from './components/Title.vue';
 //references
 import { DialogType } from './models';
 import { useStore } from './stores/main';
-import { useInventoryStore } from './stores/inventory';
+import { useInventoryStore } from './stores/Inventory';
 import { ref, onBeforeMount, onMounted } from 'vue';
 
 const store = useStore();

@@ -1,7 +1,7 @@
 <script setup>
     import GridItem from './GridItem.vue';
     import { computed } from 'vue';
-    import { useInventoryStore } from '../stores/inventory';
+    import { useInventoryStore } from '../stores/Inventory';
     import { storeToRefs } from 'pinia';
 
     const store = useInventoryStore();

@@ -1,5 +1,5 @@
 <script setup>
-    import { useInventoryStore } from '../stores/inventory';
+    import { useInventoryStore } from '../stores/Inventory';
     import { computed } from "vue";
 
     const store = useInventoryStore();
