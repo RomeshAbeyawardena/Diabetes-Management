@@ -35,11 +35,13 @@ function touchEndMethod(e) {
   const posDiff = dragStartPosition.value - dragEndPosition.value;
   const negDiff = dragEndPosition.value - dragStartPosition.value;
 
-  console.log(posDiff, negDiff);
-  if(dragStartPosition.value > dragEndPosition.value){
+  const diff = posDiff > negDiff ? posDiff : negDiff;
+  const offSet = 50;
+
+  if(dragStartPosition.value > dragEndPosition.value && diff > offSet){
     setDateFilter("subtract");
   }
-  else if(dragStartPosition.value < dragEndPosition.value) {
+  else if(dragStartPosition.value < dragEndPosition.value && diff > offSet) {
     setDateFilter("add");
   }
 
