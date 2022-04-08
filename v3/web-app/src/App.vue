@@ -17,6 +17,30 @@ import { ref, onBeforeMount, onMounted } from 'vue';
 const store = useStore();
 const inventoryStore = useInventoryStore();
 const { getLastId, load } = inventoryStore;
+const dragStartPosition = ref(0);
+const dragEndPosition = ref(0);
+function touchStartMethod(e) {
+  dragStartPosition.value = e.changedTouches[0].clientX;
+  addEventListener('touchend', (touchEvent) => touchEndMethod(touchEvent), {once: true});
+}
+
+function setDateFilter(action) {
+        var dateRange = store.filters.dateRange[action](1, "day");
+        store.filters.dateRange = dateRange;
+}
+
+function touchEndMethod(e) {
+  dragEndPosition.value = e.changedTouches[0].clientX;
+  
+  if(dragStartPosition.value > dragEndPosition.value){
+    setDateFilter("subtract");
+  }
+  else if(dragStartPosition.value < dragEndPosition.value) {
+    setDateFilter("add");
+  }
+
+
+}
 
 onBeforeMount(() => {
   store.setFilterDateRange(new Date(), new Date());
@@ -37,7 +61,7 @@ onMounted(async() => {
 </script>
 
 <template>
-  <div class="app">
+  <div class="app" @touchstart="touchStartMethod">
     <div>
       <ConfirmPopup />
       <Sidebars />
