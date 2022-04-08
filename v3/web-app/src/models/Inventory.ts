@@ -16,11 +16,8 @@ export interface IInventory {
     value: number;
     state: State;
     published: Boolean;
-
-    fromObject(state: Object): Inventory;
-    toObject(): any;
 } 
-
+ 
 export class InventoryHelper implements IInventoryHelper {
     getTotalValue(items: IInventory[]): number {
         let sum: number = 0;
@@ -45,29 +42,8 @@ export class Inventory implements IInventory {
         this.id = id,
         this.inputDate = inputDate,
         this.description = description,
-        this.value = value,
+        this.value = value, 
         this.state = state,
         this.published = published
-    }
-
-    fromObject(state: any): Inventory {
-        this.id = Number(state.id);
-        this.inputDate = new Date(state.inputDate);
-        this.description = state.description;
-        this.value = Number(state.value);
-        this.state = state.state;
-        this.published = state.published;
-        return this;
-    }
-
-    toObject(): any {
-        return {
-            id: this.id,
-            inputDate: this.inputDate,
-            description: this.description,
-            value: this.value,
-            state: this.state,
-            published: this.published
-        } 
     }
 }

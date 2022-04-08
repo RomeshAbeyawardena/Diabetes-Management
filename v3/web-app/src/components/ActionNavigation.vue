@@ -2,8 +2,8 @@
     import Button from 'primevue/button';
     import SpeedDial from 'primevue/speeddial';
     import Toast from 'primevue/toast';
-    import { useStore } from '../stores';
-    import { useInventoryStore } from '../stores/inventory';
+    import { useStore } from '../stores/main';
+    import { useInventoryStore } from '../stores/Inventory';
     import { storeToRefs } from 'pinia';
     import { ref } from 'vue';
     import { useToast } from "primevue/usetoast";
@@ -11,6 +11,7 @@
     const toast = useToast();
     const store = useStore();
     const inventoryStore = useInventoryStore();
+    const { blockEvents } = storeToRefs(store);
     const { isDeleteMode } = storeToRefs(inventoryStore);
     let optionsMenuItems = ref([ 
         { label: "Version", icon: "pi pi-sign-in", command: () => register()  },
@@ -61,7 +62,8 @@
     <Toast position="bottom-center" />
     <div id="action-navigation" class="grid justify-content-between">
         <div class="col-3 flex align-items-center justify-content-center">
-            <SpeedDial  :transitionDelay="120" 
+            <SpeedDial  :transitionDelay="120"
+                        :disabled="blockEvents"
                         :tooltipOptions="{'position':'left'}"
                         showIcon="pi pi-bars" 
                         hideIcon="pi pi-times"
@@ -71,7 +73,7 @@
              
         </div>
         <div class="col-3 flex align-items-center justify-content-center">
-            <SpeedDial :model="addMenuItems" />
+            <SpeedDial  :disabled="blockEvents" :model="addMenuItems" />
         </div>
     </div>
 </template>

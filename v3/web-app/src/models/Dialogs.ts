@@ -1,50 +1,39 @@
-export interface IDialog {
-    name: string;
-    title: string;
-    type: DialogType;
-    component: any;
-}
+import { IComponent, DialogType } from ".";
 
 export interface IDialogHelper {
-    dialogs : IDialog[];
-    getDialog(type: DialogType) : IDialog
-    addDialog(dialog: IDialog) : IDialogHelper;
+    dialogs : IComponent[];
+    getDialog(type: DialogType) : IComponent
+    addDialog(dialog: IComponent) : IDialogHelper;
 }
 
-export enum DialogType {
-    CookiePolicy = "cookie-policy",
-    DatePicker = "date-picker",
-    Login = "login",
-    Register = "register",
-    TextEntry = "text-entry",
-    NumberPicker = "number-picker"
-}
-
-export class DialogDef implements IDialog {
+export class DialogDef implements IComponent {
     name: string;
     title: string;
     type: DialogType;
     component: any;
-    constructor(type: DialogType, name: string, title: string, component: any) {
+    visible: boolean;
+
+    constructor(type: DialogType, name: string, title: string, component: any, visible: boolean) {
         this.name = name;
         this.title = title;
         this.type = type;
         this.component = component;
+        this.visible = visible;
     }
 }
 
 export class DialogHelper implements IDialogHelper {
-    dialogs: IDialog[];
+    dialogs: IComponent[];
 
     constructor() {
-        this.dialogs = new Array<IDialog>()
+        this.dialogs = new Array<IComponent>()
     }
 
-    getDialog(type: DialogType): IDialog {
+    getDialog(type: DialogType): IComponent {
         return this.dialogs.find(d => d.type === type);
     }
 
-    addDialog(dialog: IDialog) : IDialogHelper {
+    addDialog(dialog: IComponent) : IDialogHelper {
         const index = this.dialogs.findIndex(d => d.type === dialog.type);
         if(index !== -1) {
             this.dialogs.splice(index, 1);

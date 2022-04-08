@@ -4,23 +4,26 @@ import Guest from './Guest.vue';
 import Sidebar from 'primevue/sidebar';
 
 import { storeToRefs } from "pinia";
-import { useStore } from '../../stores';
+import { useStore } from '../../stores/main';
+import { markRaw, onBeforeMount } from 'vue-demi';
+import { DialogDef } from '../../models/Dialogs';
+import { DialogType } from '../../models';
 const store = useStore();
 const { sideBar } = storeToRefs(store);
 
-function getSideBarComponent() {
-    switch(sideBar.value.component)
-    {
-        case "Authenticated":
-            return Authenticated;
-        case "Guest":
-            return Guest;
-    }
-}
+onBeforeMount(() => {
+     store
+        .addDialog(
+             new DialogDef(DialogType.Authenticated, "authenticated-sidebar",
+            "Authenticated", markRaw(Authenticated)))
+         .addDialog(
+            new DialogDef(DialogType.Guest, "guest-si)debar",
+            "Guest", markRaw(Guest)));
+});
 
 </script>
 <template>
     <Sidebar v-model:visible="sideBar.visible">
-      <component :is="getSideBarComponent()" />
+      <component :is="sideBar.component" />
     </Sidebar>
 </template>

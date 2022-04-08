@@ -7,12 +7,14 @@
     dayjs.extend(customParseFormat);
 
     const props = defineProps({ 
+        disabled: Boolean,
         modelValue: Date, 
         dateFormat: String,
         format: String, 
         mobileFormat: String });
 
     const emit = defineEmits(['update:modelValue', 'input:click']);
+    const disabled = ref(props.disabled);
     const value = ref(props.modelValue);
     const val = ref(new dayjs(props.modelValue).format(props.format));
     const mobileVal = ref(new dayjs(props.modelValue).format(props.mobileFormat));
@@ -26,7 +28,6 @@
     function input(event) {
         let isValid = event !== val.value && event.length && !event.includes("_");
         if(isValid) {
-            console.log("Has changed and is valid");
             let newDate = dayjs(event, props.format);
             if(newDate.isValid())
             {
@@ -41,8 +42,6 @@
     function inputMobile(event) {
         let isValid = event !== mobileVal.value && event.length && !event.includes("_");
         if(isValid) {
-            console.log("Has changed and is valid");
-
             var date = dayjs(props.modelValue).format(props.dateFormat);
 
             let newDate = dayjs(date.concat(" ", event), props.format);
@@ -74,14 +73,14 @@
     <div class="responsive-date-input">
         <InputMask class="inputDate" 
             style="width: 100%" 
-            v-on:update:model-value="input($event)" 
-            v-on:click="inputClick($event)"
+            @update:model-value="input($event)" 
+            @click="inputClick($event)"
             :mask="getMask(props.format)"
             v-model="val" />
-        <InputMask class="inputMobileDate" 
+        <InputMask :disabled="disabled" class="inputMobileDate" 
             style="width: 100%" 
-            v-on:update:model-value="inputMobile($event)" 
-            v-on:click="inputClick($event)"
+            @update:model-value="inputMobile($event)" 
+            @click="inputClick($event)"
             :mask="getMask(props.mobileFormat)"
             v-model="mobileVal" />
     </div>
