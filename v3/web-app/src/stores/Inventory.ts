@@ -2,6 +2,8 @@ import { IInventory, Inventory } from '../models/Inventory';
 import { defineStore } from 'pinia'
 import { State } from '../models/Inventory';
 import { useStore } from "../stores/main";
+import { encode, decode } from "@msgpack/msgpack";
+import { Buffer } from 'buffer';
 
 export interface IInventoryStoreState {
     items: IInventory[]
@@ -74,6 +76,17 @@ export const useInventoryStore = defineStore('inventory', {
         }, 
         async save() : Promise<void> {
             await this.inventoryDb.setItems(this.items);
+        },
+        loadFromFile(output: string) : void {
+            const val = Buffer.from(output, 'base64');
+            const decoded = decode(val);  
+            this.items = decoded;
+        },
+        saveToFile(): string  {
+            const value = encode(this.items);
+            const output = Buffer.from(value).toString('base64');
+            
+            return output;
         }
     } 
 });

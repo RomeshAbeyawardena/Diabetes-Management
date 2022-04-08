@@ -14,9 +14,9 @@
     const { blockEvents } = storeToRefs(store);
     const { isDeleteMode } = storeToRefs(inventoryStore);
     let optionsMenuItems = ref([ 
-        { label: "Version", icon: "pi pi-sign-in", command: () => register()  },
-        { label: "About", icon: "pi pi-sign-in", command: () => login()  },
-        { label: "About", icon: "pi pi-sign-in", command: () => login()  },
+        { label: "Version", icon: "pi pi-info", command: () => register()  },
+        { label: "Share", icon: "pi pi-share-alt", command: () => saveToFile()  },
+        { label: "Load", icon: "pi pi-history", command: () => login()  },
         { label: "About", icon: "pi pi-sign-in", command: () => login()  }
     ]);
 
@@ -41,6 +41,11 @@
 
             addMenuItems.value[1].icon = "pi pi-trash";
         }
+    }
+
+    function saveToFile() {
+        let value = inventoryStore.saveToFile();
+        console.log(value);
     }
 
     async function save() {
