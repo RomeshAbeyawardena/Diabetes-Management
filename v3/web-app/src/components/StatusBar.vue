@@ -7,10 +7,11 @@
     const store = useInventoryStore(); 
     const { currentTotalValue, previousTotalValue } = storeToRefs(store);
     const tweenedPreviousTotalValue = reactive({
-        number: 0
+        number: previousTotalValue.value
     });
+
     const tweenedTotalValue = reactive({
-        number: 0
+        number: currentTotalValue.value
     });
 
     watch(currentTotalValue, v => {
