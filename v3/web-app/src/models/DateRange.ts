@@ -4,9 +4,9 @@ dayjs.extend(customParseFormat);
 
 dayjs.extend(customParseFormat)
 export interface IDateHelper {
-    dateRange(fromDate: Date, toDate: Date, useStartAndEndOfTime: boolean) : IDateRange;
-    appendTime(date: Date, time: string, format: string) : Date;
-    appendTimeFromDate(date: Date, time: Date) : Date;
+    dateRange(fromDate: Date, toDate: Date, useStartAndEndOfTime: boolean): IDateRange;
+    appendTime(date: Date, time: string, format: string): Date;
+    appendTimeFromDate(date: Date, time: Date): Date;
 }
 
 export class DateHelper implements IDateHelper {
@@ -18,13 +18,13 @@ export class DateHelper implements IDateHelper {
     appendTimeFromDate(date: Date, time: Date): Date {
         let _date = dayjs(date);
 
-        if(!_date.isValid()) {
+        if (!_date.isValid()) {
             return date;
         }
 
         let timeSpan = dayjs(time);
-        
-        if(!timeSpan.isValid()) {
+
+        if (!timeSpan.isValid()) {
             return date;
         }
 
@@ -38,10 +38,10 @@ export class DateHelper implements IDateHelper {
             .set("second", newSecond).toDate();
     }
 
-    appendTime(date: Date, time: string, format: string) : Date {
+    appendTime(date: Date, time: string, format: string): Date {
         let timeSpan = dayjs(time, format);
-        
-        if(!timeSpan.isValid()) {
+
+        if (!timeSpan.isValid()) {
             return date;
         }
 
@@ -53,10 +53,11 @@ export interface IDateRange {
     fromDate: Date;
     toDate: Date;
     useStartAndEndOfTime: boolean;
-    add(value:number, unit:string) : IDateRange;
-    subtract(value:number, unit:string) : IDateRange;
-    display(format: string, showFromDate: boolean, showToDate: boolean) : string;
-    getDateWithCurrentTime() : Date;
+    add(value: number, unit: string): IDateRange;
+    display(format: string, showFromDate: boolean, showToDate: boolean): string;
+    getDateWithCurrentTime(): Date;
+    set(date: Date): IDateRange
+    subtract(value: number, unit: string): IDateRange;
 }
 
 export class DateRange implements IDateRange {
@@ -71,7 +72,7 @@ export class DateRange implements IDateRange {
         this.useStartAndEndOfTime = useStartAndEndOfTime;
         this.dateHelper = dateHelper;
 
-        if(useStartAndEndOfTime) {
+        if (useStartAndEndOfTime) {
             let fromDate = dayjs(this.fromDate);
             let toDate = dayjs(this.toDate);
 
@@ -82,55 +83,59 @@ export class DateRange implements IDateRange {
 
     add(value: number, unit: string): IDateRange {
         let fromDate = dayjs(this.fromDate);
-            let toDate = dayjs(this.toDate);
-            
-            let newFromDate = fromDate.add(value, unit).toDate();
-            let newToDate = toDate.add(value, unit).toDate();
+        let toDate = dayjs(this.toDate);
 
-            let dateRange = new DateRange(this.dateHelper,
-                newFromDate,
-                newToDate,
-                this.useStartAndEndOfTime);
-            
-            return dateRange;
+        let newFromDate = fromDate.add(value, unit).toDate();
+        let newToDate = toDate.add(value, unit).toDate();
+
+        let dateRange = new DateRange(this.dateHelper,
+            newFromDate,
+            newToDate,
+            this.useStartAndEndOfTime);
+
+        return dateRange;
     }
 
     display(format: string, showFromDate: boolean, showToDate: boolean): string {
         let fromDate = dayjs(this.fromDate);
-            let toDate = dayjs(this.toDate);
-            let display = "";
+        let toDate = dayjs(this.toDate);
+        let display = "";
 
-            if(showFromDate) {
-                display += fromDate.format(format);
-            }
+        if (showFromDate) {
+            display += fromDate.format(format);
+        }
 
-            if(showFromDate && showToDate) {
-                display += " - "
-            }
-            
-            if(showToDate) {
-                display += toDate.format(format);
-            }
- 
-            return display;
+        if (showFromDate && showToDate) {
+            display += " - "
+        }
+
+        if (showToDate) {
+            display += toDate.format(format);
+        }
+
+        return display;
     }
 
     getDateWithCurrentTime(): Date {
         return this.dateHelper.appendTimeFromDate(this.fromDate, new Date());
     }
 
+    set(date: Date): IDateRange {
+        return new DateRange(this.dateHelper, date, date, true);
+    }
+
     subtract(value: number, unit: string): IDateRange {
         let fromDate = dayjs(this.fromDate);
-            let toDate = dayjs(this.toDate);
-            
-            let newFromDate = fromDate.subtract(value, unit).toDate();
-            let newToDate = toDate.subtract(value, unit).toDate();
+        let toDate = dayjs(this.toDate);
 
-            let dateRange = new DateRange(this.dateHelper,
-                newFromDate,
-                newToDate,
-                this.useStartAndEndOfTime);
-            
-            return dateRange;
+        let newFromDate = fromDate.subtract(value, unit).toDate();
+        let newToDate = toDate.subtract(value, unit).toDate();
+
+        let dateRange = new DateRange(this.dateHelper,
+            newFromDate,
+            newToDate,
+            this.useStartAndEndOfTime);
+
+        return dateRange;
     }
 }
