@@ -6,9 +6,11 @@ import { encode, decode } from "@msgpack/msgpack";
 import { Buffer } from 'buffer';
 
 export interface IInventoryStoreState {
+    isReadonly: boolean,
     items: IInventory[]
+    isDeleteMode: boolean,
     lastStoredId: number,
-    isDeleteMode: boolean
+    readonlyItems: IInventory[]
 }
 
 export interface IInventoryStoreGetters {
@@ -17,6 +19,8 @@ export interface IInventoryStoreGetters {
 
 export const useInventoryStore = defineStore('inventory', {
     state: (): IInventoryStoreState => ({
+        isReadonly: false,
+        readonlyItems: new Array<IInventory>(),
         items: new Array<IInventory>(),
         lastStoredId: 0,
         isDeleteMode: false

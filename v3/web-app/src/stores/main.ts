@@ -98,6 +98,9 @@ export const useStore = defineStore('main', {
               {
                 resolve(a);
               }
+              else {
+                resolve(undefined);
+              }
               subscriber.unsubscribe();
               subscriber.remove();
               this.resetDialog();

@@ -62,6 +62,7 @@ async function saveToFile() {
   const value = inventoryStore.saveToFile();
   const dialog = store.getDialog(DialogType.LocalExport);
   await store.showDialog(dialog, value, false);
+  console.log("end of promise");
   store.blockEvents = false;
 }
 

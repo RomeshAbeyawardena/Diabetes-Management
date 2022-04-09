@@ -3,7 +3,7 @@ import Button from "primevue/button";
 import ProgressSpinner from "primevue/progressspinner";
 
 import QRCodeStyling from "qr-code-styling";
-import { defineProps, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import "../../scss/local-export.scss";
 import "../../scss/social-media.scss";
 
