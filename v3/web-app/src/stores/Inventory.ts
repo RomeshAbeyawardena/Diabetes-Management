@@ -41,8 +41,9 @@ export const useInventoryStore = defineStore('inventory', {
         },
         getItemsFromDateRange() {
             return function(action: string, value: number, unit: string): IInventory[] {
-                let store = useStore();
-
+                const store = useStore();
+                const items = this.isReadonly ? this.readonlyItems : this.items;
+                
                 let dateRange = store.filters.dateRange;
                 
                 if(action)
@@ -83,8 +84,9 @@ export const useInventoryStore = defineStore('inventory', {
         },
         loadFromFile(output: string) : void {
             const val = Buffer.from(output, 'base64');
-            const decoded = decode(val);  
-            this.items = decoded;
+            const decoded = decode<Array<IInventory>>(val);  
+            this.readonlyItems = decoded;
+            this.isReadonly = true;
         },
         saveToFile(): string  {
             const value = encode(this.items);

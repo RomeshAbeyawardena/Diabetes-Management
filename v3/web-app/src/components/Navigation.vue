@@ -19,7 +19,7 @@ async function selectDate() {
     store.filters.dateRange.fromDate,
     true
   );
-  console.log(result);
+  
   store.filters.dateRange = store.filters.dateRange.set(result);
 }
 

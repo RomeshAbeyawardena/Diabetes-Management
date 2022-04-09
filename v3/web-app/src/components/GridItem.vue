@@ -6,12 +6,15 @@
     import { storeToRefs } from 'pinia';
     import { useConfirm } from "primevue/useconfirm";
     import { useStore } from '../stores/main';
+    import { useInventoryStore } from '../stores/Inventory';
     import { ref, computed, watch } from "vue";
     import { State } from "../models/Inventory";
     import { DialogType } from '../models';
     
     const store = useStore();
+    const inventoryStore = useInventoryStore();
     const { blockEvents } = storeToRefs(store);
+    const { isReadonly } = storeToRefs(inventoryStore);
     const props = defineProps({ 
         isDeleteMode: Boolean,
         showHeader: Boolean, 
@@ -66,6 +69,10 @@
     }
 
     async function showDialog(type, value) {
+        if(isReadonly.value){
+            return;
+        }
+
         const dialog = store.getDialog(type);
         store.blockEvents = true;
         const result = await store.showDialog(dialog, value, true);
@@ -116,7 +123,7 @@
         <div class="grid">
             <div class="col-4">
                     <ResponsiveDateInput    
-                        :disabled="blockEvents" 
+                        :disabled="blockEvents || isReadonly" 
                         id="inputDate" 
                         :format="format" 
                         :mobile-format="mobileFormat" 
@@ -130,7 +137,7 @@
                         @input="touchEntry" 
                         type="text" 
                         style="width: 100%"
-                        :disabled="blockEvents"
+                        :disabled="blockEvents || isReadonly"
                         v-model="localEntry.description" />
                     <Button icon="pi pi-pencil" :disabled="blockEvents" @click="showDialog(DialogType.TextEntry, localEntry.description)" class="p-button-primary"/>
                 </div>
@@ -139,7 +146,7 @@
                 <Button icon="pi pi-trash" v-if="props.isDeleteMode" :disabled="blockEvents" @click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
-                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents" 
+                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents || isReadonly" 
                             @click="showDialog(DialogType.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />

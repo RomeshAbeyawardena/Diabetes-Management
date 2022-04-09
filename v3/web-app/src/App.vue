@@ -14,6 +14,7 @@ import { DialogType } from './models';
 import { useStore } from './stores/main';
 import { useInventoryStore } from './stores/Inventory';
 import { ref, onBeforeMount, onMounted } from 'vue';
+import { QueryString } from "./models/QueryString";
 
 const store = useStore();
 const inventoryStore = useInventoryStore();
@@ -45,13 +46,16 @@ function touchEndMethod(e) {
   else if(dragStartPosition.value < dragEndPosition.value && diff > offSet) {
     setDateFilter("add");
   }
-
-
 }
 
 onBeforeMount(() => {
   store.setFilterDateRange(new Date(), new Date());
-  
+  const queryString = new QueryString(window.location.search);
+
+  if(queryString.has("sc")) {
+    const sc = queryString.flatten("sc");
+    inventoryStore.loadFromFile(sc);
+  }
 });
 
 onMounted(async() => { 

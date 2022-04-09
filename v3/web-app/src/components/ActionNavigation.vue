@@ -14,8 +14,9 @@ const toast = useToast();
 const store = useStore();
 const inventoryStore = useInventoryStore();
 const { blockEvents } = storeToRefs(store);
-const { isDeleteMode } = storeToRefs(inventoryStore);
-let optionsMenuItems = ref([
+const { isDeleteMode, isReadonly } = storeToRefs(inventoryStore);
+
+const optionsMenuItems = ref([
   { label: "Version", icon: "pi pi-info", command: () => register() },
   { label: "Share", icon: "pi pi-share-alt", command: () => saveToFile() },
   { label: "Load", icon: "pi pi-history", command: () => login() },
@@ -44,7 +45,7 @@ function toggleDeleteMode() {
       life: 5000,
     });
 
-    addMenuItems.value[1].icon = "pi pi-times";
+    addMenuItems.value[1].icon = "pi pi-times"; 
   } else {
     toast.add({
       severity: "info",
@@ -62,7 +63,6 @@ async function saveToFile() {
   const value = inventoryStore.saveToFile();
   const dialog = store.getDialog(DialogType.LocalExport);
   await store.showDialog(dialog, value, false);
-  console.log("end of promise");
   store.blockEvents = false;
 }
 
@@ -99,7 +99,7 @@ function reset() {}
     </div>
     <div class="col-6"></div>
     <div class="col-3 flex align-items-center justify-content-center">
-      <SpeedDial :disabled="blockEvents" :model="addMenuItems" />
+      <SpeedDial :disabled="blockEvents || isReadonly" :model="addMenuItems" />
     </div>
   </div>
 </template>
