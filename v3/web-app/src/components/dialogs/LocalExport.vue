@@ -15,12 +15,12 @@ const props = defineProps({
 });
 
 const logoUrl = window.location + "android-chrome-512x512.png";
-
+const dataUrl = window.location + "?sc=" + props.value;
 const qrOptions = new QRCodeStyling({
   width: 300,
   height: 300,
   type: "svg",
-  data: props.value ?? "Hello Baby",
+  data: dataUrl,
   image: logoUrl,
   dotsOptions: {
     color: "#fff",
