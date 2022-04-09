@@ -1,12 +1,11 @@
-import { MessageClientBase, MessageClientType } from "./index";
+import { UrlMessageClientBase, MessageClientType } from "./index";
 
-export default class TwitterMessageClient extends MessageClientBase {
+export default class TwitterMessageClient extends UrlMessageClientBase {
     constructor() {
-        super(MessageClientType.Twitter);
+        super(MessageClientType.Twitter, "https://twitter.com/intent/tweet?");
     }
 
-    send(message: string): void {
-        throw new Error("Method not implemented.");
+    prepareUrlWithMessage(url: string, message: string): string {
+        return url + "url=" + message;
     }
-
 }

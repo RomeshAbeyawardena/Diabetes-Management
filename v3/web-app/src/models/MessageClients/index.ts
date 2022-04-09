@@ -31,6 +31,21 @@ export abstract class MessageClientBase implements IMessageClient {
     abstract send(message: string) : void;
 }
 
+export abstract class UrlMessageClientBase extends MessageClientBase
+{
+    url: string;
+    constructor(messageClientType: MessageClientType, url: string) {
+        super(messageClientType);
+        this.url = url;
+    }
+
+    abstract prepareUrlWithMessage(url: string, message: string) :string;
+
+    send(message: string): void {
+        window.open(this.prepareUrlWithMessage(this.url, encodeURI(message)), "_blank");
+    }
+}
+
 export interface IMessageClientFactory {
     messageClients: IMessageClient[];
 

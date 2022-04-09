@@ -1,12 +1,12 @@
-import { IMessageClientFactory, MessageClientBase, MessageClientType } from "./index";
+import { IMessageClientFactory, UrlMessageClientBase, MessageClientType } from "./index";
 
-export default class WhatsAppMessageClient extends MessageClientBase {
+export default class WhatsAppMessageClient extends UrlMessageClientBase {
     constructor() {
-        super(MessageClientType.WhatsApp);
+        super(MessageClientType.WhatsApp, "whatsapp://send?text=");
     }
 
-    send(message: string): void {
-        window.open("whatsapp://send?text=" + encodeURI(message), "_blank");
+    prepareUrlWithMessage(url: string, message: string): string {
+        return url + message;
     }
 
 }
