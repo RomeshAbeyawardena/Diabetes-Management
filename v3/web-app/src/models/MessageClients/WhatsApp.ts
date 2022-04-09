@@ -1,4 +1,4 @@
-import { IMessageClientFactory, UrlMessageClientBase, MessageClientType } from "./index";
+import { UrlMessageClientBase, MessageClientType } from "./index";
 
 export default class WhatsAppMessageClient extends UrlMessageClientBase {
     constructor() {
