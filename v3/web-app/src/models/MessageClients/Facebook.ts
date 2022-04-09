@@ -1,12 +1,11 @@
-import { MessageClientBase, MessageClientType } from "./index";
+import { UrlMessageClientBase, MessageClientType } from "./index";
 
-export default class FacebookMessageClient extends MessageClientBase {
+export default class FacebookMessageClient extends UrlMessageClientBase {
     constructor() {
-        super(MessageClientType.Facebook);
+        super(MessageClientType.Facebook, "https://facebook.com/sharer/sharer.php?u=");
     }
 
-    send(message: string): void {
-        throw new Error("Method not implemented.");
+    prepareUrlWithMessage(url: string, message: string): string {
+        return url + message;
     }
-
 }
