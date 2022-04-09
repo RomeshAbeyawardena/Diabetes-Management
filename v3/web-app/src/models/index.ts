@@ -3,12 +3,13 @@ import { Subject } from 'rxjs';
 
 export enum DialogType {
     //dialogs
-    None = "none",
     CookiePolicy = "cookie-policy",
     DatePicker = "date-picker",
+    LocalExport = "local-export",
     Login = "login",
     Register = "register",
     TextEntry = "text-entry",
+    None = "none",
     NumberPicker = "number-picker",
     //side bars
     Authenticated = "authenticated",

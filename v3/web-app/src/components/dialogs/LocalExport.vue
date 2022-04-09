@@ -1,0 +1,60 @@
+<script setup>
+import ProgressSpinner from 'primevue/progressspinner';
+
+import QRCodeStyling from "qr-code-styling";
+import { defineProps, onMounted, ref } from "vue";
+import "../../scss/local-export.scss"
+const loading = ref(false);
+const qr = ref(null);
+
+const props = defineProps({
+  value: String,
+});
+
+const logoUrl = window.location + "android-chrome-512x512.png";
+
+const qrOptions = new QRCodeStyling({
+  width: 300,
+  height: 300,
+  type: "svg",
+  data: props.value ?? "Hello Baby",
+  image: logoUrl,
+  dotsOptions: {
+    color: "#fff",
+    type: "rounded",
+  },
+  backgroundOptions: {
+    color: "#20262e",
+  },
+  imageOptions: {
+    crossOrigin: "anonymous",
+    margin: 20,
+  },
+});
+
+function toggleLoadingClass() {
+  const _class = "qr-code";
+  
+  if(loading.value) {
+    return _class + " isloading";
+  }
+
+  return _class;
+}
+
+ onMounted(async() => {
+  loading.value = true;
+  qrOptions.append(qr.value);
+  await qrOptions._svgDrawingPromise;
+  loading.value = false;
+});
+</script>
+
+<template>
+  <div class="local-save">
+    <ProgressSpinner v-if="loading" style="width:50px;height:50px" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"/>
+    <div ref="qr" :class="toggleLoadingClass">
+        
+    </div>
+  </div>
+</template>

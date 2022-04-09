@@ -3,6 +3,7 @@ import Button from "primevue/button";
 import CookiePolicy from "./CookiePolicy.vue";
 import DatePicker from "./DatePicker.vue";
 import Dialog from "primevue/dialog";
+import LocalExport from "./LocalExport.vue";
 import Login from "./Login.vue";
 import NumberPicker from "./NumberPicker.vue";
 import Register from "./Login.vue";
@@ -35,7 +36,7 @@ onBeforeMount(() => {
     .addDialog(
       new DialogDef(
         DialogType.CookiePolicy,
-        "Cookie policy",
+        "cookie-policy",
         "Cookie policy",
         markRaw(CookiePolicy)
       )
@@ -46,6 +47,14 @@ onBeforeMount(() => {
         "date-picker",
         "Select a date",
         markRaw(DatePicker)
+      )
+    )
+    .addDialog(
+      new DialogDef(
+        DialogType.LocalExport,
+        "local-export",
+        "Export data",
+        markRaw(LocalExport)
       )
     )
     .addDialog(
@@ -67,7 +76,7 @@ onBeforeMount(() => {
 });
 </script>
 <template>
-  <Dialog :header="dialog.title" v-model:visible="dialog.visible">
+  <Dialog @hide="rejectChanges" :header="dialog.title" v-model:visible="dialog.visible">
     <component
       :is="dialog.component"
       @value:updated="valueUpdated"

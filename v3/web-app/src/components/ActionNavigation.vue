@@ -1,84 +1,102 @@
 <script setup>
-    import Button from 'primevue/button';
-    import SpeedDial from 'primevue/speeddial';
-    import Toast from 'primevue/toast';
-    import { useStore } from '../stores/main';
-    import { useInventoryStore } from '../stores/Inventory';
-    import { storeToRefs } from 'pinia';
-    import { ref } from 'vue';
-    import { useToast } from "primevue/usetoast";
+import Button from "primevue/button";
+import SpeedDial from "primevue/speeddial";
+import Toast from "primevue/toast";
 
-    const toast = useToast();
-    const store = useStore();
-    const inventoryStore = useInventoryStore();
-    const { blockEvents } = storeToRefs(store);
-    const { isDeleteMode } = storeToRefs(inventoryStore);
-    let optionsMenuItems = ref([ 
-        { label: "Version", icon: "pi pi-info", command: () => register()  },
-        { label: "Share", icon: "pi pi-share-alt", command: () => saveToFile()  },
-        { label: "Load", icon: "pi pi-history", command: () => login()  },
-        { label: "About", icon: "pi pi-sign-in", command: () => login()  }
-    ]);
+import { useStore } from "../stores/main";
+import { useInventoryStore } from "../stores/Inventory";
+import { storeToRefs } from "pinia";
+import { ref } from "vue";
+import { useToast } from "primevue/usetoast";
+import { DialogType } from "../models";
 
-    let addMenuItems = ref([
-        { label: "Reset", icon: "pi pi-refresh", command: () => reset()  },
-        { label: "Delete mode", icon: "pi pi-trash", command: () => toggleDeleteMode()  },
-        { label: "Save", icon: "pi pi-save", command: () => save()  },
-        { label: "Add", icon: "pi pi-plus", command: () => add()  },
-    ]); 
-    
-    function toggleDeleteMode() {
-        isDeleteMode.value = !isDeleteMode.value;
+const toast = useToast();
+const store = useStore();
+const inventoryStore = useInventoryStore();
+const { blockEvents } = storeToRefs(store);
+const { isDeleteMode } = storeToRefs(inventoryStore);
+let optionsMenuItems = ref([
+  { label: "Version", icon: "pi pi-info", command: () => register() },
+  { label: "Share", icon: "pi pi-share-alt", command: () => saveToFile() },
+  { label: "Load", icon: "pi pi-history", command: () => login() },
+  { label: "About", icon: "pi pi-sign-in", command: () => login() },
+]);
 
-        if(isDeleteMode.value)
-        {
-            toast.add({ severity:"info", summary: "Delete mode activated", detail: "Tap the same option again to turn this mode off", life: 5000 })
+let addMenuItems = ref([
+  { label: "Reset", icon: "pi pi-refresh", command: () => reset() },
+  {
+    label: "Delete mode",
+    icon: "pi pi-trash",
+    command: () => toggleDeleteMode(),
+  },
+  { label: "Save", icon: "pi pi-save", command: () => save() },
+  { label: "Add", icon: "pi pi-plus", command: () => add() },
+]);
 
-            addMenuItems.value[1].icon = "pi pi-times";
-        }
-        else {
-            toast.add({ severity:"info", summary: "Delete mode deactivated", detail: "", life: 1500 })
+function toggleDeleteMode() {
+  isDeleteMode.value = !isDeleteMode.value;
 
-            addMenuItems.value[1].icon = "pi pi-trash";
-        }
-    }
+  if (isDeleteMode.value) {
+    toast.add({
+      severity: "info",
+      summary: "Delete mode activated",
+      detail: "Tap the same option again to turn this mode off",
+      life: 5000,
+    });
 
-    function saveToFile() {
-        let value = inventoryStore.saveToFile();
-        console.log(value);
-    }
+    addMenuItems.value[1].icon = "pi pi-times";
+  } else {
+    toast.add({
+      severity: "info",
+      summary: "Delete mode deactivated",
+      detail: "",
+      life: 1500,
+    });
 
-    async function save() {
-        await inventoryStore.save();
-        toast.add({ severity:"info", summary: "Items saved", detail: "Items have been saved locally successfully", life: 1500 })
-    }
+    addMenuItems.value[1].icon = "pi pi-trash";
+  }
+}
 
-    function add() {
-        let c = store.filters.dateRange.getDateWithCurrentTime();
-        
-        inventoryStore.addNew(c);
-    }
+async function saveToFile() {
+  const value = inventoryStore.saveToFile();
+  const dialog = store.getDialog(DialogType.LocalExport);
+  await store.showDialog(dialog, value, false);
+}
 
-    function reset() {
+async function save() {
+  await inventoryStore.save();
+  toast.add({
+    severity: "info",
+    summary: "Items saved",
+    detail: "Items have been saved locally successfully",
+    life: 1500,
+  });
+}
 
-    }
+function add() {
+  let c = store.filters.dateRange.getDateWithCurrentTime();
+
+  inventoryStore.addNew(c);
+}
+
+function reset() {}
 </script>
 <template>
-    <Toast position="bottom-center" />
-    <div id="action-navigation" class="grid justify-content-between">
-        <div class="col-3 flex align-items-center justify-content-center">
-            <SpeedDial  :transitionDelay="120"
-                        :disabled="blockEvents"
-                        :tooltipOptions="{'position':'left'}"
-                        showIcon="pi pi-bars" 
-                        hideIcon="pi pi-times"
-                        :model="optionsMenuItems" />
-        </div>
-        <div class="col-6">
-             
-        </div>
-        <div class="col-3 flex align-items-center justify-content-center">
-            <SpeedDial  :disabled="blockEvents" :model="addMenuItems" />
-        </div>
+  <Toast position="bottom-center" />
+  <div id="action-navigation" class="grid justify-content-between">
+    <div class="col-3 flex align-items-center justify-content-center">
+      <SpeedDial
+        :transitionDelay="120"
+        :disabled="blockEvents"
+        :tooltipOptions="{ position: 'left' }"
+        showIcon="pi pi-bars"
+        hideIcon="pi pi-times"
+        :model="optionsMenuItems"
+      />
     </div>
+    <div class="col-6"></div>
+    <div class="col-3 flex align-items-center justify-content-center">
+      <SpeedDial :disabled="blockEvents" :model="addMenuItems" />
+    </div>
+  </div>
 </template>

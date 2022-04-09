@@ -8,6 +8,7 @@ import Navigation from "./components/Navigation.vue";
 import Sidebars from './components/side-bars/Sidebars.vue';
 import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
+
 //references
 import { DialogType } from './models';
 import { useStore } from './stores/main';
