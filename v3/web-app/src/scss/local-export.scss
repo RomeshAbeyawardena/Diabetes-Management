@@ -1,4 +1,18 @@
 .local-save,
 .qr-code {
     text-align: center;
+
+    &.loading {
+        display: none;
+    }
+}
+
+div.social-media-nav {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+
+    div.col {
+        text-align: center;
+    }
 }

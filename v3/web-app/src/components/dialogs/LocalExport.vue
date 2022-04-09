@@ -1,9 +1,12 @@
 <script setup>
-import ProgressSpinner from 'primevue/progressspinner';
+import Button from "primevue/button";
+import ProgressSpinner from "primevue/progressspinner";
 
 import QRCodeStyling from "qr-code-styling";
 import { defineProps, onMounted, ref } from "vue";
-import "../../scss/local-export.scss"
+import "../../scss/local-export.scss";
+import "../../scss/social-media.scss";
+
 const loading = ref(false);
 const qr = ref(null);
 
@@ -33,16 +36,16 @@ const qrOptions = new QRCodeStyling({
 });
 
 function toggleLoadingClass() {
-  const _class = "qr-code";
-  
-  if(loading.value) {
-    return _class + " isloading";
+  const css = "qr-code";
+
+  if (loading.value) {
+    return css + " isloading";
   }
 
-  return _class;
+  return css;
 }
 
- onMounted(async() => {
+onMounted(async () => {
   loading.value = true;
   qrOptions.append(qr.value);
   await qrOptions._svgDrawingPromise;
@@ -52,9 +55,47 @@ function toggleLoadingClass() {
 
 <template>
   <div class="local-save">
-    <ProgressSpinner v-if="loading" style="width:50px;height:50px" strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s"/>
-    <div ref="qr" :class="toggleLoadingClass">
-        
+    <ProgressSpinner
+      v-if="loading"
+      style="width: 50px; height: 50px"
+      strokeWidth="8"
+      fill="var(--surface-ground)"
+      animationDuration=".5s"
+    />
+    <div ref="qr" :class="toggleLoadingClass()"></div>
+    <div class="social-media-nav">
+      <div class="grid">
+        <div class="col">
+          <Button
+            icon="pi pi-whatsapp"
+            class="p-button-rounded p-button-whatsapp"
+          ></Button>
+        </div>
+        <div class="col">
+          <Button
+            icon="pi pi-twitter"
+            class="p-button-rounded p-button-twitter"
+          ></Button>
+        </div>
+        <div class="col">
+          <Button
+            icon="pi pi-facebook"
+            class="p-button-rounded p-button-facebook"
+          ></Button>
+        </div>
+        <div class="col">
+          <Button
+            icon="pi pi-send"
+            class="p-button-rounded p-button-facebook"
+          ></Button>
+        </div>
+        <div class="col">
+          <Button
+            icon="pi pi-download"
+            class="p-button-rounded p-button-facebook"
+          ></Button>
+        </div>
+      </div>
     </div>
   </div>
 </template>

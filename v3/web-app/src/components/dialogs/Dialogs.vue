@@ -53,7 +53,7 @@ onBeforeMount(() => {
       new DialogDef(
         DialogType.LocalExport,
         "local-export",
-        "Export data",
+        "Share",
         markRaw(LocalExport)
       )
     )

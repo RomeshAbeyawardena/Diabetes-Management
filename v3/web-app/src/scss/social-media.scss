@@ -1,0 +1,19 @@
+button.p-button {
+    &.p-button-facebook {
+        color: #fff;
+        background: var(--blue-600);
+        border: 1px solid var(--blue-600);
+    }
+
+    &.p-button-twitter {
+        color: #fff;
+        background: var(--blue-400);
+        border: 1px solid var(--blue-400);
+    }
+
+    &.p-button-whatsapp {
+        color: #fff;
+        background: var(--green-300);
+        border: 1px solid var(--green-500);
+    }
+}
