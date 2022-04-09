@@ -19,6 +19,14 @@ import "primeflex/primeflex.css";
 import "./scss/index.scss";
 import { DbPluginBuilder } from './plugins/DbPlugin';
 
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(function(reg) {
+        console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+        console.warn('Error whilst registering service worker', err);
+    });
+}
+
 function helperPlugin() {
     return new HelperPluginBuilder(
         new CookieHelper(), 

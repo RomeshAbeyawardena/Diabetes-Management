@@ -18,6 +18,7 @@
     "promise": "^8.1.0",
     "rxjs": "^7.5.5",
     "sass": "^1.49.11",
+    "vite-plugin-mkcert": "^1.6.0",
     "vue": "^3.2.25"
   },
   "devDependencies": {
