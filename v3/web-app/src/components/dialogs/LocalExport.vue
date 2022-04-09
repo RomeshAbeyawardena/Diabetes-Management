@@ -86,13 +86,13 @@ onMounted(async () => {
         <div class="col">
           <Button
             icon="pi pi-send"
-            class="p-button-rounded p-button-facebook"
+            class="p-button-rounded p-button-primary"
           ></Button>
         </div>
         <div class="col">
           <Button
             icon="pi pi-download"
-            class="p-button-rounded p-button-facebook"
+            class="p-button-rounded p-button-primary"
           ></Button>
         </div>
       </div>

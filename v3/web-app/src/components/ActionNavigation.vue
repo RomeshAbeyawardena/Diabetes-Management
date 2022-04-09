@@ -58,9 +58,11 @@ function toggleDeleteMode() {
 }
 
 async function saveToFile() {
+  store.blockEvents = true;
   const value = inventoryStore.saveToFile();
   const dialog = store.getDialog(DialogType.LocalExport);
   await store.showDialog(dialog, value, false);
+  store.blockEvents = false;
 }
 
 async function save() {
