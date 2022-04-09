@@ -1,11 +1,14 @@
 export enum MessageClientType {
     Facebook = "facebook",
     Twitter = "twitter",
-    WhatsApp = "whatsapp"
+    WhatsApp = "whatsapp",
+    Email = "email",
+    Download = "download"
 }
 
 export interface IMessageClient {
     type: MessageClientType;
+    register(messageClientFactory: IMessageClientFactory): void;
     canSend(messageClientType: MessageClientType): boolean;
     send(message: string) : void;
 }
@@ -21,6 +24,10 @@ export abstract class MessageClientBase implements IMessageClient {
         return this.type == messageClientType;
     }
 
+    register(messageClientFactory: IMessageClientFactory) : void {
+        messageClientFactory.set(this);
+    }
+    
     abstract send(message: string) : void;
 }
 

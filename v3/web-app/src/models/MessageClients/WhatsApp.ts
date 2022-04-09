@@ -1,4 +1,4 @@
-import { MessageClientBase, MessageClientType } from "./index";
+import { IMessageClientFactory, MessageClientBase, MessageClientType } from "./index";
 
 export default class WhatsAppMessageClient extends MessageClientBase {
     constructor() {
@@ -6,7 +6,7 @@ export default class WhatsAppMessageClient extends MessageClientBase {
     }
 
     send(message: string): void {
-        throw new Error("Method not implemented.");
+        window.open("whatsapp://send?text=" + encodeURI(message), "_blank");
     }
 
 }

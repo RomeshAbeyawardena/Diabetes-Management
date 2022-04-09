@@ -1,12 +1,14 @@
 <script setup>
 import Button from "primevue/button";
 import ProgressSpinner from "primevue/progressspinner";
-
+import { MessageClientType } from "../../models/MessageClients";
 import QRCodeStyling from "qr-code-styling";
 import { onMounted, ref } from "vue";
+import { useStore } from "../../stores/main";
 import "../../scss/local-export.scss";
 import "../../scss/social-media.scss";
 
+const store = useStore();
 const loading = ref(false);
 const qr = ref(null);
 
@@ -45,6 +47,10 @@ function toggleLoadingClass() {
   return css;
 }
 
+function shareLink(messageClientType){
+  store.messageClientSender.send(messageClientType, dataUrl);
+}
+
 onMounted(async () => {
   loading.value = true;
   qrOptions.append(qr.value);
@@ -66,31 +72,31 @@ onMounted(async () => {
     <div class="social-media-nav">
       <div class="grid">
         <div class="col">
-          <Button
+          <Button @click="shareLink(MessageClientType.WhatsApp)"
             icon="pi pi-whatsapp"
             class="p-button-rounded p-button-whatsapp"
           ></Button>
         </div>
         <div class="col">
-          <Button
+          <Button @click="shareLink(MessageClientType.Twitter)"
             icon="pi pi-twitter"
             class="p-button-rounded p-button-twitter"
           ></Button>
         </div>
         <div class="col">
-          <Button
+          <Button @click="shareLink(MessageClientType.Facebook)"
             icon="pi pi-facebook"
             class="p-button-rounded p-button-facebook"
           ></Button>
         </div>
         <div class="col">
-          <Button
+          <Button @click="shareLink(MessageClientType.Email)"
             icon="pi pi-send"
             class="p-button-rounded p-button-primary"
           ></Button>
         </div>
         <div class="col">
-          <Button
+          <Button @click="shareLink(MessageClientType.Download)"
             icon="pi pi-download"
             class="p-button-rounded p-button-primary"
           ></Button>

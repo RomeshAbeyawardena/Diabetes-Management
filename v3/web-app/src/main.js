@@ -9,7 +9,7 @@ import { CookieHelper } from './models/Cookies';
 import { InventoryHelper } from './models/Inventory';
 import { DialogHelper } from './models/Dialogs';
 import { DateHelper } from './models/DateRange';
-
+import { MessageClientPlugin } from './models/MessageClients/Setup';
 import { HelperPluginBuilder } from './plugins/HelperPlugin';
 
 import "primevue/resources/themes/bootstrap4-dark-blue/theme.css";
@@ -34,9 +34,14 @@ function dbPlugin() {
     ).build();
 }
 
+function messageClientPlugin() {
+    return new MessageClientPlugin().build();
+}
+
 let pinia = createPinia()
     .use(helperPlugin)
-    .use(dbPlugin);
+    .use(dbPlugin)
+    .use(messageClientPlugin);
 
 createApp(App)
     .use(pinia)
