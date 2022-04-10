@@ -6,7 +6,7 @@ import Dialog from "primevue/dialog";
 import LocalExport from "./LocalExport.vue";
 import Login from "./Login.vue";
 import NumberPicker from "./NumberPicker.vue";
-import Register from "./Login.vue";
+import Register from "./Register.vue";
 import TextEntry from "./TextEntry.vue";
 
 import { ref, onBeforeMount, markRaw } from "vue";
@@ -71,6 +71,14 @@ onBeforeMount(() => {
         "number-picker",
         "Select a value",
         markRaw(NumberPicker)
+      )
+    )
+    .addDialog(
+      new DialogDef(
+        DialogType.Register,
+        "register-user",
+        "Register",
+        markRaw(Register)
       )
     )
     .addDialog(

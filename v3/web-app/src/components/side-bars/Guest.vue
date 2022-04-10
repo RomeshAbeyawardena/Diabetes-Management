@@ -19,7 +19,9 @@ import { DialogType } from '../../models';
     }
 
     function register() {
-        console.log("register");
+        const registerDialog = store.getDialog(DialogType.Register);
+        store.showDialog(registerDialog, null, false);
+        store.sideBar.visible = false;
     }
 </script>
 <template>

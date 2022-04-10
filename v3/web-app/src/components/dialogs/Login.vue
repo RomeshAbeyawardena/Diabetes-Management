@@ -17,6 +17,22 @@ const store = useStore();
 const userStore = useUserStore();
 async function login() {
   try {
+    if (!emailAddress.value.length || emailAddress.value.length < 3) {
+      throw "Email address must not be empty";
+    }
+
+    if (
+      !emailAddress.value.match(
+        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+    ) {
+      throw "Email address must be a valid e-mail address";
+    }
+
+    if (!password.value.length) {
+      throw "Password must not be empty";
+    }
+
     await userStore.login({
       emailAddress: emailAddress.value,
       password: password.value,
@@ -41,6 +57,7 @@ async function login() {
     <span class="p-input-icon-left" style="width: 100%">
       <i class="pi pi-at" />
       <InputText
+        autocomplete="email"
         placeholder="Email Address"
         aria-placeholder="Email address"
         type="text"
@@ -53,7 +70,6 @@ async function login() {
     <span class="p-input-icon-left" style="width: 100%">
       <i class="pi pi-key" />
       <InputText
-        autocomplete="email"
         type="password"
         placeholder="Password"
         v-model="password"
