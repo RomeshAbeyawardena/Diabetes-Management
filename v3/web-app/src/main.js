@@ -21,6 +21,11 @@ import { DbPluginBuilder } from './plugins/DbPlugin';
 import { ApiPlugin } from './api/plugin';
 import { ApiHelper } from './plugins/ApiHelper';
 
+const appElement = document.getElementById("app");
+
+const apiDefinition = atob(appElement.dataset.apiDefinition);
+appElement.dataset.apiDefinition = null;
+
 const apiHelper = new ApiHelper();
 
 function helperPlugin() {
@@ -44,12 +49,10 @@ function messageClientPlugin() {
 }
 
 function apiPlugin() {
-    const appElement = document.getElementById("app");
-    
-    let apiDefinition = atob(appElement.dataset.apiDefinition);
-    
-    return new ApiPlugin(apiHelper, JSON.parse(apiDefinition))
+    const apiDefinitions = JSON.parse(apiDefinition);
+    const apiPlugin = new ApiPlugin(apiHelper, apiDefinitions)
         .build();
+    return apiPlugin;
 }
 
 let pinia = createPinia()

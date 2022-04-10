@@ -21,10 +21,8 @@ async function login() {
       emailAddress: emailAddress.value,
       password: password.value,
     });
-
     store.resetDialog();
   } catch (err) {
-    console.log(err);
     messages.value.push({ severity: "warn", content: err, life: 3000 });
   }
 }

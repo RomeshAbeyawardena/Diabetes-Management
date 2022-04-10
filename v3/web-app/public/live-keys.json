@@ -1,0 +1,31 @@
+{
+    "inventory": {
+        "baseUrl": "https://diabetesmanagementapi.azurewebsites.net/api/",
+        "endpoints": [
+            {
+                "method": "GET",
+                "name": "inventory",
+                "description": "Get inventory",
+                "apiKey": "OmGEL7MumKobLX5fkubyTJsyavSviNAfBVU42fcx5Gs69ajeuGhe4w=="
+            },
+            {
+                "method": "POST",
+                "name": "inventory",
+                "description": "Save inventory",
+                "apiKey": "LLA93ZWz/aBVKgfPc50t4sf59MSNYwPDNfvzsmArD6a3WYruOi3h2A=="
+            },
+            {
+                "method": "POST",
+                "name": "user/register",
+                "description": "register user",
+                "apiKey": "E2gN866COSHMVcul7D7fKQQvXDqmz1HmlRMofPBr3S5ZwTENY6iHJg=="
+            },
+            {
+                "method": "POST",
+                "name": "user",
+                "description": "Authenticate user",
+                "apiKey": "geX5RxxaJRNrtGK7xkdsw4EZQoH9aVzmTYrliSgOAE/ED3LuzCDYlQ=="
+            }
+        ]
+    }
+}

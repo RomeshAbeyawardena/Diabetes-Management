@@ -11,6 +11,8 @@ import { DialogType } from '../../models';
 const store = useStore();
 const { sideBar } = storeToRefs(store);
 
+
+
 onBeforeMount(() => {
      store
         .addDialog(

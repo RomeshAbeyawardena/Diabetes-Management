@@ -25,7 +25,7 @@ export interface ILoginRequest {
 }
 
 export interface IRegisterRequest extends ILoginRequest {
-    displayName: string;
+    displayName: string; 
 }
 
 export class UserApi extends ApiBaseWithHeader implements IUserApi {
@@ -34,12 +34,14 @@ export class UserApi extends ApiBaseWithHeader implements IUserApi {
     }
 
     async login(loginRequest: ILoginRequest): Promise<IResponse<IUser>> {
+        this.setApiKey("user", "POST");
         const formData = this.apiHelper.ConvertToFormData(loginRequest);
         const response = await this.client.post<IResponse<IUser>>("user", formData);
         return response.data;
 
     }
     async register(registerRequest: IRegisterRequest): Promise<IResponse<IUser>> {
+        this.setApiKey("user/register", "POST");
         const formData = this.apiHelper.ConvertToFormData(registerRequest);
         const response = await this.client.post<IResponse<IUser>>("user", formData);
         return response.data;

@@ -36,6 +36,7 @@ export class InventoryApi extends ApiBaseWithHeader implements IInventoryApi {
     }
 
     async get(request: IGetRequest): Promise<IResponse<IInventory>> {
+        this.setApiKey("inventory", "GET");
         const response = await this.client
             .get<IResponse<IInventory>>("inventory", {
                 params: {
@@ -49,6 +50,7 @@ export class InventoryApi extends ApiBaseWithHeader implements IInventoryApi {
     }
 
     async post(request: IPostRequest): Promise<IResponse<IInventory>> {
+        this.setApiKey("inventory", "POST");
         const formData = this.apiHelper.ConvertToFormData(request);
         const response = await this.client.post<IResponse<IInventory>>("inventory", formData);
         return response.data;

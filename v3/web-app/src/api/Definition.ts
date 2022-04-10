@@ -1,6 +1,13 @@
+export interface IApiEndpointDefinition {
+    apiKey: string;
+    description: string;
+    method: string;
+    name: string;
+}
+
 export interface IApiDefinition {
     baseUrl: string;
-    apiKey: string;
+    endpoints: IApiEndpointDefinition[];
 }
 
 export interface IApiDefinitions {

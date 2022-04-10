@@ -29,7 +29,6 @@ export const useUserStore = defineStore('user', {
                 this.userToken = resp.data.UserId;
                 this.displayName = resp.data.DisplayName;
                 const dialog = store.getDialog(DialogType.Authenticated);
-                console.log(dialog);
                 store.setSidebar(dialog);
                 return resp.data.UserId;
             }
