@@ -21,6 +21,8 @@
         entry: Object 
     });
 
+    const UniqueId = ref(store.stringHelper.generateRandomString(8));
+
     const showHeader = ref(props.showHeader);
     const localEntry = ref(props.entry);
     const dateFormat = ref("DD/MM/YYYY");
@@ -52,6 +54,10 @@
         if(localEntry.value.state === State.unchanged) {
             localEntry.value.state = State.modified;
         }
+    }
+
+    function appendUniqueId(value) {
+        return value + "-" + UniqueId.value;
     }
 
     function markAsDeleted(event) {
@@ -110,13 +116,13 @@
     <div>
         <div class="grid" v-if="showHeader">
             <div class="col-4">
-                <label for="inputDate">Date</label>
+                <label :for="appendUniqueId('inputDate')">Date</label>
             </div>
             <div class="col-6">
-                <label for="description">Description</label>
+                <label :for="appendUniqueId('description')">Description</label>
             </div>
             <div class="col-2">
-                <label v-if="!props.isDeleteMode" for="value">Value</label>
+                <label v-if="!props.isDeleteMode" :for="appendUniqueId('value')">Value</label>
                 <label v-if="props.isDeleteMode" for="value">Action</label>
             </div>
         </div>
@@ -124,7 +130,7 @@
             <div class="col-4">
                     <ResponsiveDateInput    
                         :disabled="blockEvents || isReadonly" 
-                        id="inputDate" 
+                        :id="appendUniqueId('inputDate')" 
                         :format="format" 
                         :mobile-format="mobileFormat" 
                         :date-format="dateFormat"
@@ -133,7 +139,7 @@
             </div>
             <div class="col-6">
                 <div class="p-inputgroup">
-                    <InputText id="description" 
+                    <InputText :id="appendUniqueId('description')" 
                         @input="touchEntry" 
                         type="text" 
                         style="width: 100%"
@@ -146,7 +152,7 @@
                 <Button icon="pi pi-trash" v-if="props.isDeleteMode" :disabled="blockEvents" @click="markAsDeleted($event)"
                         class="p-button-rounded p-button-secondary">
                 </Button>
-                <InputText id="value" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents || isReadonly" 
+                <InputText :id="appendUniqueId('value')" v-if="!props.isDeleteMode" v-model="inputValue" :disabled="blockEvents || isReadonly" 
                             @click="showDialog(DialogType.NumberPicker, localEntry.value)"
                             type="number" 
                             style="width: 100%" />

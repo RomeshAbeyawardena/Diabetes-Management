@@ -20,6 +20,7 @@ import "./scss/index.scss";
 import { DbPluginBuilder } from './plugins/DbPlugin';
 import { ApiPlugin } from './api/plugin';
 import { ApiHelper } from './plugins/ApiHelper';
+import { StringHelper } from './models/StringHelper';
 
 const appElement = document.getElementById("app");
 
@@ -34,7 +35,8 @@ function helperPlugin() {
         new CookieHelper(), 
         new DateHelper(),
         new DialogHelper(),
-        new InventoryHelper()
+        new InventoryHelper(),
+        new StringHelper()
     ).build();
 }
 
