@@ -88,11 +88,19 @@ export const useInventoryStore = defineStore('inventory', {
             this.readonlyItems = decoded;
             this.isReadonly = true;
         },
-        saveToFile(): string  {
+        async saveToFile(): Promise<string>  {
             const value = encode(this.items);
             const output = Buffer.from(value).toString('base64');
             
-            return output;
+            const response = await this.inventoryApi.post({
+                key: "diabetic.unit.manager",
+                type: "export",
+                userId: "c55d2555-dc9a-4583-ada2-d68f9c21b184",
+                items: output
+            });
+            const payload = JSON.parse(response);
+            console.log(payload);
+            return payload.InventoryHistoryId;
         }
     } 
 });

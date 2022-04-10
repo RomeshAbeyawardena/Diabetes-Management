@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
+using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Enums;
+using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Data;
@@ -23,20 +26,34 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
             
         }
 
-        [FunctionName("GetInventory")]
+        [OpenApiOperation(operationId: "GetInventory", 
+            tags: new[] { "get" }, 
+            Summary = "Retrieves an inventory for a specified user", 
+            Description = "Retrieves an inventory for a specified user by key and type", 
+            Visibility = OpenApiVisibilityType.Important),
+        OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The key", Description = "The key", Visibility = OpenApiVisibilityType.Important),
+        OpenApiParameter(name: "type", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The type", Description = "The type", Visibility = OpenApiVisibilityType.Important),
+        OpenApiParameter(name: "userId", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The userId", Description = "The userId", Visibility = OpenApiVisibilityType.Important),
+        //OpenApiResponseWithBody(System.Net.HttpStatusCode.OK, "application/json", typeof(DbModels.InventoryHistory)),
+        FunctionName("GetInventory")]
         public async Task<IActionResult> GetInventory(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = BaseUrl)] HttpRequest request)
         {
             //await AuthenticateRequest(request);
+            Guid inventoryHistoryId = default;
+            var requiredConditionsA = new[]
+            {
+                request.Query.TryGetValue("inventoryHistoryId", out var id) && Guid.TryParse(id.ToString(), out inventoryHistoryId),
+            };
 
-            var requiredConditions = new[]
+            var requiredConditionsB = new[]
             {
                 request.Query.TryGetValue("key", out var key),
                 request.Query.TryGetValue("type", out var type),
                 request.Query.TryGetValue("userId", out var userIdValue)
             };
 
-            if (requiredConditions.All(a => a) && Guid.TryParse(userIdValue, out var userId))
+            if ((requiredConditionsA.All(a => a) || requiredConditionsB.All(a => a)) && Guid.TryParse(userIdValue, out var userId))
             {
                 int? versionNumber = null;
 
@@ -63,7 +80,13 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
             return new BadRequestResult();
         }
 
-        [FunctionName("SaveInventory")]
+        [OpenApiOperation(operationId: "SaveInventory",
+            tags: new[] { "post" },
+            Summary = "Save an inventory for a specified user",
+            Description = "Saves an inventory for a specified user by key and type",
+            Visibility = OpenApiVisibilityType.Important),
+         OpenApiRequestBody("multipart/form-data", typeof(SaveRequest), Description = "Inventory to save", Required = true),
+         FunctionName("SaveInventory")]
         public async Task<IActionResult> SaveInventory([HttpTrigger(AuthorizationLevel.Function, "post", Route = BaseUrl)] HttpRequest request)
         {
             try

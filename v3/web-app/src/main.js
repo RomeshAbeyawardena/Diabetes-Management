@@ -18,9 +18,14 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./scss/index.scss";
 import { DbPluginBuilder } from './plugins/DbPlugin';
+import { ApiPlugin } from './api/plugin';
+import { ApiHelper } from './plugins/ApiHelper';
+
+const apiHelper = new ApiHelper();
 
 function helperPlugin() {
     return new HelperPluginBuilder(
+        apiHelper,
         new CookieHelper(), 
         new DateHelper(),
         new DialogHelper(),
@@ -38,10 +43,20 @@ function messageClientPlugin() {
     return new MessageClientPlugin().build();
 }
 
+function apiPlugin() {
+    const appElement = document.getElementById("app");
+    
+    let apiDefinition = atob(appElement.dataset.apiDefinition);
+    
+    return new ApiPlugin(apiHelper, JSON.parse(apiDefinition))
+        .build();
+}
+
 let pinia = createPinia()
     .use(helperPlugin)
     .use(dbPlugin)
-    .use(messageClientPlugin);
+    .use(messageClientPlugin)
+    .use(apiPlugin);
 
 createApp(App)
     .use(pinia)
