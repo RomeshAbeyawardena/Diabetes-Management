@@ -5,6 +5,11 @@ import Message from "primevue/message";
 import { ref } from "vue";
 import { useUserStore } from "../../stores/User";
 import { useStore } from "../../stores/main";
+
+const props = defineProps({ value: Number });
+const emit = defineEmits(["value:updated"]);
+const value = ref(props.value);
+
 const emailAddress = ref("");
 const password = ref("");
 const messages = ref([]);
@@ -18,17 +23,16 @@ async function login() {
     });
 
     store.resetDialog();
-
-  } catch(err) {
-      console.log(err);
-      messages.value.push({ severity: "warn", content: err, life:3000 })
+  } catch (err) {
+    console.log(err);
+    messages.value.push({ severity: "warn", content: err, life: 3000 });
   }
 }
 </script>
 <template>
   <Message
     v-for="message of messages"
-    :life="message.life" 
+    :life="message.life"
     :sticky="false"
     :severity="message.severity"
     :key="message.content"
@@ -51,6 +55,7 @@ async function login() {
     <span class="p-input-icon-left" style="width: 100%">
       <i class="pi pi-key" />
       <InputText
+        autocomplete="email"
         type="password"
         placeholder="Password"
         v-model="password"

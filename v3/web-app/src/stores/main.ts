@@ -107,9 +107,13 @@ export const useStore = defineStore('main', {
             });
           }); 
         },
-        showSidebar(dialog: IComponent) {
+        setSidebar(dialog: IComponent) {
           this.sideBar.component = dialog.component;
-          this.sideBar.title = dialog.type;
+          this.sideBar.type = dialog.type;
+          this.sideBar.title = dialog.title;
+        },
+        showSidebar(dialog: IComponent) {
+          this.setSidebar(dialog);
           this.sideBar.visible = true;
         },
         voidDialogValue() {

@@ -17,7 +17,7 @@ onBeforeMount(() => {
              new DialogDef(DialogType.Authenticated, "authenticated-sidebar",
             "Authenticated", markRaw(Authenticated)))
          .addDialog(
-            new DialogDef(DialogType.Guest, "guest-si)debar",
+            new DialogDef(DialogType.Guest, "guest-sidebar",
             "Guest", markRaw(Guest)));
 });
 

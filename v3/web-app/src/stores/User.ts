@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia';
 import { ILoginRequest, IRegisterRequest } from '../api/User';
+import { DialogType } from '../models';
+import { useStore } from './main';
 
 export interface IUserStoreState {
     displayName: string
@@ -21,11 +23,14 @@ export const useUserStore = defineStore('user', {
             const response = await this.userApi.login(user);
 
             const resp = JSON.parse(response);
-            
+            const store = useStore();            
             if(resp.data)
             {
                 this.userToken = resp.data.UserId;
                 this.displayName = resp.data.DisplayName;
+                const dialog = store.getDialog(DialogType.Authenticated);
+                console.log(dialog);
+                store.setSidebar(dialog);
                 return resp.data.UserId;
             }
             
