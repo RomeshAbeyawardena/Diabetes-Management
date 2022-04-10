@@ -1,6 +1,6 @@
 import { IApiHelper } from "../plugins/ApiHelper";
 import { IApiDefinition } from "./Definition";
-import { IResponse, ApiBase } from "./index";
+import { IResponse, ApiBaseWithHeader } from "./index";
 
 export interface IInventory {
     inventoryHistoryId: string;
@@ -13,8 +13,8 @@ export interface IInventory {
 }
 
 export interface IGetRequest {
-    key: string; 
-    type: string; 
+    key: string;
+    type: string;
     userId: string;
 }
 
@@ -30,21 +30,20 @@ export interface IInventoryApi {
     post(request: IPostRequest): Promise<IResponse<IInventory>>;
 }
 
-export class InventoryApi extends ApiBase implements IInventoryApi {
+export class InventoryApi extends ApiBaseWithHeader implements IInventoryApi {
     constructor(apiHelper: IApiHelper, apiDefinition: IApiDefinition) {
-        super(apiHelper, apiDefinition.baseUrl, config => config.headers = {
-            "x-api-key": apiDefinition.apiKey
-        });
+        super(apiHelper, apiDefinition)
     }
 
     async get(request: IGetRequest): Promise<IResponse<IInventory>> {
         const response = await this.client
             .get<IResponse<IInventory>>("inventory", {
-            params: { 
-                    key: request.key, 
-                    type: request.type, 
-                    userId: request.userId }
-        });
+                params: {
+                    key: request.key,
+                    type: request.type,
+                    userId: request.userId
+                }
+            });
 
         return response.data;
     }

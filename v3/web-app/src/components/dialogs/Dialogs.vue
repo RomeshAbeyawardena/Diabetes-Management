@@ -59,6 +59,14 @@ onBeforeMount(() => {
     )
     .addDialog(
       new DialogDef(
+        DialogType.Login,
+        "login",
+        "Login to sync and share",
+        markRaw(Login)
+      )
+    )
+    .addDialog(
+      new DialogDef(
         DialogType.NumberPicker,
         "number-picker",
         "Select a value",

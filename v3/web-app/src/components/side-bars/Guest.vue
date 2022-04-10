@@ -1,8 +1,11 @@
 <script setup>
-    import { toRef } from 'vue';
     import Menu from 'primevue/menu';
     
-    let menuItems = [
+    import { useStore } from '../../stores/main';
+    import { toRef } from 'vue';
+import { DialogType } from '../../models';
+    const store = useStore();
+    const menuItems = [
         { label: "Sign Up", icon: "pi pi-sign-in", command: () => register()  },
         { label: "Sign In", icon: "pi pi-sign-in", command: () => login()  }
     ];
@@ -10,7 +13,9 @@
     const items = toRef(menuItems);
     
     function login() {
-        console.log("login");
+        const loginDialog = store.getDialog(DialogType.Login);
+        store.showDialog(loginDialog, null, false);
+        store.sideBar.visible = false;
     }
 
     function register() {

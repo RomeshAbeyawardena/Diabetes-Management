@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DiabetesManagement.Api.RequestHandlers;
 using DiabetesManagement.Shared;
 using DiabetesManagement.Shared.Contracts;
 using DiabetesManagement.Shared.RequestHandlers;
@@ -44,8 +45,8 @@ namespace DiabetesManagement.Api
 
         protected IActionResult HandleException(Exception exception)
         {
-            Logger.LogError(exception, "A handled error has occurred");
-            return new BadRequestObjectResult(exception.Message);
+            //Logger.LogError(exception, "A handled error has occurred");
+            return new BadRequestObjectResult(new Response(null, StatusCodes.Status400BadRequest, exception.Message));
         }
 
 

@@ -1,5 +1,6 @@
 import { Axios, AxiosRequestConfig } from "axios";
 import { IApiHelper } from "../plugins/ApiHelper";
+import { IApiDefinition } from "./Definition";
 
 export interface IApi {
     apiHelper: IApiHelper;
@@ -9,9 +10,9 @@ export interface IApi {
 
 export interface IResponse<T> {
     data: T;
-    statusCode: string;
+    statusCode: number;
+    statusMessage: string;
 }
-
 
 export abstract class ApiBase implements IApi {
     apiHelper: IApiHelper;
@@ -25,5 +26,13 @@ export abstract class ApiBase implements IApi {
 
         action(requestConfig);
         this.client = new Axios(requestConfig);
+    }
+}
+
+export abstract class ApiBaseWithHeader extends ApiBase {
+    constructor(apiHelper: IApiHelper, apiDefinition: IApiDefinition) {
+        super(apiHelper, apiDefinition.baseUrl, config => config.headers = {
+            "x-api-key": apiDefinition.apiKey
+        });
     }
 }

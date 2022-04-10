@@ -4,6 +4,7 @@ import { State } from '../models/Inventory';
 import { useStore } from "../stores/main";
 import { encode, decode } from "@msgpack/msgpack";
 import { Buffer } from 'buffer';
+import { useUserStore } from './User';
 
 export interface IInventoryStoreState {
     isReadonly: boolean,
@@ -92,15 +93,22 @@ export const useInventoryStore = defineStore('inventory', {
             const value = encode(this.items);
             const output = Buffer.from(value).toString('base64');
             
+            const store = useUserStore();
+
             const response = await this.inventoryApi.post({
                 key: "diabetic.unit.manager",
                 type: "export",
-                userId: "c55d2555-dc9a-4583-ada2-d68f9c21b184",
+                userId: store.userToken,
                 items: output
             });
-            const payload = JSON.parse(response);
-            console.log(payload);
-            return payload.InventoryHistoryId;
+            const resp = JSON.parse(response);
+            console.log(resp);
+            if(resp.data)
+            {
+                return resp.data.InventoryHistoryId;
+            }
+
+            throw "Invalid input: " + resp.statusMessage;
         }
     } 
 });

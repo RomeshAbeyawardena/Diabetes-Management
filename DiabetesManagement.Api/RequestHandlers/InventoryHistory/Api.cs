@@ -74,7 +74,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                             Version = versionNumber
                         });
 
-                return new OkObjectResult(inventory.ToDynamic());
+                return new OkObjectResult(new Response(inventory.ToDynamic()));
             }
 
             return new BadRequestResult();
@@ -127,7 +127,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                         $" { (requiredConditions[3] ? "userId" : "") }");
                 }
 
-                return new OkObjectResult(savedEntity.ToDynamic());
+                return new OkObjectResult(new Response(savedEntity.ToDynamic()));
             }
             catch (InvalidOperationException invalidOperationException)
             {
