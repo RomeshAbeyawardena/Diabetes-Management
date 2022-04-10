@@ -92,9 +92,7 @@ export const useInventoryStore = defineStore('inventory', {
         async saveToFile(): Promise<string>  {
             const value = encode(this.items);
             const output = Buffer.from(value).toString('base64');
-            
-            const store = useUserStore();
-
+            const store = useUserStore()
             const response = await this.inventoryApi.post({
                 key: "diabetic.unit.manager",
                 type: "export",
@@ -102,7 +100,7 @@ export const useInventoryStore = defineStore('inventory', {
                 items: output
             });
             const resp = JSON.parse(response);
-            console.log(resp);
+            
             if(resp.data)
             {
                 return resp.data.InventoryHistoryId;

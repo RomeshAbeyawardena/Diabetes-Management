@@ -40,10 +40,10 @@ namespace DiabetesManagement.Api.RequestHandlers.User
 
                 if (requestedUser == null)
                 {
-                    return new UnauthorizedResult();
+                    return new UnauthorisedObjectResult(new Response(default, StatusCodes.Status401Unauthorized, "Invalid email address or password"));
                 }
 
-                return new OkObjectResult(requestedUser.ToDynamic());
+                return new OkObjectResult(new Response(requestedUser.ToDynamic()));
             }
 
             return new BadRequestResult();
