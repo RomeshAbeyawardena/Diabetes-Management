@@ -1,9 +1,12 @@
 {
     "compilerOptions": {
       "allowJs": true,
-      "moduleResolution": "node",
       "esModuleInterop": true,
-      "outDir": "tsout"
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "tsout",
+      "strict": false,
+      "lib": [ "dom","es2015" ],
+      "moduleResolution": "node"
     },
     "exclude": [
       "node_modules",

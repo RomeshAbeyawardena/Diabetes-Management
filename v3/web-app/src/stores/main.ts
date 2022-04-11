@@ -45,10 +45,10 @@ export const useStore = defineStore('main', {
 
     },
     actions: {
-        addDialog(dialog: IDialogComponent) {
+        addDialog(dialog: IDialogComponent) : any {
           return this.dialogHelper.addDialog(dialog);
         },
-        getConsent() {
+        getConsent() : void {
           let cookie = this.cookieHelper.getCookie("CP_end_user.consent");
           
           if(cookie && cookie.value) {

@@ -11,16 +11,16 @@ import { DialogHelper } from './models/Dialogs';
 import { DateHelper } from './models/DateRange';
 import { MessageClientPlugin } from './models/MessageClients/Setup';
 import { HelperPluginBuilder } from './plugins/HelperPlugin';
+import { DbPluginBuilder } from './plugins/DbPlugin';
+import { ApiPlugin } from './api/plugin';
+import { ApiHelper } from './plugins/ApiHelper';
+import { StringHelper } from './models/StringHelper';
 
 import "primevue/resources/themes/bootstrap4-dark-blue/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./scss/index.scss";
-import { DbPluginBuilder } from './plugins/DbPlugin';
-import { ApiPlugin } from './api/plugin';
-import { ApiHelper } from './plugins/ApiHelper';
-import { StringHelper } from './models/StringHelper';
 
 const appElement = document.getElementById("app");
 
