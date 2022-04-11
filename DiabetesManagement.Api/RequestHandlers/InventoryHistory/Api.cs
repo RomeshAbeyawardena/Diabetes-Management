@@ -143,11 +143,11 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
             }
             catch (InvalidOperationException invalidOperationException)
             {
-                return HandleException(invalidOperationException);
+                return HandleException(StatusCodes.Status400BadRequest, invalidOperationException);
             }
             catch (DataException dataException)
             {
-                return HandleException(dataException);
+                return HandleException(StatusCodes.Status400BadRequest, dataException);
             }
         }
     }

@@ -28,7 +28,7 @@ async function register() {
       throw "Email address must not be empty";
     }
 
-    if(!emailAddress.value.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+    if(!emailAddress.value.trim().match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
         throw "Email address must be a valid e-mail address";
     }
 
@@ -45,8 +45,9 @@ async function register() {
     }
 
     await userStore.register({
-      emailAddress: emailAddress.value,
-      password: password.value,
+      emailAddress: emailAddress.value.trim(),
+      password: password.value.trim(),
+      displayName: password.value.trim()
     });
     store.resetDialog();
   } catch (err) {

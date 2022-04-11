@@ -43,10 +43,10 @@ namespace DiabetesManagement.Api
             throw new UnauthorizedAccessException();
         }
 
-        protected IActionResult HandleException(Exception exception)
+        protected static IActionResult HandleException(int statusCode, Exception exception)
         {
             //Logger.LogError(exception, "A handled error has occurred");
-            return new BadRequestObjectResult(new Response(null, StatusCodes.Status400BadRequest, exception.Message));
+            return new BadRequestObjectResult(new Response(null, statusCode, exception.Message));
         }
 
 

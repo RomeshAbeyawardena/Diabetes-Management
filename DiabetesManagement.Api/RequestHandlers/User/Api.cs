@@ -5,6 +5,8 @@ using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -54,27 +56,35 @@ namespace DiabetesManagement.Api.RequestHandlers.User
         public async Task<IActionResult> Register([HttpTrigger(AuthorizationLevel.Function, "post", Route = $"{BaseUrl}/{nameof(Register)}")] 
             HttpRequest request)
         {
-            var requiredConditions = new[]
+            try
             {
+                var requiredConditions = new[]
+                {
                 request.Form.TryGetValue("emailAddress", out var emailAddress),
                 request.Form.TryGetValue("displayName", out var displayName),
                 request.Form.TryGetValue("password", out var password)
             };
 
-            if(requiredConditions.All(a => a))
-            {
-                var savedUser = await HandlerFactory.Execute<SaveRequest, Shared.Models.User>(
-                    Commands.RegisterUser, 
-                    new SaveRequest { 
-                        DisplayName = displayName, 
-                        EmailAddress = emailAddress, 
-                        Password = password 
-                    });
+                if (requiredConditions.All(a => a))
+                {
+                    var savedUser = await HandlerFactory.Execute<SaveRequest, Shared.Models.User>(
+                        Commands.RegisterUser,
+                        new SaveRequest
+                        {
+                            DisplayName = displayName,
+                            EmailAddress = emailAddress,
+                            Password = password
+                        });
 
-                return new OkObjectResult(savedUser.ToDynamic());
+                    return new OkObjectResult(savedUser.ToDynamic());
+                }
+
+                throw new InvalidOperationException("Expected values not provided");
             }
-
-            return new BadRequestResult();
+            catch(InvalidOperationException exception)
+            {
+                return HandleException(StatusCodes.Status400BadRequest, exception);
+            }
         }
     }
 }
