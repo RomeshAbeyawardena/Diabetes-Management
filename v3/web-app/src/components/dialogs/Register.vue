@@ -3,7 +3,7 @@ import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Message from "primevue/message";
 
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useStore } from "../../stores/main";
 import { useUserStore } from "../../stores/User";
 import { useToast } from "primevue/usetoast";
@@ -20,6 +20,20 @@ const confirm = ref("");
 const messages = ref([]);
 const store = useStore();
 const userStore = useUserStore();
+const isLoading = ref(false);
+const icon = computed(() => {
+  if (isLoading.value) {
+    return "pi pi-spin pi-spinner";
+  }
+  return null;
+});
+
+const loginLabel = computed(() => {
+  if (isLoading.value) {
+    return "";
+  }
+  return "Login";
+});
 
 function dismiss() {
   store.resetDialog();
@@ -60,11 +74,13 @@ function validate() {
 async function register() {
   try {
     validate();
+    isLoading.value = true;
     await userStore.register({
       emailAddress: emailAddress.value.trim(),
       password: password.value.trim(),
       displayName: displayName.value.trim(),
     });
+    isLoading.value = false;
     store.resetDialog();
 
     toast.add({
@@ -75,6 +91,7 @@ async function register() {
     });
   } catch (err) {
     messages.value.push({ severity: "warn", content: err, life: 3000 });
+    isLoading.value = false;
   }
 }
 </script>
@@ -139,6 +156,6 @@ async function register() {
   </div>
   <div style="text-align: right">
     <Button label="Cancel" @click="dismiss()" style="margin-right: 1rem"></Button>
-    <Button label="Register" @click="register()"></Button>
+    <Button :label="loginLabel" :disabled="isLoading" :icon="icon" @click="register()"></Button>
   </div>
 </template>
