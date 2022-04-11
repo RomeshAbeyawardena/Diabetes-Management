@@ -4,7 +4,7 @@ import { defineStore } from 'pinia'
 import { IDialogComponent, IComponent, IConsent, IFilters } from "../models";
 import { DialogType } from '../models';
 import { Subject } from 'rxjs';
-
+import Promise from "promise";
 const cancelDialogOption = "dialog.cancel";
 
 export interface IMainStoreState {
