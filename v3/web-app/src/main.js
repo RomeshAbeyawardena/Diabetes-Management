@@ -22,10 +22,14 @@ import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./scss/index.scss";
 
-const appElement = document.getElementById("app");
+const elementId = "app";
+const appElement = document.getElementById(elementId);
 
 const apiDefinition = atob(appElement.dataset.apiDefinition);
-appElement.dataset.apiDefinition = null;
+appElement.dataset.apiDefinition = false;
+
+const devApiDefinition = atob(appElement.dataset.devApiDefinition);
+appElement.dataset.devApiDefinition = false;
 
 const apiHelper = new ApiHelper();
 
@@ -51,7 +55,10 @@ function messageClientPlugin() {
 }
 
 function apiPlugin() {
-    const apiDefinitions = JSON.parse(apiDefinition);
+    const apiDefinitions = JSON.parse((import.meta.env.DEV) 
+        ? devApiDefinition 
+        : apiDefinition);
+    
     const apiPlugin = new ApiPlugin(apiHelper, apiDefinitions)
         .build();
     return apiPlugin;
@@ -68,4 +75,4 @@ createApp(App)
     .use(PrimeVue) 
     .use(ConfirmationService)
     .use(ToastService)
-    .mount('#app');
+    .mount('#'.concat(elementId));

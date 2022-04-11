@@ -83,11 +83,19 @@ export const useInventoryStore = defineStore('inventory', {
         async save() : Promise<void> {
             await this.inventoryDb.setItems(this.items);
         },
-        loadFromFile(output: string) : void {
-            const val = Buffer.from(output, 'base64');
-            const decoded = decode<Array<IInventory>>(val);  
-            this.readonlyItems = decoded;
-            this.isReadonly = true;
+        async loadFromFile(output: string) : Promise<void> {
+            const val = Buffer.from(output, 'base64').toString("utf-8");
+            const response = await this.inventoryApi.get({
+                inventoryHistoryId: val
+            });
+
+            const resp = JSON.parse(response);
+            if(resp.data) {
+                const items = Buffer.from(resp.data.Items, 'base64')
+                const decoded = decode<Array<IInventory>>(items);  
+                this.readonlyItems = decoded;
+                this.isReadonly = true;
+            }
         },
         async saveToFile(): Promise<string>  {
             const value = encode(this.items);
@@ -103,7 +111,7 @@ export const useInventoryStore = defineStore('inventory', {
             
             if(resp.data)
             {
-                return resp.data.InventoryHistoryId;
+                return Buffer.from(resp.data.InventoryHistoryId).toString("base64");
             }
 
             throw "Invalid input: " + resp.statusMessage;

@@ -16,6 +16,7 @@ export interface IGetRequest {
     key: string;
     type: string;
     userId: string;
+    inventoryHistoryId: string;
 }
 
 export interface IPostRequest {
@@ -40,6 +41,7 @@ export class InventoryApi extends ApiBaseWithHeader implements IInventoryApi {
         const response = await this.client
             .get<IResponse<IInventory>>("inventory", {
                 params: {
+                    inventoryHistoryId: request.inventoryHistoryId,
                     key: request.key,
                     type: request.type,
                     userId: request.userId

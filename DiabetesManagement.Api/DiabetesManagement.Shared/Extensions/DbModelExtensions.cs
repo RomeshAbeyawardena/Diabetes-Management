@@ -65,7 +65,7 @@ namespace DiabetesManagement.Shared.Extensions
                 .QueryBuilder(model.JoinDefinitionsBuilder(builder!), 
                     b => b.SetBuildMode(BuildMode.Select).SetTopAmount(topAmount).GenerateWhereClause(request)).Query;
             
-            Debug.WriteLine(query, nameof(Get));
+            //Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
                 query = $"{query} {orderByQuery}";
             return await dbConnection.QueryAsync<TResponse>(query, request!.ToDynamic(), transaction);
@@ -89,7 +89,7 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var val = property.GetValue(value);
-                Debug.WriteLine("{0} {1}:{2}", nameof(ToDynamic), property, val);
+                //Debug.WriteLine("{0} {1}:{2}", nameof(ToDynamic), property, val);
                 dynamic.TryAdd(property.Name, val);
             }
 
@@ -107,7 +107,7 @@ namespace DiabetesManagement.Shared.Extensions
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
             var query = model.QueryBuilder(builder: b => b.SetBuildMode(BuildMode.Insert)).Query; //model.Build(BuildMode.Insert);
-            Debug.WriteLine(query, nameof(Insert));
+            //Debug.WriteLine(query, nameof(Insert));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
@@ -121,7 +121,7 @@ namespace DiabetesManagement.Shared.Extensions
             var query = model.QueryBuilder(builder: b => b
                 .SetBuildMode(BuildMode.Update)
                 .GenerateUpdateBody(request).GenerateWhereClause(whereRequest)).Query; //model.Build(BuildMode.Update, request);
-            Debug.WriteLine(query, nameof(Update));
+            //Debug.WriteLine(query, nameof(Update));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
         }
