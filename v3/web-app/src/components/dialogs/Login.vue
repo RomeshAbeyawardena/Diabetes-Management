@@ -59,12 +59,12 @@ function validate() {
 async function login() {
   try {
     validate();
-    this.isLoading = true;
+    isLoading.value = true;
     await userStore.login({
       emailAddress: emailAddress.value,
       password: password.value,
     });
-    this.isLoading = false;
+    isLoading.value = false;
     store.resetDialog();
 
     toast.add({
@@ -75,7 +75,7 @@ async function login() {
     });
   } catch (err) {
     messages.value.push({ severity: "warn", content: err, life: 3000 });
-    this.isLoading = false;
+    isLoading.value = false;
   }
 }
 </script>
