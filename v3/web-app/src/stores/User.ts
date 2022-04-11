@@ -37,6 +37,18 @@ export const useUserStore = defineStore('user', {
         },
         async register(user: IRegisterRequest) {
             const response = await this.userApi.register(user);
+            const resp = JSON.parse(response);
+            const store = useStore();      
+            if(resp.data)
+            {
+                this.userToken = resp.data.UserId;
+                this.displayName = resp.data.DisplayName;
+                const dialog = store.getDialog(DialogType.Authenticated);
+                store.setSidebar(dialog);
+                return resp.data.UserId;
+            }
+
+            throw "Registration failed: " + resp.statusMessage;
         }
     }
 });

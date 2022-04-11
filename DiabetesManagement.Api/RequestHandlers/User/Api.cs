@@ -76,7 +76,7 @@ namespace DiabetesManagement.Api.RequestHandlers.User
                             Password = password
                         });
 
-                    return new OkObjectResult(savedUser.ToDynamic());
+                    return new OkObjectResult(new Response(savedUser.ToDynamic()));
                 }
 
                 throw new InvalidOperationException("Expected values not provided");

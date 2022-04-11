@@ -6,7 +6,9 @@ import Message from "primevue/message";
 import { ref } from "vue";
 import { useStore } from "../../stores/main";
 import { useUserStore } from "../../stores/User";
+import { useToast } from "primevue/usetoast";
 
+const toast = useToast();
 const props = defineProps({ value: Number });
 const emit = defineEmits(["value:updated"]);
 const value = ref(props.value);
@@ -18,38 +20,55 @@ const confirm = ref("");
 const messages = ref([]);
 const store = useStore();
 const userStore = useUserStore();
+
+function validate() {
+  if (!displayName.value.length || displayName.value.length < 3) {
+    throw "Display name must not be empty";
+  }
+
+  if (!emailAddress.value.length || emailAddress.value.length < 3) {
+    throw "Email address must not be empty";
+  }
+
+  if (
+    !emailAddress.value
+      .trim()
+      .match(
+        /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+      )
+  ) {
+    throw "Email address must be a valid e-mail address";
+  }
+
+  if (!password.value.length) {
+    throw "Password must not be empty";
+  }
+
+  if (!confirm.value.length) {
+    throw "Password must not be empty";
+  }
+
+  if (confirm.value != password.value) {
+    throw "Passwords must match";
+  }
+}
+
 async function register() {
   try {
-    if (!displayName.value.length || displayName.value.length < 3) {
-      throw "Display name must not be empty";
-    }
-
-    if (!emailAddress.value.length || emailAddress.value.length < 3) {
-      throw "Email address must not be empty";
-    }
-
-    if(!emailAddress.value.trim().match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
-        throw "Email address must be a valid e-mail address";
-    }
-
-    if (!password.value.length) {
-      throw "Password must not be empty";
-    }
-
-    if (!confirm.value.length) {
-      throw "Password must not be empty";
-    }
-
-    if (confirm.value != password.value) {
-      throw "Passwords must match";
-    }
-
+    validate();
     await userStore.register({
       emailAddress: emailAddress.value.trim(),
       password: password.value.trim(),
-      displayName: password.value.trim()
+      displayName: password.value.trim(),
     });
     store.resetDialog();
+
+    toast.add({
+      severity: "success",
+      summary: "Registration successful you have been signed in",
+      detail: "",
+      life: 2000,
+    });
   } catch (err) {
     messages.value.push({ severity: "warn", content: err, life: 3000 });
   }

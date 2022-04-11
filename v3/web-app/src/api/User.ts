@@ -34,16 +34,19 @@ export class UserApi extends ApiBaseWithHeader implements IUserApi {
     }
 
     async login(loginRequest: ILoginRequest): Promise<IResponse<IUser>> {
+        const endpoint = "user";
         this.setApiKey("user", "POST");
         const formData = this.apiHelper.ConvertToFormData(loginRequest);
-        const response = await this.client.post<IResponse<IUser>>("user", formData);
+        const response = await this.client.post<IResponse<IUser>>(endpoint, formData);
         return response.data;
 
     }
     async register(registerRequest: IRegisterRequest): Promise<IResponse<IUser>> {
+        const endpoint = "user/register";
         this.setApiKey("user/register", "POST");
+        
         const formData = this.apiHelper.ConvertToFormData(registerRequest);
-        const response = await this.client.post<IResponse<IUser>>("user", formData);
+        const response = await this.client.post<IResponse<IUser>>(endpoint, formData);
         return response.data;
     }
 }
