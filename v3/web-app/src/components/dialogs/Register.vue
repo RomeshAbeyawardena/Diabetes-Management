@@ -32,7 +32,7 @@ const loginLabel = computed(() => {
   if (isLoading.value) {
     return "";
   }
-  return "Login";
+  return "Register";
 });
 
 function dismiss() {
