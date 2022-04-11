@@ -8,6 +8,7 @@ import Navigation from "./components/Navigation.vue";
 import Sidebars from './components/side-bars/Sidebars.vue';
 import StatusBar from './components/StatusBar.vue';
 import Title from './components/Title.vue';
+import Toast from "primevue/toast";
 
 //references
 import { DialogType } from './models';
@@ -74,6 +75,7 @@ onMounted(async() => {
 <template>
   <div class="app" @touchstart="touchStartMethod">
     <div>
+      <Toast position="bottom-center" />
       <ConfirmPopup />
       <Sidebars />
       <Dialogs />

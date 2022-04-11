@@ -1,13 +1,13 @@
 <script setup>
 import Button from "primevue/button";
 import SpeedDial from "primevue/speeddial";
-import Toast from "primevue/toast";
 
+import { useToast } from "primevue/usetoast";
 import { useStore } from "../stores/main";
 import { useInventoryStore } from "../stores/Inventory";
 import { storeToRefs } from "pinia";
 import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
+
 import { DialogType } from "../models";
 
 const toast = useToast();
@@ -90,7 +90,6 @@ function add() {
 function reset() {}
 </script>
 <template>
-  <Toast position="bottom-center" />
   <div id="action-navigation" class="grid justify-content-between">
     <div class="col-3 flex align-items-center justify-content-center">
       <SpeedDial

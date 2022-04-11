@@ -2,10 +2,12 @@
 import InputText from "primevue/inputtext";
 import Button from "primevue/button";
 import Message from "primevue/message";
+import { useToast } from "primevue/usetoast";
 import { ref } from "vue";
 import { useUserStore } from "../../stores/User";
 import { useStore } from "../../stores/main";
 
+const toast = useToast();
 const props = defineProps({ value: Number });
 const emit = defineEmits(["value:updated"]);
 const value = ref(props.value);
@@ -37,7 +39,15 @@ async function login() {
       emailAddress: emailAddress.value,
       password: password.value,
     });
+
     store.resetDialog();
+
+    toast.add({
+      severity: "success",
+      summary: "Login successful",
+      detail: "",
+      life: 1500,
+    });
   } catch (err) {
     messages.value.push({ severity: "warn", content: err, life: 3000 });
   }
