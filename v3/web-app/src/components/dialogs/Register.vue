@@ -21,6 +21,10 @@ const messages = ref([]);
 const store = useStore();
 const userStore = useUserStore();
 
+function dismiss() {
+  store.resetDialog();
+}
+
 function validate() {
   if (!displayName.value.length || displayName.value.length < 3) {
     throw "Display name must not be empty";
@@ -59,7 +63,7 @@ async function register() {
     await userStore.register({
       emailAddress: emailAddress.value.trim(),
       password: password.value.trim(),
-      displayName: password.value.trim(),
+      displayName: displayName.value.trim(),
     });
     store.resetDialog();
 
@@ -134,7 +138,7 @@ async function register() {
     </span>
   </div>
   <div style="text-align: right">
-    <Button label="Cancel" style="margin-right: 1rem"></Button>
+    <Button label="Cancel" @click="dismiss()" style="margin-right: 1rem"></Button>
     <Button label="Register" @click="register()"></Button>
   </div>
 </template>

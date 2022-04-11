@@ -17,6 +17,11 @@ const password = ref("");
 const messages = ref([]);
 const store = useStore();
 const userStore = useUserStore();
+
+function dismiss() {
+  store.resetDialog();
+}
+
 async function login() {
   try {
     if (!emailAddress.value.length || emailAddress.value.length < 3) {
@@ -88,7 +93,7 @@ async function login() {
     </span>
   </div>
   <div style="text-align: right">
-    <Button label="Cancel" style="margin-right: 1rem"></Button>
+    <Button label="Cancel" @click="dismiss()" style="margin-right: 1rem"></Button>
     <Button label="Login" @click="login()"></Button>
   </div>
 </template>
