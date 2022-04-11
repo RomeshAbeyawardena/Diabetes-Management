@@ -53,7 +53,19 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                 request.Query.TryGetValue("userId", out var userIdValue)
             };
 
-            if ((requiredConditionsA.All(a => a) || requiredConditionsB.All(a => a)) && Guid.TryParse(userIdValue, out var userId))
+            if (requiredConditionsA.All(a => a)) {
+                var inventory = await HandlerFactory
+                   .Execute<GetRequest, DbModels.InventoryHistory>(
+                       Queries.GetInventoryItems,
+                       new GetRequest
+                       {
+                           InventoryHistoryId = inventoryHistoryId,
+                       });
+
+                return new OkObjectResult(new Response(inventory.ToDynamic()));
+            }
+            
+            if(requiredConditionsB.All(a => a) && Guid.TryParse(userIdValue, out var userId))
             {
                 int? versionNumber = null;
 

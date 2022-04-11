@@ -29,13 +29,18 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
             return HandlerFactory
                     .Execute<InventoryHistoryFeature.GetRequest, Models.InventoryHistory>(
                         InventoryHistoryFeature.Queries.GetInventoryHistory,
-                        new InventoryHistoryFeature.GetRequest
-                        {
-                            Key = request.Key,
-                            Type = request.Type,
-                            UserId = request.UserId,
-                            Version = request.Version
-                        });
+                        request.InventoryHistoryId.HasValue
+                            ? new InventoryHistoryFeature.GetRequest
+                            {
+                                InventoryHistoryId = request.InventoryHistoryId.Value
+                            }
+                            : new InventoryHistoryFeature.GetRequest
+                            {
+                                Key = request.Key,
+                                Type = request.Type,
+                                UserId = request.UserId,
+                                Version = request.Version
+                            });
         }
     }
 }
