@@ -16,6 +16,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 {
     using DbModels = Shared.Models;
     using DiabetesManagement.Shared.Extensions;
+    using System.Collections.Generic;
 
     public class Api : ApiBase
     {
@@ -23,13 +24,50 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
         public Api(ILogger<Api> log, IConfiguration configuration)
             : base(log, configuration)
         {
-            
+
         }
 
-        [OpenApiOperation(operationId: "GetInventory", 
-            tags: new[] { "get" }, 
-            Summary = "Retrieves an inventory for a specified user", 
-            Description = "Retrieves an inventory for a specified user by key and type", 
+        [FunctionName("GetInventoryHistory")]
+        public async Task<IActionResult> GetInventoryHistory(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = $"{BaseUrl}/list")] HttpRequest request)
+        {
+            Guid userId = default;
+            try
+            {
+                var requiredConditions = new[]
+                {
+                    request.Query.TryGetValue("key", out var key),
+                    request.Query.TryGetValue("type", out var type),
+                    request.Query.TryGetValue("userId", out var userIdValue) && Guid.TryParse(userIdValue, out userId)
+                };
+
+                if (requiredConditions.All(a => a))
+                {
+                    var inventories = await HandlerFactory
+                       .Execute<ListRequest, IEnumerable<DbModels.InventoryHistory>>(
+                           Queries.ListInventoryHistory,
+                           new ListRequest
+                           {
+                               UserId = userId,
+                               Type = type,
+                               Key = key
+                           });
+
+                    return new OkObjectResult(new Response(inventories.Select(i => i.ToDynamic())));
+                }
+
+                throw new InvalidOperationException("Expected values not specified");
+            }
+            catch (InvalidOperationException exception)
+            {
+                return HandleException(StatusCodes.Status400BadRequest, exception);
+            }
+        }
+
+        [OpenApiOperation(operationId: "GetInventory",
+            tags: new[] { "get" },
+            Summary = "Retrieves an inventory for a specified user",
+            Description = "Retrieves an inventory for a specified user by key and type",
             Visibility = OpenApiVisibilityType.Important),
         OpenApiParameter(name: "key", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The key", Description = "The key", Visibility = OpenApiVisibilityType.Important),
         OpenApiParameter(name: "type", In = ParameterLocation.Query, Required = true, Type = typeof(string), Summary = "The type", Description = "The type", Visibility = OpenApiVisibilityType.Important),
@@ -53,7 +91,8 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                 request.Query.TryGetValue("userId", out var userIdValue)
             };
 
-            if (requiredConditionsA.All(a => a)) {
+            if (requiredConditionsA.All(a => a))
+            {
                 var inventory = await HandlerFactory
                    .Execute<GetRequest, DbModels.InventoryHistory>(
                        Queries.GetInventoryItems,
@@ -64,12 +103,12 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 
                 return new OkObjectResult(new Response(inventory.ToDynamic()));
             }
-            
-            if(requiredConditionsB.All(a => a) && Guid.TryParse(userIdValue, out var userId))
+
+            if (requiredConditionsB.All(a => a) && Guid.TryParse(userIdValue, out var userId))
             {
                 int? versionNumber = null;
 
-                if (request.Query.TryGetValue("version", out var version) 
+                if (request.Query.TryGetValue("version", out var version)
                     && int.TryParse(version, out int versionNum))
                 {
                     versionNumber = versionNum;
@@ -77,7 +116,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
 
                 var inventory = await HandlerFactory
                     .Execute<GetRequest, DbModels.InventoryHistory>(
-                        Queries.GetInventoryItems, 
+                        Queries.GetInventoryItems,
                         new GetRequest
                         {
                             Key = key,
@@ -118,7 +157,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                     {
                         savedEntity = await HandlerFactory
                             .Execute<SaveRequest, DbModels.InventoryHistory>(
-                                Commands.SaveInventoryPayload, 
+                                Commands.SaveInventoryPayload,
                                 new SaveRequest
                                 {
                                     Items = items,
@@ -129,17 +168,15 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                     }
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
-                }
-                else
-                {
-                    throw new InvalidOperationException($"Expected form values for items, type, key, userId. " +
-                        $"Received: { (requiredConditions[0] ? "items" : "") }," +
-                        $" { (requiredConditions[1] ? "type" : "") }, " +
-                        $" { (requiredConditions[2] ? "key" : "") }, " +
-                        $" { (requiredConditions[3] ? "userId" : "") }");
+
+                    return new OkObjectResult(new Response(savedEntity.ToDynamic()));
                 }
 
-                return new OkObjectResult(new Response(savedEntity.ToDynamic()));
+                throw new InvalidOperationException($"Expected form values for items, type, key, userId. " +
+                    $"Received: { (requiredConditions[0] ? "items" : "") }," +
+                    $" { (requiredConditions[1] ? "type" : "") }, " +
+                    $" { (requiredConditions[2] ? "key" : "") }, " +
+                    $" { (requiredConditions[3] ? "userId" : "") }");
             }
             catch (InvalidOperationException invalidOperationException)
             {

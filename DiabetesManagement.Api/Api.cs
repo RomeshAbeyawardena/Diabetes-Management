@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DiabetesManagement.Api
@@ -48,7 +51,6 @@ namespace DiabetesManagement.Api
             //Logger.LogError(exception, "A handled error has occurred");
             return new BadRequestObjectResult(new Response(null, statusCode, exception.Message));
         }
-
 
         protected ILogger Logger { get; }
         protected ApplicationSettings ApplicationSettings { get; }

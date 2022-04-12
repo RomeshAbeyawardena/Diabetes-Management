@@ -21,6 +21,7 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 import "primeflex/primeflex.css";
 import "./scss/index.scss";
+import { useCacheEntryPlugin } from './models/Cache';
 
 const elementId = "app";
 const appElement = document.getElementById(elementId);
@@ -68,7 +69,8 @@ let pinia = createPinia()
     .use(helperPlugin)
     .use(dbPlugin)
     .use(messageClientPlugin)
-    .use(apiPlugin);
+    .use(apiPlugin)
+    .use(useCacheEntryPlugin);
 
 createApp(App)
     .use(pinia)

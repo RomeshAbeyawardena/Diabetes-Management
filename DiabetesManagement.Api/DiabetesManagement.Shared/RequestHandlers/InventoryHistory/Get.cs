@@ -24,6 +24,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
         protected override async Task<Models.InventoryHistory> HandleAsync(GetRequest request)
         {
             var inventoryHistory = new Models.InventoryHistory();
+            TryOpenConnection();
 
             string? orderBy = default;
             if (request.IsLatest)
@@ -35,8 +36,6 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
                 orderByQuery: orderBy!,
                 builder: builder => builder.Add<Models.InventoryHistory, Models.Inventory>(p => p.InventoryId, c => c.InventoryId),
                 transaction: GetOrBeginTransaction);
-
-            TryOpenConnection();
 
             return inventoryHistoryItems.FirstOrDefault()!;
         }
