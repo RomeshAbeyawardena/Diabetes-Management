@@ -34,12 +34,13 @@ export class Cache implements ICache {
     readonly defaultTimeSpan : ITimespan = { value: 15, unit: "minutes" };
 
     constructor(timeSpan?: ITimespan) {
+        this.cacheMap = new Map<string, ICacheEntry>();
         this.defaultExpiryTimespan = timeSpan ?? this.defaultTimeSpan;
     }
 
     evict(key?: string): void {
 
-        if(key) {
+        if(key && this.cacheMap.has(key)) {
             this.cacheMap.delete(key);
             return;
         }

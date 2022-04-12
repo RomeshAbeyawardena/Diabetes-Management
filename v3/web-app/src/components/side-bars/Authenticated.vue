@@ -5,22 +5,24 @@ import "../../scss/menu-sidebar.scss";
 import { toRef } from "vue";
 import { useUserStore } from "../../stores/User";
 import { storeToRefs } from "pinia";
+import { useInventoryStore } from "../../stores/Inventory";
 
 const store = useUserStore();
+const inventoryStore = useInventoryStore();
 const { displayName } = storeToRefs(store);
 const menuItems = [
-  { label: "Sync", icon: "pi pi-sign-in", command: () => register() },
-  { label: "Restore", icon: "pi pi-sign-in", command: () => login() },
+  { label: "Sync", icon: "pi pi-sign-in", command: () => sync() },
+  { label: "Restore", icon: "pi pi-sign-in", command: () => restore() },
 ];
 
 const items = toRef(menuItems);
 
-function login() {
-  console.log("login");
+async function restore() {
+  await inventoryStore.saveVersion();
 }
 
-function register() {
-  console.log("register");
+async function sync() {
+  await inventoryStore.saveVersion();
 }
 </script>
 <template>

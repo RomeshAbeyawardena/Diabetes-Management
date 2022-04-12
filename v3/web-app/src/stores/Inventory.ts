@@ -141,9 +141,10 @@ export const useInventoryStore = defineStore('inventory', {
             const inventory = await this.saveInventory(APPLICATION_SUBJECT_TYPE_SHARE);
             return Buffer.from(inventory.inventoryHistoryId).toString("base64");
         },
-        async saveVersion() : Promise<void> {
-            await this.saveInventory(APPLICATION_SUBJECT_TYPE_SAVE);
+        async saveVersion() : Promise<IInventory> {
+            const item = await this.saveInventory(APPLICATION_SUBJECT_TYPE_SAVE);
             this.cache.evict(CACHE_KEY_NAME);
+            return item;
         }
     } 
 });
