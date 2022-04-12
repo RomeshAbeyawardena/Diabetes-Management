@@ -1,0 +1,14 @@
+div.version-picker {
+    div.grid {
+        align-items: center;
+        justify-content: center;
+
+        div.col-6 {
+            flex-grow: 6;
+
+            div.p-dropdown {
+                width: 100%;
+            }
+        }
+    }
+}
