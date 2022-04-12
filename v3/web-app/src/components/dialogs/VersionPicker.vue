@@ -1,18 +1,37 @@
 <script setup>
-import MultiSelect from 'primevue/multiselect';
-import { onMounted } from 'vue-demi';
-import { useInventoryStore } from '../../stores/Inventory';
+
+import Dropdown from 'primevue/dropdown';
+import { onBeforeMount } from "vue-demi";
+import { useInventoryStore } from "../../stores/Inventory";
 import { ref } from "vue";
 
 const store = useInventoryStore();
 const selectedInventory = ref(null);
 const inventoryVersions = ref([]);
 
-onMounted(async() => {
-    inventoryVersions.value = await store.loadVersions();
-})
+onBeforeMount(async () => {
+  const versions = await store.loadVersions();
+  inventoryVersions.value = versions;
+  
+});
 </script>
 <template>
-    <label>Select a version</label>
-    <MultiSelect v-model="selectedInventory" :options="inventories" optionLabel="version" placeholder="Select version" />
+  <div class="field">
+    <label style="margin-right: 0.5rem;">Version:</label>
+    <Dropdown
+      :filter="true"
+      :showClear="true"
+      v-model="selectedInventory"
+      :options="inventoryVersions"
+      optionLabel="version"
+      placeholder="Select version"
+    >
+     <template #value="slotProps">
+       <div>Version {{slotProps.value}}</div>
+     </template>
+     <template #option="slotProps">
+       <div>Version {{slotProps.option.version}}</div>
+     </template>
+    </Dropdown>
+  </div>
 </template>

@@ -99,7 +99,7 @@ export const useInventoryStore = defineStore('inventory', {
                 this.isReadonly = true;
             }
         },
-        async loadVersions(): Promise<IInventory> {
+        async loadVersions(): Promise<IInventory[]> {
             const versions = this.cacheHelper.get(this.cache, CACHE_KEY_NAME)
             if(versions && versions.length){
                 return versions;
@@ -108,12 +108,15 @@ export const useInventoryStore = defineStore('inventory', {
             const store = useUserStore()
             const response = await this.inventoryApi.list({
                 key: APPLICATION_TYPE_KEY,
-                type: APPLICATION_SUBJECT_TYPE_SHARE,
+                type: APPLICATION_SUBJECT_TYPE_SAVE,
                 userId: store.userToken,
             });
-
+            
             const resp = JSON.parse(response);
+            
             this.cacheHelper.set(this.cache, CACHE_KEY_NAME, resp.data);
+
+            return resp.data;
         },
         async save() : Promise<void> {
             await this.inventoryDb.setItems(this.items);

@@ -54,7 +54,7 @@ export class InventoryApi extends ApiBaseWithHeader implements IInventoryApi {
 
     async list(request: IGetRequest): Promise<IResponse<IInventory[]>> {
         const endpoint = "inventory/list";
-        this.setApiKey(endpoint, "POST");
+        this.setApiKey(endpoint, "GET");
         const repsonse = await this.client.get<IResponse<IInventory[]>>(endpoint, {
             params: {
                 key: request.key,

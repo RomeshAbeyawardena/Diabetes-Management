@@ -69,6 +69,7 @@ namespace DiabetesManagement.Shared.Extensions
             //Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
                 query = $"{query} {orderByQuery}";
+
             return await dbConnection.QueryAsync<TResponse>(query, request!.ToDynamic(), transaction);
         }
 

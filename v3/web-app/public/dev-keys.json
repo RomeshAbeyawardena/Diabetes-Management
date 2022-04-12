@@ -9,6 +9,12 @@
                 "apiKey": "OmGEL7MumKobLX5fkubyTJsyavSviNAfBVU42fcx5Gs69ajeuGhe4w=="
             },
             {
+                "method": "GET",
+                "name": "inventory/list",
+                "description": "Get inventory versions",
+                "apiKey": "OmGEL7MumKobLX5fkubyTJsyavSviNAfBVU42fcx5Gs69ajeuGhe4w=="
+            },
+            {
                 "method": "POST",
                 "name": "inventory",
                 "description": "Save inventory",

@@ -8,6 +8,7 @@ import Login from "./Login.vue";
 import NumberPicker from "./NumberPicker.vue";
 import Register from "./Register.vue";
 import TextEntry from "./TextEntry.vue";
+import VersionPicker from "./VersionPicker.vue";
 
 import { ref, onBeforeMount, markRaw } from "vue";
 import { DialogDef } from "../../models/Dialogs";
@@ -87,6 +88,13 @@ onBeforeMount(() => {
         "text-entry",
         "Select a value",
         markRaw(TextEntry)
+      ))
+      .addDialog(
+      new DialogDef(
+        DialogType.VersionPicker,
+        "version-picker",
+        "Select a version to restore",
+        markRaw(VersionPicker)
       )
     );
 });

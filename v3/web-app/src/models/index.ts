@@ -11,6 +11,7 @@ export enum DialogType {
     TextEntry = "text-entry",
     None = "none",
     NumberPicker = "number-picker",
+    VersionPicker = "version-picker",
     //side bars
     Authenticated = "authenticated",
     Guest = "guest"

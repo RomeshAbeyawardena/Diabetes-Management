@@ -3,13 +3,15 @@ import Menu from "primevue/menu";
 import "../../scss/menu-sidebar.scss";
 
 import { toRef } from "vue";
+import { useStore } from "../../stores/main";
 import { useUserStore } from "../../stores/User";
 import { storeToRefs } from "pinia";
 import { useInventoryStore } from "../../stores/Inventory";
-
-const store = useUserStore();
+import { DialogType } from "../../models";
+const store = useStore();
+const userStore = useUserStore();
 const inventoryStore = useInventoryStore();
-const { displayName } = storeToRefs(store);
+const { displayName } = storeToRefs(userStore);
 const menuItems = [
   { label: "Sync", icon: "pi pi-sign-in", command: () => sync() },
   { label: "Restore", icon: "pi pi-sign-in", command: () => restore() },
@@ -17,8 +19,9 @@ const menuItems = [
 
 const items = toRef(menuItems);
 
-async function restore() {
-  await inventoryStore.saveVersion();
+function restore() {
+  const dialog = store.getDialog(DialogType.VersionPicker);
+  store.showDialog(dialog, null, true);
 }
 
 async function sync() {
