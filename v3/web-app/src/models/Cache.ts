@@ -37,7 +37,13 @@ export class Cache implements ICache {
         this.defaultExpiryTimespan = timeSpan ?? this.defaultTimeSpan;
     }
 
-    evict(): void {
+    evict(key?: string): void {
+
+        if(key) {
+            this.cacheMap.delete(key);
+            return;
+        }
+
         const date = new Date();
         this.cacheMap.forEach((i: ICacheEntry, key: string) => {
             if(i.expires < date) {

@@ -26,8 +26,8 @@ export const useUserStore = defineStore('user', {
             const store = useStore();            
             if(resp.data)
             {
-                this.userToken = resp.data.UserId;
-                this.displayName = resp.data.DisplayName;
+                this.userToken = resp.data.userId;
+                this.displayName = resp.data.displayName;
                 const dialog = store.getDialog(DialogType.Authenticated);
                 store.setSidebar(dialog);
                 return resp.data.UserId;
@@ -41,8 +41,8 @@ export const useUserStore = defineStore('user', {
             const store = useStore();      
             if(resp.data)
             {
-                this.userToken = resp.data.UserId;
-                this.displayName = resp.data.DisplayName;
+                this.userToken = resp.data.userId;
+                this.displayName = resp.data.displayName;
                 const dialog = store.getDialog(DialogType.Authenticated);
                 store.setSidebar(dialog);
                 return resp.data.UserId;

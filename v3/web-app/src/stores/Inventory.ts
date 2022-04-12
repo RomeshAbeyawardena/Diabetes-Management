@@ -18,6 +18,11 @@ export interface IInventoryStoreGetters {
 
 }
 
+const APPLICATION_TYPE_KEY = "diabetic.unit.manager";
+const APPLICATION_SUBJECT_TYPE_SAVE = "saveState";
+const APPLICATION_SUBJECT_TYPE_SHARE = "export";
+const CACHE_KEY_NAME = "versions";
+
 export const useInventoryStore = defineStore('inventory', {
     state: (): IInventoryStoreState => ({
         isReadonly: false,
@@ -27,15 +32,10 @@ export const useInventoryStore = defineStore('inventory', {
         isDeleteMode: false
     }),
     getters: {
-        lastId(): number {
-            if(this.items.length)
-            {
-                return this.items[this.items.length - 1].id;
-            }
-            return this.lastStoredId; 
-        },
-        previousTotalValue(): number {
-            return this.inventoryHelper.getTotalValue(this.previousDateItems);
+        currentDateItems() : IInventory[] {
+            let items = this.getItemsFromDateRange(null, 1, "day");
+            items.sort((a: IInventory, b: IInventory) => Number(a.inputDate) - Number(b.inputDate));
+            return items;
         },
         currentTotalValue(): number {
             return this.inventoryHelper.getTotalValue(this.currentDateItems);
@@ -60,13 +60,18 @@ export const useInventoryStore = defineStore('inventory', {
                 return items;
             };
         },
+        lastId(): number {
+            if(this.items.length)
+            {
+                return this.items[this.items.length - 1].id;
+            }
+            return this.lastStoredId; 
+        },
+        previousTotalValue(): number {
+            return this.inventoryHelper.getTotalValue(this.previousDateItems);
+        },
         previousDateItems() : IInventory[] {
             return this.getItemsFromDateRange("subtract", 1, "day");
-        },
-        currentDateItems() : IInventory[] {
-            let items = this.getItemsFromDateRange(null, 1, "day");
-            items.sort((a: IInventory, b: IInventory) => Number(a.inputDate) - Number(b.inputDate));
-            return items;
         }
     },
     actions: {
@@ -79,9 +84,6 @@ export const useInventoryStore = defineStore('inventory', {
         },
         async load() : Promise<void> {
             this.items = await this.inventoryDb.getItems();
-        }, 
-        async save() : Promise<void> {
-            await this.inventoryDb.setItems(this.items);
         },
         async loadFromFile(output: string) : Promise<void> {
             const val = Buffer.from(output, 'base64').toString("utf-8");
@@ -97,13 +99,32 @@ export const useInventoryStore = defineStore('inventory', {
                 this.isReadonly = true;
             }
         },
-        async saveToFile(): Promise<string>  {
+        async loadVersions(): Promise<IInventory> {
+            const versions = this.cacheHelper.get(this.cache, CACHE_KEY_NAME)
+            if(versions && versions.length){
+                return versions;
+            }
+            
+            const store = useUserStore()
+            const response = await this.inventoryApi.list({
+                key: APPLICATION_TYPE_KEY,
+                type: APPLICATION_SUBJECT_TYPE_SHARE,
+                userId: store.userToken,
+            });
+
+            const resp = JSON.parse(response);
+            this.cacheHelper.set(this.cache, CACHE_KEY_NAME, resp.data);
+        },
+        async save() : Promise<void> {
+            await this.inventoryDb.setItems(this.items);
+        },
+        async saveInventory(type: string) : Promise<IInventory> {
             const value = encode(this.items);
             const output = Buffer.from(value).toString('base64');
             const store = useUserStore()
             const response = await this.inventoryApi.post({
-                key: "diabetic.unit.manager",
-                type: "export",
+                key: APPLICATION_TYPE_KEY,
+                type: type,
                 userId: store.userToken,
                 items: output
             });
@@ -111,10 +132,18 @@ export const useInventoryStore = defineStore('inventory', {
             
             if(resp.data)
             {
-                return Buffer.from(resp.data.InventoryHistoryId).toString("base64");
+                return resp.data;
             }
 
-            throw "Invalid input: " + resp.statusMessage;
+            throw "Save failed: " + resp.statusMessage;
+        },
+        async saveToFile(): Promise<string>  {
+            const inventory = await this.saveInventory(APPLICATION_SUBJECT_TYPE_SHARE);
+            return Buffer.from(inventory.inventoryHistoryId).toString("base64");
+        },
+        async saveVersion() : Promise<void> {
+            await this.saveInventory(APPLICATION_SUBJECT_TYPE_SAVE);
+            this.cache.evict(CACHE_KEY_NAME);
         }
     } 
 });

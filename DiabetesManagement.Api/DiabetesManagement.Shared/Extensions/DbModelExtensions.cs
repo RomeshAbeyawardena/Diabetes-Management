@@ -8,6 +8,7 @@ namespace DiabetesManagement.Shared.Extensions
     using DiabetesManagement.Shared.Contracts;
     using DiabetesManagement.Shared.Defaults;
     using DiabetesManagement.Shared.Enumerations;
+    using Humanizer;
     using System.Diagnostics;
     using System.Dynamic;
     using System.Runtime.Serialization;
@@ -90,7 +91,7 @@ namespace DiabetesManagement.Shared.Extensions
 
                 var val = property.GetValue(value);
                 //Debug.WriteLine("{0} {1}:{2}", nameof(ToDynamic), property, val);
-                dynamic.TryAdd(property.Name, val);
+                dynamic.TryAdd(property.Name.Camelize(), val);
             }
 
             return dynamic;

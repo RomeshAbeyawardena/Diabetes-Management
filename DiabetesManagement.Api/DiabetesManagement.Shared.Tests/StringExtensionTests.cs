@@ -18,7 +18,5 @@ namespace DiabetesManagement.Shared.Tests
 
             Assert.AreEqual("Krish.Ellis", expectedSignature.ProcessCaseSignature(expectedValue));
         }
-
-
     }
 }
