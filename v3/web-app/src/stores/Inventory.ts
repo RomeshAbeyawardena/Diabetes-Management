@@ -52,12 +52,12 @@ export const useInventoryStore = defineStore('inventory', {
                     dateRange = dateRange[action](value, unit);
                 }
 
-                if(this.items.length) {
-                    return this.items.filter((i: IInventory) => i.inputDate >= dateRange.fromDate 
+                if(items.length) {
+                    return items.filter((i: IInventory) => i.inputDate >= dateRange.fromDate 
                         && i.inputDate <= dateRange.toDate && i.state !== State.deleted);
                 }
 
-                return this.items;
+                return items;
             };
         },
         previousDateItems() : IInventory[] {
