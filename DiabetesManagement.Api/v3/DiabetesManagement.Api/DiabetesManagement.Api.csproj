@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DiabetesManagement.Core\DiabetesManagement.Core.csproj" />
+    <ProjectReference Include="..\DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj" />
     <ProjectReference Include="..\DiabetesManagement\DiabetesManagement.csproj" />
   </ItemGroup>
   <ItemGroup>

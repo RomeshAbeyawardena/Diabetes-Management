@@ -18,6 +18,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = BaseUrl)] 
         HttpRequest request)
     {
+        var result = await Mediator.Send(request.Query.Bind())
         return new OkResult();
     }
 }

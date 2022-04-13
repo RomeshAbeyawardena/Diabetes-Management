@@ -1,5 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using DiabetesManagement.Extensions;
+using DiabetesManagement.Core.Features.Inventory;
 
 [assembly: FunctionsStartup(typeof(DiabetesManagement.Api.Startup))]
 namespace DiabetesManagement.Api
@@ -8,7 +10,7 @@ namespace DiabetesManagement.Api
     {
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            builder.Services.AddSingleton<ApplicationSettings>();
+            builder.Services.RegisterCoreServices(typeof(Startup), typeof(Get));
         }
     }
 }
