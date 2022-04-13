@@ -73,18 +73,8 @@ namespace DiabetesManagement.Shared.Extensions
             return await dbConnection.QueryAsync<TResponse>(query, request!.ToDynamic(), transaction);
         }
 
-        public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null, bool convertDatesToIsoString = false)
+        public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null)
         {
-            string FormatDate(DateTimeOffset? dateValue)
-            {
-                if (dateValue.HasValue)
-                {
-                    return dateValue.Value.ToString("yyyy-MM-ddTHH:mm:ss.sssZ");
-                }
-
-                return string.Empty;
-            }
-
             ExpandoObject dynamic = new();
 
             if(properties == null)
@@ -101,32 +91,19 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var val = property.GetValue(value);
-                if (convertDatesToIsoString)
-                {
-                    if (property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
-                    {
-                        var dateValue = (DateTimeOffset?)val;
-                        val = FormatDate(dateValue);
-                    }
-                    else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-                    {
-                        var dateValue = (DateTime?)val;
-                        val = FormatDate(dateValue);
-                    }
-                }
-
+                
                 dynamic.TryAdd(property.Name.Camelize(), val);
             }
 
             return dynamic;
         }
 
-        public static ExpandoObject ToDynamic(this IDbModel model, bool convertDatesToIsoString)
+        public static ExpandoObject ToDynamic(this IDbModel model)
         {
             if (model == null)
                 return new ExpandoObject();
 
-            return model.ToDynamic(model.Properties, convertDatesToIsoString);
+            return model.ToDynamic(model.Properties);
         }
 
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)

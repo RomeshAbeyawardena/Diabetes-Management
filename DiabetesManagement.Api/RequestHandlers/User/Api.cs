@@ -45,7 +45,7 @@ namespace DiabetesManagement.Api.RequestHandlers.User
                     return new UnauthorisedObjectResult(new Response(default, StatusCodes.Status401Unauthorized, "Invalid email address or password"));
                 }
 
-                return new OkObjectResult(new Response(requestedUser.ToDynamic(true)));
+                return new OkObjectResult(new Response(requestedUser.ToDynamic()));
             }
 
             return new BadRequestResult();
@@ -76,7 +76,7 @@ namespace DiabetesManagement.Api.RequestHandlers.User
                             Password = password
                         });
 
-                    return new OkObjectResult(new Response(savedUser.ToDynamic(true)));
+                    return new OkObjectResult(new Response(savedUser.ToDynamic()));
                 }
 
                 throw new InvalidOperationException("Expected values not provided");

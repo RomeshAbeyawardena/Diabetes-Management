@@ -141,6 +141,6 @@ namespace DiabetesManagement.Shared.Base
         public string ColumnDelimitedList => $"[{string.Join("],[", Columns)}]";
         public virtual string WhereClause => $"WHERE [{IdProperty}]= @{IdProperty}";
 
-        IQueryBuilder IDbModel.QueryBuilder { get; set; }
+        IQueryBuilder? IDbModel.QueryBuilder { get; set; }
     }
 }

@@ -53,7 +53,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                                Key = key
                            });
 
-                    return new OkObjectResult(new Response(inventories.Select(i => i.ToDynamic(true))));
+                    return new OkObjectResult(new Response(inventories.Select(i => i.ToDynamic())));
                 }
 
                 throw new InvalidOperationException("Expected values not specified");
@@ -125,7 +125,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                             Version = versionNumber
                         });
 
-                return new OkObjectResult(new Response(inventory.ToDynamic(true)));
+                return new OkObjectResult(new Response(inventory.ToDynamic()));
             }
 
             return new BadRequestResult();
@@ -169,7 +169,7 @@ namespace DiabetesManagement.Api.RequestHandlers.InventoryHistory
                     else
                         throw new InvalidOperationException("User id is in an invalid format");
 
-                    return new OkObjectResult(new Response(savedEntity.ToDynamic(true)));
+                    return new OkObjectResult(new Response(savedEntity.ToDynamic()));
                 }
 
                 throw new InvalidOperationException($"Expected form values for items, type, key, userId. " +

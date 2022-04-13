@@ -12,7 +12,7 @@ namespace DiabetesManagement.Shared.Contracts
         string FullyQualifiedColumnDelimitedList { get; }
         string ColumnDelimitedList { get; }
         string WhereClause { get; }
-        IQueryBuilder QueryBuilder { get; internal set; }
+        IQueryBuilder? QueryBuilder { get; internal set; }
         string ResolveColumnName(PropertyInfo property, bool fullyQualified);
         string ResolveColumnName(string propertyName, bool fullyQualified);
     }
