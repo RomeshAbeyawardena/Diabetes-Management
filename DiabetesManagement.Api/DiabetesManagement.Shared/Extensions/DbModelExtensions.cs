@@ -73,7 +73,7 @@ namespace DiabetesManagement.Shared.Extensions
             return await dbConnection.QueryAsync<TResponse>(query, request!.ToDynamic(), transaction);
         }
 
-        public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null)
+        public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null, bool convertDatesToIsoString = false)
         {
             string FormatDate(DateTimeOffset? dateValue)
             {
@@ -101,16 +101,18 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var val = property.GetValue(value);
-                
-                if(property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
+                if (convertDatesToIsoString)
                 {
-                    var dateValue = (DateTimeOffset?)val;
-                    val = FormatDate(dateValue);
-                }
-                else if(property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
-                {
-                    var dateValue = (DateTime?)val;
-                    val = FormatDate(dateValue);
+                    if (property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
+                    {
+                        var dateValue = (DateTimeOffset?)val;
+                        val = FormatDate(dateValue);
+                    }
+                    else if (property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                    {
+                        var dateValue = (DateTime?)val;
+                        val = FormatDate(dateValue);
+                    }
                 }
 
                 dynamic.TryAdd(property.Name.Camelize(), val);
@@ -119,17 +121,17 @@ namespace DiabetesManagement.Shared.Extensions
             return dynamic;
         }
 
-        public static ExpandoObject ToDynamic(this IDbModel model)
+        public static ExpandoObject ToDynamic(this IDbModel model, bool convertDatesToIsoString)
         {
             if (model == null)
                 return new ExpandoObject();
 
-            return model.ToDynamic(model.Properties);
+            return model.ToDynamic(model.Properties, convertDatesToIsoString);
         }
 
         public static async Task<Guid> Insert(this IDbModel model, IDbConnection dbConnection, IDbTransaction? transaction)
         {
-            var query = model.QueryBuilder(builder: b => b.SetBuildMode(BuildMode.Insert)).Query; //model.Build(BuildMode.Insert);
+            var query = model.QueryBuilder(builder: b => b.SetBuildMode(BuildMode.Insert)).Query;
             //Debug.WriteLine(query, nameof(Insert));
             var d = ToDynamic(model);
             return await dbConnection.ExecuteScalarAsync<Guid>(query, d, transaction);
