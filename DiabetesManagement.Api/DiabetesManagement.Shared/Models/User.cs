@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DiabetesManagement.Shared.Models
 {
     [MessagePack.MessagePackObject(true)]
-    public class User : DbModelBase
+    public class User
     {
         [Key]
         public Guid UserId { get; set; }

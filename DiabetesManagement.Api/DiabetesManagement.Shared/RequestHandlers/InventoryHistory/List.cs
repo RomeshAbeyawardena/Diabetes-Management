@@ -23,7 +23,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 
         protected override async Task<IEnumerable<Models.InventoryHistory>> HandleAsync(ListRequest request)
         {
-            var inventoryModel = new Models.InventoryHistory();
+            var inventoryModel = new Models.Inventory();
             TryOpenConnection();
 
             var orderBy = "ORDER BY [VERSION] DESC";
@@ -31,8 +31,8 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
             return await inventoryModel
                 .Get(DbConnection, request,
                 orderByQuery: orderBy!,
-                builder: builder => builder.Add<Models.InventoryHistory,
-                    Models.Inventory>(p => p.InventoryId, c => c.InventoryId),
+                builder: builder => builder.Add<Models.Inventory,
+                    Models.InventoryHistory>(p => p.InventoryId, c => c.InventoryId),
                 transaction: GetOrBeginTransaction, topAmount: 20);
         }
     }

@@ -1,12 +1,10 @@
-﻿using DiabetesManagement.Shared.Attributes;
-using DiabetesManagement.Shared.Base;
-using DiabetesManagement.Shared.Extensions;
+﻿using DiabetesManagement.Shared.Extensions;
+using MediatR;
 using System.Data;
 
 namespace DiabetesManagement.Shared.RequestHandlers.Inventory
 {
-    [HandlerDescriptor(Queries.GetInventory, Permissions.View)]
-    public class Get : HandlerBase<GetRequest, Models.Inventory>
+    public class Get : IRequestHandler<GetRequest, IEnumerable<Models.Inventory>>
     {
         public Get(string connectionString)
            : base(connectionString)

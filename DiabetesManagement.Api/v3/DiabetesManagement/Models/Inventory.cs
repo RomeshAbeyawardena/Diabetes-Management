@@ -1,11 +1,10 @@
-﻿using DiabetesManagement.Shared.Base;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DiabetesManagement.Shared.Models
+namespace DiabetesManagement.Models
 {
     [MessagePack.MessagePackObject(true),
-     Table("INVENTORY")]
+     Table("INVENTORY_HISTORY")]
     public class Inventory
     {
         [Key]

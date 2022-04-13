@@ -6,11 +6,12 @@ import { useInventoryStore } from "../../stores/Inventory";
 import { computed, ref } from "vue";
 import { storeToRefs } from "pinia";
 import dayjs from "dayjs";
-
-const dateFormat = "DD MMM yyyy hh:mmZ";
+const dateNow = new Date();
+const longDateFormat = "DD MMM HH:mm:ss";
+const shortDateFormat = "DD MMM YY HH:mm:ss";
 const store = useInventoryStore();
 const { currentVersion } = storeToRefs(store);
-const selectedInventory = ref(null);
+const selectedInventory = ref({ version: 0, created: new Date() });
 const inventoryVersions = ref([]);
 const loading = ref(false);
 const placeholder = computed(() => {
@@ -20,8 +21,15 @@ const placeholder = computed(() => {
 
     return "Select version";
 });
-function formatDate(date, format)  {
-    dayjs(date).format(format);
+function formatDate(date)  {
+    const d = new Date(date);
+    const n = dayjs(dateNow);
+    const _date = dayjs(d);
+    const format = _date.year() == n.year() 
+      ? shortDateFormat
+      : longDateFormat;
+
+    return _date.format(format);
 }
 
 
@@ -45,10 +53,10 @@ onBeforeMount(async () => {
           placeholder="Select version"
         >
           <template #value="slotProps">
-            <div>Version {{ slotProps.value.version }} - {{ formatDate(slotProps.value.created, dateFormat) }}</div>
+            <div>Version {{ slotProps.value.version }} - {{ slotProps.value.created }}</div>
           </template>
           <template #option="slotProps">
-            <div>Version {{ slotProps.option.version }} - {{ formatDate(slotProps.option.created, dateFormat) }}</div>
+            <div>Version {{ slotProps.option.version }} - {{ slotProps.option.created }}</div>
           </template>
         </Dropdown>
       </div>

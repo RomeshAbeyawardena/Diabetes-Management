@@ -66,7 +66,7 @@ namespace DiabetesManagement.Shared.Extensions
                 .QueryBuilder(model.JoinDefinitionsBuilder(builder!), 
                     b => b.SetBuildMode(BuildMode.Select).SetTopAmount(topAmount).GenerateWhereClause(request)).Query;
             
-            //Debug.WriteLine(query, nameof(Get));
+            Debug.WriteLine(query, nameof(Get));
             if (!string.IsNullOrWhiteSpace(orderByQuery))
                 query = $"{query} {orderByQuery}";
 
