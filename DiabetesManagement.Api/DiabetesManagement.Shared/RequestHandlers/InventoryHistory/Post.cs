@@ -38,6 +38,7 @@ namespace DiabetesManagement.Shared.RequestHandlers.InventoryHistory
 
             var getRequest = new GetRequest
             {
+                UserId = request.UserId,
                 InventoryId = inventoryHistory!.InventoryId,
                 Type = inventoryHistory.Type,
                 IsLatest = true,

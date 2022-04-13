@@ -1,4 +1,4 @@
-<script lang="ts" setup>
+<script setup>
 import "../../scss/version-picker.scss"
 import Dropdown from "primevue/dropdown";
 import { onBeforeMount } from "vue-demi";
@@ -20,7 +20,7 @@ const placeholder = computed(() => {
 
     return "Select version";
 });
-function formatDate(date: Date, format: string)  {
+function formatDate(date, format)  {
     dayjs(date).format(format);
 }
 

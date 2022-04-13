@@ -3,10 +3,12 @@
       "allowJs": true,
       "esModuleInterop": true,
       "forceConsistentCasingInFileNames": true,
+      "declaration": true,
       "outDir": "tsout",
-      "strict": false,
+      "strict": true,
       "lib": [ "dom","es2015" ],
-      "moduleResolution": "node"
+      "moduleResolution": "node",
+      "jsx": "preserve"
     },
     "exclude": [
       "node_modules",
