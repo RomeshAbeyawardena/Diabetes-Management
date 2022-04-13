@@ -7,11 +7,12 @@ import { Buffer } from 'buffer';
 import { useUserStore } from './User';
 
 export interface IInventoryStoreState {
-    isReadonly: boolean,
-    items: IInventory[]
-    isDeleteMode: boolean,
-    lastStoredId: number,
-    readonlyItems: IInventory[]
+    currentVersion: number;
+    isDeleteMode: boolean;
+    items: IInventory[];
+    isReadonly: boolean;
+    lastStoredId: number;
+    readonlyItems: IInventory[];
 }
 
 export interface IInventoryStoreGetters {
@@ -25,6 +26,7 @@ const CACHE_KEY_NAME = "versions";
 
 export const useInventoryStore = defineStore('inventory', {
     state: (): IInventoryStoreState => ({
+        currentVersion: 0,
         isReadonly: false,
         readonlyItems: new Array<IInventory>(),
         items: new Array<IInventory>(),

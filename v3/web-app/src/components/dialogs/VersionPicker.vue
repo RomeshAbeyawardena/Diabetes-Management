@@ -1,13 +1,29 @@
-<script setup>
+<script lang="ts" setup>
 import "../../scss/version-picker.scss"
 import Dropdown from "primevue/dropdown";
 import { onBeforeMount } from "vue-demi";
 import { useInventoryStore } from "../../stores/Inventory";
-import { ref } from "vue";
+import { computed, ref } from "vue";
+import { storeToRefs } from "pinia";
+import dayjs from "dayjs";
 
+const dateFormat = "DD MMM yyyy hh:mmZ";
 const store = useInventoryStore();
+const { currentVersion } = storeToRefs(store);
 const selectedInventory = ref(null);
 const inventoryVersions = ref([]);
+const loading = ref(false);
+const placeholder = computed(() => {
+    if(loading.value){
+        return "Loading versions...";
+    }
+
+    return "Select version";
+});
+function formatDate(date: Date, format: string)  {
+    dayjs(date).format(format);
+}
+
 
 onBeforeMount(async () => {
   const versions = await store.loadVersions();
@@ -26,14 +42,13 @@ onBeforeMount(async () => {
           :showClear="true"
           v-model="selectedInventory"
           :options="inventoryVersions"
-          optionLabel="version"
           placeholder="Select version"
         >
           <template #value="slotProps">
-            <div>Version {{ slotProps.value }}</div>
+            <div>Version {{ slotProps.value.version }} - {{ formatDate(slotProps.value.created, dateFormat) }}</div>
           </template>
           <template #option="slotProps">
-            <div>Version {{ slotProps.option.version }}</div>
+            <div>Version {{ slotProps.option.version }} - {{ formatDate(slotProps.option.created, dateFormat) }}</div>
           </template>
         </Dropdown>
       </div>
