@@ -75,6 +75,16 @@ namespace DiabetesManagement.Shared.Extensions
 
         public static ExpandoObject ToDynamic(this object value, IEnumerable<PropertyInfo>? properties = null)
         {
+            string FormatDate(DateTimeOffset? dateValue)
+            {
+                if (dateValue.HasValue)
+                {
+                    return dateValue.Value.ToString("yyyy-MM-ddTHH:mm:ss.sssZ");
+                }
+
+                return string.Empty;
+            }
+
             ExpandoObject dynamic = new();
 
             if(properties == null)
@@ -91,7 +101,18 @@ namespace DiabetesManagement.Shared.Extensions
                 }
 
                 var val = property.GetValue(value);
-                //Debug.WriteLine("{0} {1}:{2}", nameof(ToDynamic), property, val);
+                
+                if(property.PropertyType == typeof(DateTimeOffset) || property.PropertyType == typeof(DateTimeOffset?))
+                {
+                    var dateValue = (DateTimeOffset?)val;
+                    val = FormatDate(dateValue);
+                }
+                else if(property.PropertyType == typeof(DateTime) || property.PropertyType == typeof(DateTime?))
+                {
+                    var dateValue = (DateTime?)val;
+                    val = FormatDate(dateValue);
+                }
+
                 dynamic.TryAdd(property.Name.Camelize(), val);
             }
 
