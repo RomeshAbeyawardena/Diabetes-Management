@@ -26,10 +26,19 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
         }
 
         var inventory = postRequest.Inventory;
-        inventory.InventoryId = Guid.NewGuid();
-        inventory.Created = DateTimeOffset.UtcNow;
-        inventory.Hash = inventory.GetHash();
-        DbSet.Add(inventory);
+        var currentDate = DateTimeOffset.UtcNow;
+        if (inventory.InventoryId == default)
+        {
+            inventory.InventoryId = Guid.NewGuid();
+            inventory.Created = currentDate;
+            inventory.Hash = inventory.GetHash();
+            Add(inventory);
+        }
+        else
+        {
+            inventory.Modified = currentDate;
+            Update(inventory);
+        }
 
         if (postRequest.CommitChanges)
         {

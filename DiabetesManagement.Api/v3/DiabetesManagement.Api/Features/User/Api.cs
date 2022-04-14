@@ -84,7 +84,6 @@ namespace DiabetesManagement.Api.Features.User
             var expiredSession = await Mediator.Send(new SessionFeature.PostCommand
             {
                 SessionId = session?.SessionId,
-                UserId = session?.UserId,
                 ExpireSession = true
             });
 

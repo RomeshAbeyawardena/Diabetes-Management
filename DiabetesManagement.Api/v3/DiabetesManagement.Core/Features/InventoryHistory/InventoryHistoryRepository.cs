@@ -74,7 +74,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         inventoryHistory.Created = DateTimeOffset.UtcNow;
         inventoryHistory.Hash = inventoryHistory.GetHash();
 
-        DbSet.Add(inventoryHistory);
+        Add(inventoryHistory);
 
         if (request.CommitChanges)
         {

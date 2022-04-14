@@ -17,7 +17,8 @@ namespace DiabetesManagement.Core.Features.Session
         {
             if(request.AuthenticateSession)
             {
-                return await DbSet.FirstOrDefaultAsync(s => s.SessionId == request.SessionId && s.UserId == request.UserId && s.Enabled
+                return await DbSet.Include(s => s.User)
+                    .FirstOrDefaultAsync(s => s.SessionId == request.SessionId && s.UserId == request.UserId && s.Enabled
                     && s.Expires >= DateTimeOffset.UtcNow, cancellationToken);
             }
 
@@ -29,7 +30,7 @@ namespace DiabetesManagement.Core.Features.Session
 
             if (request.SessionId.HasValue)
             {
-                return await DbSet.FindAsync(new object[] { request.SessionId.Value }, cancellationToken: cancellationToken);
+                return await FindAsync(s => s.SessionId == request.SessionId.Value, cancellationToken: cancellationToken);
             }
 
             return null!;
@@ -49,7 +50,7 @@ namespace DiabetesManagement.Core.Features.Session
                 session.SessionId = Guid.NewGuid();
                 session.Created = currentDate;
                 session.Expires = session.Created.Add(applicationSettings.SessionExpiry);
-                DbSet.Add(session);
+                Add(session);
             }
             else
             {
@@ -72,6 +73,8 @@ namespace DiabetesManagement.Core.Features.Session
                             .Add(diff2);
                     }
                 }
+
+                Update(session);
             }
 
             if (command.CommitChanges)
