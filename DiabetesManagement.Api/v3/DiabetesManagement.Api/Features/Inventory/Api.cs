@@ -28,13 +28,12 @@ public class Api : ApiBase
         HttpRequest request)
     {
         var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-        if (!await base.ValidateSession(request, getRequest.UserId!.Value))
-        {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
-        }
 
-        var result = await Mediator.Send(getRequest);
-        return new OkObjectResult(new Models.Response(result));
+        return await Validate(request, getRequest.UserId!.Value, async () =>
+        {
+            var result = await Mediator.Send(getRequest);
+            return new OkObjectResult(new Models.Response(result));
+        });
     }
 
     [FunctionName("list-inventory")]
@@ -44,15 +43,15 @@ public class Api : ApiBase
     {
         var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
 
-        if (!await base.ValidateSession(request, getRequest.UserId!.Value))
+        return await Validate(request, getRequest.UserId!.Value, async () =>
         {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
-        }
+            var result = await Mediator.Send(getRequest);
+            var versions = mapper.Map<IEnumerable<Models.Version>>(result);
 
-        var result = await Mediator.Send(getRequest);
-        var versions = mapper.Map<IEnumerable<Models.Version>>(result);
+            return new OkObjectResult(new Models.Response(versions));
+        });
+        
 
-        return new OkObjectResult(new Models.Response(versions));
     }
 
     [FunctionName("save-inventory")]
@@ -62,12 +61,10 @@ public class Api : ApiBase
     {
         var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
 
-        if (!await base.ValidateSession(request, postRequest.UserId!.Value))
+        return await Validate(request, postRequest.UserId!.Value, async () =>
         {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
-        }
-
-        var result = await Mediator.Send(postRequest);
-        return new OkObjectResult(new Models.Response(result));
+            var result = await Mediator.Send(postRequest);
+            return new OkObjectResult(new Models.Response(result));
+        });
     }
 }

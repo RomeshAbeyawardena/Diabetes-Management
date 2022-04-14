@@ -47,6 +47,16 @@ public abstract class ApiBase
         return false;
     }
 
+    protected async Task<IActionResult> Validate(HttpRequest httpRequest, Guid userId, Func<Task<IActionResult>> successAction)
+    {
+        if (!await ValidateSession(httpRequest, userId))
+        {
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
+        }
+
+        return await successAction();
+    }
+
     public ApiBase(IConvertorFactory convertorFactory, IMediator mediator)
     {
         this.convertorFactory = convertorFactory;
