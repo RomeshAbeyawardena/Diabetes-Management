@@ -9,6 +9,7 @@ namespace DiabetesManagement.Api.Features.Inventory;
 using DiabetesManagement.Api.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
+using DiabetesManagement.Features.InventoryHistory;
 
 public class Api : ApiBase
 {
@@ -23,6 +24,15 @@ public class Api : ApiBase
         HttpRequest request)
     {
         var result = await Mediator.Send(request.Query.Bind<GetRequest>(ConvertorFactory));
+        return new OkObjectResult(result);
+    }
+
+    [FunctionName("Save-Inventory")]
+    public async Task<IActionResult> SaveInventory(
+        [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
+        HttpRequest request)
+    {
+        var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
         return new OkObjectResult(result);
     }
 }

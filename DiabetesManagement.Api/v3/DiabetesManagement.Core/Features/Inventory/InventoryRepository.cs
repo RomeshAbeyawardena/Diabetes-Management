@@ -1,5 +1,7 @@
 ﻿using DiabetesManagement.Core.Base;
+using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiabetesManagement.Core.Features.Inventory;
 
@@ -9,8 +11,31 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
     {
     }
 
-    public Task<IEnumerable<Models.Inventory>> Get(GetRequest request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Models.Inventory>> Get(GetRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return await DbSet
+            .Where(i => i.UserId == request.UserId && i.Key == request.Key && i.DefaultType == request.Type)
+            .ToArrayAsync(cancellationToken);
+    }
+
+    public async Task<Models.Inventory> Save(SaveCommand postRequest, CancellationToken cancellationToken)
+    {
+        if(postRequest.Inventory == null)
+        {
+            throw new NullReferenceException();
+        }
+
+        var inventory = postRequest.Inventory;
+        inventory.InventoryId = Guid.NewGuid();
+        inventory.Created = DateTimeOffset.UtcNow;
+        inventory.Hash = inventory.GetHash();
+        DbSet.Add(inventory);
+
+        if (postRequest.CommitChanges)
+        {
+            await Context.SaveChangesAsync(cancellationToken);
+        }
+
+        return inventory;
     }
 }

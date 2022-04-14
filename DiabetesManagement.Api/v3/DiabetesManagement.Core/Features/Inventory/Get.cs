@@ -1,4 +1,5 @@
 ﻿using DiabetesManagement.Features.Inventory;
+using DiabetesManagement.Features.InventoryHistory;
 using MediatR;
 
 namespace DiabetesManagement.Core.Features.Inventory;
