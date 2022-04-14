@@ -2,7 +2,7 @@
 using DiabetesManagement.Features.InventoryHistory;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.Inventory;
+namespace DiabetesManagement.Core.Features.InventoryHistory;
 
 public class Get : IRequestHandler<GetRequest, IEnumerable<Models.InventoryHistory>>
 {

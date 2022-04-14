@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using DiabetesManagement.Extensions;
-using DiabetesManagement.Core.Features.Inventory;
+using DiabetesManagement.Core.Features.InventoryHistory;
 
 [assembly: FunctionsStartup(typeof(DiabetesManagement.Api.Startup))]
 namespace DiabetesManagement.Api

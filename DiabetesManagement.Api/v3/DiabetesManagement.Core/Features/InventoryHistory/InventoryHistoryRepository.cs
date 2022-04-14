@@ -3,13 +3,13 @@ using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.InventoryHistory;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Core.Features.Inventory;
+namespace DiabetesManagement.Core.Features.InventoryHistory;
 
 public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.InventoryHistory>, IInventoryHistoryRepository
 {
     public InventoryHistoryRepository(InventoryDbContext context) : base(context)
     {
-        
+
     }
 
     public async Task<IEnumerable<Models.InventoryHistory>> Get(DiabetesManagement.Features.Inventory.GetRequest request, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
                 return await query.Where(i => i.Version == request.Version)
                     .ToArrayAsync(cancellationToken);
             }
-            
+
             return await query.ToArrayAsync(cancellationToken);
         }
 
@@ -58,7 +58,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
     }
     public async Task<Models.InventoryHistory> Save(SaveCommand request, CancellationToken cancellationToken)
     {
-        if(request.InventoryHistory == null)
+        if (request.InventoryHistory == null)
         {
             throw new NullReferenceException();
         }
@@ -69,7 +69,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
 
         DbSet.Add(inventoryHistory);
 
-        if(request.CommitChanges)
+        if (request.CommitChanges)
         {
             await Context.SaveChangesAsync(cancellationToken);
         }

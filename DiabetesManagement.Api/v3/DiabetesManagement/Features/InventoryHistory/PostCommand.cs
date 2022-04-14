@@ -7,6 +7,7 @@ namespace DiabetesManagement.Features.InventoryHistory
     {
         [Required]
         public string? Key { get; set; }
+
         [Required]
         public Guid? UserId { get; set; }
 

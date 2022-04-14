@@ -3,7 +3,7 @@ using DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.Inventory;
+namespace DiabetesManagement.Core.Features.InventoryHistory;
 
 public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
 {
@@ -25,7 +25,7 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
         var inventory = (await inventoryRepository.Get(getRequest, cancellationToken)).SingleOrDefault();
         var version = 1;
         //create inventory
-        if(inventory == null)
+        if (inventory == null)
         {
             inventory = await inventoryRepository.Save(new DiabetesManagement.Features.Inventory.SaveCommand
             {
@@ -40,7 +40,10 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
         }
         else
         {
-            version = (await inventoryHistoryRepository.GetLatestVersion(getRequest, cancellationToken)) + 1;
+            //increment version for new item
+            version = await inventoryHistoryRepository.GetLatestVersion(getRequest, cancellationToken) + 1;
+            //set modified date
+            inventory.Modified = DateTimeOffset.UtcNow;
         }
 
         return await inventoryHistoryRepository.Save(new DiabetesManagement.Features.InventoryHistory.SaveCommand
