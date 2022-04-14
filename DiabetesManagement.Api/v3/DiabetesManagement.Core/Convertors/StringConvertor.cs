@@ -6,7 +6,7 @@ namespace DiabetesManagement.Core.Convertors;
 [RegisterService]
 public class StringConvertor : IConvertor
 {
-    private string value;
+    private string? value;
     public bool CanConvert(Type type, object value)
     {
         if (type != typeof(string))
@@ -20,6 +20,6 @@ public class StringConvertor : IConvertor
 
     public object? Convert()
     {
-        return this.value;
+        return value;
     }
 }

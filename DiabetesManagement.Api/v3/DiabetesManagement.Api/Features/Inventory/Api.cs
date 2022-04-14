@@ -10,6 +10,7 @@ using DiabetesManagement.Api.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
+using DiabetesManagement.Models;
 
 public class Api : ApiBase
 {
@@ -24,7 +25,7 @@ public class Api : ApiBase
         HttpRequest request)
     {
         var result = await Mediator.Send(request.Query.Bind<GetRequest>(ConvertorFactory));
-        return new OkObjectResult(result);
+        return new OkObjectResult(new Response(result));
     }
 
     [FunctionName("Save-Inventory")]
@@ -33,6 +34,6 @@ public class Api : ApiBase
         HttpRequest request)
     {
         var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
-        return new OkObjectResult(result);
+        return new OkObjectResult(new Response(result));
     }
 }

@@ -2,6 +2,7 @@
 using DiabetesManagement.Contracts;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.User;
+using DiabetesManagement.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +23,16 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
         HttpRequest request)
         {
-            var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
-            return new OkObjectResult(result);
+            try
+            {
+                var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
+                return new OkObjectResult(new Response(result));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return new BadRequestObjectResult(new Response(400, ex.Message));
+            }
+            
         }
 
         [FunctionName("Login-user")]
@@ -34,7 +43,19 @@ namespace DiabetesManagement.Api.Features.User
             var getRequest = request.Form.Bind<GetRequest>(ConvertorFactory);
             getRequest.AuthenticateUser = true;
             var result = await Mediator.Send(getRequest);
-            return new OkObjectResult(result);
+            try
+            {
+                if (result == null)
+                {
+                    throw new InvalidOperationException("Invalid username or password");
+                }
+
+                return new OkObjectResult(new Response(result));
+            }
+            catch(InvalidOperationException ex)
+            {
+                return new UnauthorizedObjectResult(new Response(401, ex.Message));
+            }
         }
     }
 }
