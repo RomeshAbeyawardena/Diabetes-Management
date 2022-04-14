@@ -2,7 +2,8 @@
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiabetesManagement.Models;
-
+[MessagePack.MessagePackObject(true),
+ Table("USER")]
 public class User
 {
     [Key]

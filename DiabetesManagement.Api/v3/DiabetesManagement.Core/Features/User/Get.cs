@@ -1,13 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DiabetesManagement.Features.User;
+using MediatR;
 
-namespace DiabetesManagement.Core.Features.User
+namespace DiabetesManagement.Core.Features.User;
+
+public class Get : IRequestHandler<GetRequest, Models.User>
 {
-    public class Get
-    {
+    private readonly IUserRepository userRepository;
 
+    public Get(IUserRepository userRepository)
+    {
+        this.userRepository = userRepository;
+    }
+
+    public Task<Models.User> Handle(GetRequest request, CancellationToken cancellationToken)
+    {
+        return userRepository.GetUser(request, cancellationToken)!;
     }
 }

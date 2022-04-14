@@ -23,34 +23,46 @@ namespace DiabetesManagement.Core.Features.User
             }
 
             var emailAddress = request.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
-            var password = request.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
 
-            var result = await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress && u.Password == password, cancellationToken);
+            Models.User? foundUser = default;
 
-            if(result != null)
+            if (request.AuthenticateUser)
             {
-                result.EmailAddress = result.EmailAddressCaseSignature!.ProcessCaseSignature(result.EmailAddress!);
-                result.DisplayName = result.EmailAddressCaseSignature!.ProcessCaseSignature(result.DisplayName!);
+                var password = request.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+
+                foundUser = await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress && u.Password == password, cancellationToken);
+            }
+            else
+            {
+                foundUser = await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
             }
 
-            return result;
+
+            if (foundUser != null)
+            {
+                foundUser.EmailAddress = foundUser.EmailAddress!.Decrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, foundUser.EmailAddressCaseSignature);
+                foundUser.DisplayName = foundUser.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, foundUser.DisplayNameCaseSignature);
+            }
+
+            return foundUser;
         }
 
         public async Task<Models.User> SaveUser(SaveCommand command, CancellationToken cancellationToken)
         {
-            if(command.User == null)
+            if (command.User == null)
             {
                 throw new NullReferenceException();
             }
 
             var user = command.User;
-            user.DisplayName = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
+            user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
             user.DisplayNameCaseSignature = str;
             user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
             user.EmailAddressCaseSignature = str;
 
             user.Created = DateTimeOffset.UtcNow;
             user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+            user.Hash = user.GetHash();
 
             DbSet.Add(user);
 

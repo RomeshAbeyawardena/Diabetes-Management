@@ -34,6 +34,13 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
                     .ToArrayAsync(cancellationToken);
             }
 
+            if (request.GetLatest)
+            {
+                query = query.OrderByDescending(a => a.Version);
+                var firstEntry = await query.FirstOrDefaultAsync(cancellationToken);
+                return new Models.InventoryHistory[] { firstEntry! };
+            }
+
             return await query.ToArrayAsync(cancellationToken);
         }
 

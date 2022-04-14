@@ -1,13 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
+using AutoMapper;
+using DiabetesManagement.Features.User;
+using MediatR;
 
-namespace DiabetesManagement.Core.Features.User
+namespace DiabetesManagement.Core.Features.User;
+
+public class Post : IRequestHandler<PostCommand, Models.User>
 {
-    public class Post
-    {
+    private readonly IMapper mapper;
+    private readonly IUserRepository userRepository;
 
+    public Post(IMapper mapper, IUserRepository userRepository)
+    {
+        this.mapper = mapper;
+        this.userRepository = userRepository;
+    }
+    
+    public async Task<Models.User> Handle(PostCommand request, CancellationToken cancellationToken)
+    {
+        var user = await userRepository.GetUser(mapper.Map<GetRequest>(request), cancellationToken);
+
+        if(user != null)
+        {
+            throw new InvalidOperationException("User already exists");
+        }
+
+        return await userRepository.SaveUser(new SaveCommand
+        {
+            User = new Models.User
+            {
+                DisplayName = request.DisplayName,
+                EmailAddress = request.EmailAddress,
+                Password = request.Password,
+            },
+            CommitChanges = true
+        }, cancellationToken);
     }
 }

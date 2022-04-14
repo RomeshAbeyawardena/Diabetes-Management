@@ -9,9 +9,9 @@ public class ApplicationSettings
         DefaultConnectionString = configuration.GetConnectionString("default");
     }
     public string DefaultConnectionString { get; }
-    public byte[] PersonalDataServerKeyBytes => Convert.FromBase64String(PersonalDataServerKey!);
-    public byte[] ConfidentialServerKeyBytes => Convert.FromBase64String(PersonalDataServerKey!);
-    public byte[] ServerInitialVectorBytes => Convert.FromBase64String(ServerInitialVector!);
+    public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();
+    public byte[] ConfidentialServerKeyBytes => !string.IsNullOrWhiteSpace(PersonalDataServerKey) ? Convert.FromBase64String(PersonalDataServerKey!) : Array.Empty<byte>();
+    public byte[] ServerInitialVectorBytes => !string.IsNullOrWhiteSpace(ServerInitialVector) ? Convert.FromBase64String(ServerInitialVector!) : Array.Empty<byte>();
     public string? HashAlgorithm { get; set; }
     public string? Algorithm { get; set; }
     public string? Issuer { get; set; }
