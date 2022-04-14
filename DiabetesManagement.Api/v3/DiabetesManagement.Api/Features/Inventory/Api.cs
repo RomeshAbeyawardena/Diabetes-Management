@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -10,30 +11,45 @@ using DiabetesManagement.Api.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
-using DiabetesManagement.Models;
 
 public class Api : ApiBase
 {
     public const string BaseUrl = "inventory";
-    public Api(IMediator mediator, Contracts.IConvertorFactory convertorFactor) : base(convertorFactor, mediator)
+    private readonly IMapper mapper;
+
+    public Api(IMediator mediator, Contracts.IConvertorFactory convertorFactor, IMapper mapper) : base(convertorFactor, mediator)
     {
+        this.mapper = mapper;
     }
 
-    [FunctionName("Get-Inventory")]
+    [FunctionName("get-inventory")]
     public async Task<IActionResult> GetInventory(
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
         HttpRequest request)
     {
         var result = await Mediator.Send(request.Query.Bind<GetRequest>(ConvertorFactory));
-        return new OkObjectResult(new Response(result));
+        return new OkObjectResult(new Models.Response(result));
     }
 
-    [FunctionName("Save-Inventory")]
+    [FunctionName("list-inventory")]
+    public async Task<IActionResult> ListInventory(
+        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
+        HttpRequest request)
+    {
+        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
+        var result = await Mediator.Send(getRequest);
+
+        var versions = mapper.Map<IEnumerable<Models.Version>>(result);
+
+        return new OkObjectResult(new Models.Response(versions));
+    }
+
+    [FunctionName("save-inventory")]
     public async Task<IActionResult> SaveInventory(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request)
     {
         var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
-        return new OkObjectResult(new Response(result));
+        return new OkObjectResult(new Models.Response(result));
     }
 }

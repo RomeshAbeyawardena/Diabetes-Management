@@ -18,7 +18,7 @@ namespace DiabetesManagement.Api.Features.User
         {
         }
 
-        [FunctionName("Register-user")]
+        [FunctionName("register-user")]
         public async Task<IActionResult> Register(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
         HttpRequest request)
@@ -35,7 +35,7 @@ namespace DiabetesManagement.Api.Features.User
             
         }
 
-        [FunctionName("Login-user")]
+        [FunctionName("login-user")]
         public async Task<IActionResult> Login(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
         HttpRequest request)
