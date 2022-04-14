@@ -1,24 +1,29 @@
-﻿using DiabetesManagement.Api.Base;
-using MediatR;
+﻿using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
 namespace DiabetesManagement.Api.Features.Inventory;
+
+using DiabetesManagement.Api.Base;
+using DiabetesManagement.Extensions.Extensions;
+using DiabetesManagement.Features.Inventory;
+
 public class Api : ApiBase
 {
     public const string BaseUrl = "inventory";
-    public Api(IMediator mediator) : base(mediator)
+    public Api(IMediator mediator, Contracts.IConvertorFactory convertorFactor) : base(convertorFactor, mediator)
     {
     }
 
     [FunctionName("Get-Inventory")]
     public async Task<IActionResult> GetInventory(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = BaseUrl)] 
+        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
         HttpRequest request)
     {
+        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
         //var result = await Mediator.Send(request.Query.Bind())
-        return new OkResult();
+        return new OkObjectResult(getRequest);
     }
 }

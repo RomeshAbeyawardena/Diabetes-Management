@@ -1,7 +1,9 @@
-﻿using DiabetesManagement.Contracts;
+﻿using DiabetesManagement.Attributes;
+using DiabetesManagement.Contracts;
 
 namespace DiabetesManagement.Core.Convertors;
 
+[RegisterService]
 public class IntConvertor : IConvertor
 {
     private int? value;

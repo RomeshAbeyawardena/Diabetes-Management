@@ -1,8 +1,10 @@
-﻿using DiabetesManagement.Contracts;
-using Microsoft.Extensions.Primitives;
-
+﻿using Microsoft.Extensions.Primitives;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
+using Humanizer;
 namespace DiabetesManagement.Extensions.Extensions;
 
+using DiabetesManagement.Contracts;
 public static class RequestCollectionExtensions 
 {
     public static TRequest Bind<TRequest>(this IEnumerable<KeyValuePair<string, StringValues>> requestCollection, IConvertorFactory convertorFactory)
@@ -10,9 +12,9 @@ public static class RequestCollectionExtensions
         var instance = Activator.CreateInstance<TRequest>();
         var requestType = typeof(TRequest);
         var requestDictionary = new Dictionary<string, StringValues>(requestCollection);
-        foreach (var property in requestType.GetProperties(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.DeclaredOnly))
+        foreach (var property in requestType.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
         {
-            if(requestDictionary.TryGetValue(property.Name, out var value))
+            if(requestDictionary.TryGetValue(property.Name.Camelize(), out var value))
             {
                 if (property.CanWrite)
                 {
@@ -28,8 +30,14 @@ public static class RequestCollectionExtensions
                     {   
                         property.SetValue(instance, convertor.Convert());
                     }
-
-                    
+                }
+            }
+            else
+            {
+                var required = property.GetCustomAttribute<RequiredAttribute>();
+                if (required != null)
+                {
+                    throw new ValidationException(required.ErrorMessage);
                 }
             }
         }

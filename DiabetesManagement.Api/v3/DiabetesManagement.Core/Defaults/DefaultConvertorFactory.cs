@@ -1,7 +1,9 @@
-﻿using DiabetesManagement.Contracts;
+﻿using DiabetesManagement.Attributes;
+using DiabetesManagement.Contracts;
 
 namespace DiabetesManagement.Core.Defaults
 {
+    [RegisterService]
     public class DefaultConvertorFactory : IConvertorFactory
     {
         private readonly IEnumerable<IConvertor> convertors;

@@ -1,8 +1,10 @@
-﻿using DiabetesManagement.Contracts;
+﻿using DiabetesManagement.Attributes;
+using DiabetesManagement.Contracts;
 using System.Globalization;
 
 namespace DiabetesManagement.Core.Convertors;
 
+[RegisterService]
 public class DateTimeOffsetConvertor : IConvertor
 {
     private DateTimeOffset? value;
