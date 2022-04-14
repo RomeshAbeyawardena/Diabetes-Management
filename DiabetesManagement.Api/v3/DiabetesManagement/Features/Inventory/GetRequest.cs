@@ -2,7 +2,7 @@
 
 namespace DiabetesManagement.Features.Inventory;
 
-public class GetRequest : IRequest<IEnumerable<Models.Inventory>>
+public class GetRequest : IRequest<IEnumerable<Models.InventoryHistory>>
 {
     public string? Key { get; set; }
     public Guid? UserId { get; set; }

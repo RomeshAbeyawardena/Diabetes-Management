@@ -1,13 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DiabetesManagement.Features.Inventory;
+using MediatR;
 
-namespace DiabetesManagement.Core.Features.Inventory
+namespace DiabetesManagement.Core.Features.Inventory;
+
+public class Get : IRequestHandler<GetRequest, IEnumerable<Models.InventoryHistory>>
 {
-    public class Get
+    public Get(IInventoryRepository inventoryRepository)
     {
 
+    }
+
+    public Task<IEnumerable<Models.InventoryHistory>> Handle(GetRequest request, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
     }
 }

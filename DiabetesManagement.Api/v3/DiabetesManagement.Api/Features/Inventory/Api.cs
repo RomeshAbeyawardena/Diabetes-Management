@@ -22,8 +22,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
         HttpRequest request)
     {
-        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-        //var result = await Mediator.Send(request.Query.Bind())
-        return new OkObjectResult(getRequest);
+        var result = await Mediator.Send(request.Query.Bind<GetRequest>(ConvertorFactory));
+        return new OkObjectResult(result);
     }
 }
