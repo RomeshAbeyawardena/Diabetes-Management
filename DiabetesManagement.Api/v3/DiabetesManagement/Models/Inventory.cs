@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace DiabetesManagement.Models
 {
     [MessagePack.MessagePackObject(true),
-     Table("INVENTORY_HISTORY")]
+     Table("INVENTORY")]
     public class Inventory
     {
         [Key]
