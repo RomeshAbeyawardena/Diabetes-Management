@@ -55,14 +55,22 @@ namespace DiabetesManagement.Core.Features.Session
             {
                 if (session.Expires.HasValue && session.Expires > currentDate)
                 {
-                    var diff = session.Expires.Value 
-                            .Subtract(currentDate);
+                    if (command.ExpireSession)
+                    {
+                        session.Expires = session.Expires.Value.Subtract(applicationSettings.SessionExpiry);
+                        session.Enabled = false;
+                    }
+                    else
+                    {
+                        var diff = session.Expires.Value
+                                .Subtract(currentDate);
 
-                    var diff2 = applicationSettings.SessionExpiry
-                            .Subtract(diff);
+                        var diff2 = applicationSettings.SessionExpiry
+                                .Subtract(diff);
 
-                    session.Expires = session.Expires.Value
-                        .Add(diff2);
+                        session.Expires = session.Expires.Value
+                            .Add(diff2);
+                    }
                 }
             }
 

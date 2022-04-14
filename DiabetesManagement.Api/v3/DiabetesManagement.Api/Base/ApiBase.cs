@@ -13,12 +13,33 @@ public abstract class ApiBase
     protected IConvertorFactory ConvertorFactory => convertorFactory;
     protected IMediator Mediator => mediator;
 
+    protected bool TryGetSessionId(HttpRequest httpRequest, out Guid sessionId)
+    {
+        sessionId = default;
+        return httpRequest.Headers.TryGetValue("X-API-SESSION-KEY", out var sessionValue)
+            && Guid.TryParse(sessionValue.FirstOrDefault(), out sessionId);
+    }
+
+    protected async Task<Models.Session> GetSession(HttpRequest httpRequest)
+    {
+        if (TryGetSessionId(httpRequest, out var sessionId))
+        {
+            return await Mediator.Send(new GetRequest { SessionId = sessionId });
+        }
+
+        return null!;
+    }
+
     protected async Task<bool> ValidateSession(HttpRequest httpRequest, Guid userId)
     {
-        if(httpRequest.Headers.TryGetValue("X-API-SESSION-KEY", out var sessionValue) 
-            && Guid.TryParse(sessionValue.FirstOrDefault(), out var sessionId))
+        if (TryGetSessionId(httpRequest, out var sessionId))
         {
-            var session = await Mediator.Send(new GetRequest { AuthenticateSession = true, SessionId = sessionId, UserId = userId });
+            var session = await Mediator.Send(new GetRequest
+            {
+                AuthenticateSession = true,
+                SessionId = sessionId,
+                UserId = userId
+            });
 
             return session != null;
         }

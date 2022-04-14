@@ -1,7 +1,6 @@
 ﻿using DiabetesManagement.Api.Base;
 using DiabetesManagement.Contracts;
 using DiabetesManagement.Extensions.Extensions;
-using DiabetesManagement.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -22,16 +21,16 @@ namespace DiabetesManagement.Api.Features.User
         [FunctionName("register-user")]
         public async Task<IActionResult> Register(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                var result = await Mediator.Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory));
-                return new OkObjectResult(new Response(result));
+                var result = await Mediator.Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory), cancellationToken);
+                return new OkObjectResult(new Models.Response(result));
             }
             catch (InvalidOperationException ex)
             {
-                return new BadRequestObjectResult(new Response(400, ex.Message));
+                return new BadRequestObjectResult(new Models.Response(400, ex.Message));
             }
 
         }
@@ -39,13 +38,13 @@ namespace DiabetesManagement.Api.Features.User
         [FunctionName("login-user")]
         public async Task<IActionResult> Login(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
         {
             var getRequest = request.Form.Bind<UserFeature.GetRequest>(ConvertorFactory);
             getRequest.AuthenticateUser = true;
 
             var result = await Mediator.Send(getRequest);
-            object finalResult = result;
+            object finalResult;
             try
             {
                 if (result == null)
@@ -54,20 +53,42 @@ namespace DiabetesManagement.Api.Features.User
                 }
 
                 //check for existing session
-                var session = await Mediator.Send(new SessionFeature.GetRequest { UserId = result.UserId });
+                var session = await Mediator.Send(new SessionFeature.GetRequest { UserId = result.UserId }, cancellationToken);
 
                 finalResult = await Mediator.Send(new SessionFeature.PostCommand
                 {
                     SessionId = session?.SessionId,
                     UserId = result.UserId,
-                });
+                }, cancellationToken);
 
-                return new OkObjectResult(new Response(finalResult));
+                return new OkObjectResult(new Models.Response(finalResult));
             }
             catch (InvalidOperationException ex)
             {
-                return new UnauthorizedObjectResult(new Response(401, ex.Message));
+                return new UnauthorizedObjectResult(new Models.Response(401, ex.Message));
             }
+        }
+
+        [FunctionName("logout-user")]
+        public async Task<IActionResult> Logout(
+        [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/logout")]
+        HttpRequest request)
+        {
+            var session = await GetSession(request);
+
+            if(session == null)
+            {
+                return new BadRequestObjectResult(new Models.Response(StatusCodes.Status400BadRequest, "Session invalid"));
+            }
+
+            var expiredSession = await Mediator.Send(new SessionFeature.PostCommand
+            {
+                SessionId = session?.SessionId,
+                UserId = session?.UserId,
+                ExpireSession = true
+            });
+
+            return new OkObjectResult(new Models.Response(expiredSession));
         }
     }
 }
