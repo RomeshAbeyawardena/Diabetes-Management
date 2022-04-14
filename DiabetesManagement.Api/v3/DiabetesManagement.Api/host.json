@@ -1,5 +1,10 @@
 {
 	"version": "2.0",
+	"logger": {
+		"categoryFilter": {
+			"defaultLevel": "Debug"
+		}
+	},
 	"logging": {
 		"applicationInsights": {
 			"samplingSettings": {

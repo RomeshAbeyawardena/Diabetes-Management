@@ -15,5 +15,7 @@ namespace DiabetesManagement.Models
         public string? Items { get; set; }
         public string? Hash { get; set; }
         public DateTimeOffset Created { get; set; }
+
+        public virtual Inventory? Inventory { get; set; }
     }
 }

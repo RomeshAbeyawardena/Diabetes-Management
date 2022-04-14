@@ -5,15 +5,15 @@ namespace DiabetesManagement.Core.Features.Inventory;
 
 public class Get : IRequestHandler<GetRequest, IEnumerable<Models.InventoryHistory>>
 {
-    private readonly IInventoryRepository inventoryRepository;
+    private readonly IInventoryHistoryRepository inventoryRepository;
 
-    public Get(IInventoryRepository inventoryRepository)
+    public Get(IInventoryHistoryRepository inventoryRepository)
     {
         this.inventoryRepository = inventoryRepository;
     }
 
     public Task<IEnumerable<Models.InventoryHistory>> Handle(GetRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return inventoryRepository.Get(request, cancellationToken);
     }
 }
