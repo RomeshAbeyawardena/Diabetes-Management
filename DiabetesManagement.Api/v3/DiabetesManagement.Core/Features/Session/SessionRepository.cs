@@ -15,6 +15,12 @@ namespace DiabetesManagement.Core.Features.Session
 
         public async Task<Models.Session?> Get(GetRequest request, CancellationToken cancellationToken)
         {
+            if(request.AuthenticateSession)
+            {
+                return await DbSet.FirstOrDefaultAsync(s => s.SessionId == request.SessionId && s.UserId == request.UserId
+                    && s.Expires >= DateTimeOffset.UtcNow, cancellationToken);
+            }
+
             if (request.UserId.HasValue)
             {
                 return await DbSet.FirstOrDefaultAsync(s => s.UserId == request.UserId

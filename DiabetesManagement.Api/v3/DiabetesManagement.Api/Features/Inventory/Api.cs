@@ -27,7 +27,13 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
         HttpRequest request)
     {
-        var result = await Mediator.Send(request.Query.Bind<GetRequest>(ConvertorFactory));
+        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
+        if (!await base.ValidateSession(request, getRequest.UserId!.Value))
+        {
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
+        }
+
+        var result = await Mediator.Send(getRequest);
         return new OkObjectResult(new Models.Response(result));
     }
 
@@ -37,8 +43,13 @@ public class Api : ApiBase
         HttpRequest request)
     {
         var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-        var result = await Mediator.Send(getRequest);
 
+        if (!await base.ValidateSession(request, getRequest.UserId!.Value))
+        {
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
+        }
+
+        var result = await Mediator.Send(getRequest);
         var versions = mapper.Map<IEnumerable<Models.Version>>(result);
 
         return new OkObjectResult(new Models.Response(versions));
@@ -49,7 +60,14 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request)
     {
-        var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
+        var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
+
+        if (!await base.ValidateSession(request, postRequest.UserId!.Value))
+        {
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
+        }
+
+        var result = await Mediator.Send(postRequest);
         return new OkObjectResult(new Models.Response(result));
     }
 }
