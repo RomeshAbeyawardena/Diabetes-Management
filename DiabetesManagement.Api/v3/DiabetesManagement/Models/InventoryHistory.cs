@@ -11,8 +11,8 @@ namespace DiabetesManagement.Models
         public Guid InventoryHistoryId { get; set; }
         public Guid InventoryId { get; set; }
         public int Version { get; set; }
-        public string? Type { get; set; }
-        public string? Items { get; set; }
+        public string? Intent { get; set; }
+        public string? Value { get; set; }
         public string? Hash { get; set; }
         public DateTimeOffset Created { get; set; }
 

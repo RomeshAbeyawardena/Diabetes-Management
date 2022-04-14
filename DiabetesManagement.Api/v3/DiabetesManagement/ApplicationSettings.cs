@@ -12,6 +12,7 @@ public class ApplicationSettings
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();
     public byte[] ConfidentialServerKeyBytes => !string.IsNullOrWhiteSpace(PersonalDataServerKey) ? Convert.FromBase64String(PersonalDataServerKey!) : Array.Empty<byte>();
     public byte[] ServerInitialVectorBytes => !string.IsNullOrWhiteSpace(ServerInitialVector) ? Convert.FromBase64String(ServerInitialVector!) : Array.Empty<byte>();
+    public TimeSpan SessionExpiry { get; set; }
     public string? HashAlgorithm { get; set; }
     public string? Algorithm { get; set; }
     public string? Issuer { get; set; }

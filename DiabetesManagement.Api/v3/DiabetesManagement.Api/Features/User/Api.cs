@@ -1,13 +1,14 @@
 ﻿using DiabetesManagement.Api.Base;
 using DiabetesManagement.Contracts;
 using DiabetesManagement.Extensions.Extensions;
-using DiabetesManagement.Features.User;
 using DiabetesManagement.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using SessionFeature = DiabetesManagement.Features.Session;
+using UserFeature = DiabetesManagement.Features.User;
 
 namespace DiabetesManagement.Api.Features.User
 {
@@ -25,14 +26,14 @@ namespace DiabetesManagement.Api.Features.User
         {
             try
             {
-                var result = await Mediator.Send(request.Form.Bind<PostCommand>(ConvertorFactory));
+                var result = await Mediator.Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory));
                 return new OkObjectResult(new Response(result));
             }
             catch (InvalidOperationException ex)
             {
                 return new BadRequestObjectResult(new Response(400, ex.Message));
             }
-            
+
         }
 
         [FunctionName("login-user")]
@@ -40,9 +41,11 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
         HttpRequest request)
         {
-            var getRequest = request.Form.Bind<GetRequest>(ConvertorFactory);
+            var getRequest = request.Form.Bind<UserFeature.GetRequest>(ConvertorFactory);
             getRequest.AuthenticateUser = true;
+
             var result = await Mediator.Send(getRequest);
+            object finalResult = result;
             try
             {
                 if (result == null)
@@ -50,9 +53,18 @@ namespace DiabetesManagement.Api.Features.User
                     throw new InvalidOperationException("Invalid username or password");
                 }
 
-                return new OkObjectResult(new Response(result));
+                //check for existing session
+                var session = await Mediator.Send(new SessionFeature.GetRequest { UserId = result.UserId });
+
+                finalResult = await Mediator.Send(new SessionFeature.PostCommand
+                {
+                    SessionId = session?.SessionId,
+                    UserId = result.UserId,
+                });
+
+                return new OkObjectResult(new Response(finalResult));
             }
-            catch(InvalidOperationException ex)
+            catch (InvalidOperationException ex)
             {
                 return new UnauthorizedObjectResult(new Response(401, ex.Message));
             }

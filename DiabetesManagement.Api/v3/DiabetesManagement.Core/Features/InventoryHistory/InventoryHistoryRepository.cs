@@ -26,7 +26,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
             && !string.IsNullOrWhiteSpace(request.Type))
         {
             var query = includeQuery
-                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Key == request.Key && i.Type == request.Type);
+                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Key && i.Intent == request.Type);
 
             if (request.Version.HasValue)
             {
@@ -56,7 +56,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
            && !string.IsNullOrWhiteSpace(request.Type))
         {
             return await includeQuery
-                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Key == request.Key && i.Type == request.Type)
+                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Key && i.Intent == request.Type)
                 .Select(i => i.Version)
                 .MaxAsync(cancellationToken);
         }

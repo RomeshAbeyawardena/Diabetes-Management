@@ -31,8 +31,8 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
             {
                 Inventory = new Models.Inventory
                 {
-                    DefaultType = request.Type,
-                    Key = request.Key,
+                    DefaultIntent = request.Type,
+                    Subject = request.Key,
                     UserId = request.UserId!.Value
                 },
                 CommitChanges = false
@@ -51,8 +51,8 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
             InventoryHistory = new Models.InventoryHistory
             {
                 InventoryId = inventory.InventoryId,
-                Items = request.Items,
-                Type = request.Type,
+                Value = request.Items,
+                Intent = request.Type,
                 Version = version
             },
             CommitChanges = true

@@ -14,7 +14,7 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
     public async Task<IEnumerable<Models.Inventory>> Get(GetRequest request, CancellationToken cancellationToken)
     {
         return await DbSet
-            .Where(i => i.UserId == request.UserId && i.Key == request.Key && i.DefaultType == request.Type)
+            .Where(i => i.UserId == request.UserId && i.Subject == request.Key && i.DefaultIntent == request.Type)
             .ToArrayAsync(cancellationToken);
     }
 
