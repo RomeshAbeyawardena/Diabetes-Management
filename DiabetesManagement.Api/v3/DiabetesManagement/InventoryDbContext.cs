@@ -11,6 +11,9 @@ public class InventoryDbContext : DbContext
 
     }
 
+    public DbSet<Application>? Applications { get; set; }
+    public DbSet<AccessToken>? AccessTokens { get; set; }
+    public DbSet<AccessTokenClaim>? Claims { get; set; }
     public DbSet<Inventory>? Inventories { get; set; }
     public DbSet<InventoryHistory>? InventoryHistory { get; set; }
     public DbSet<User>? Users { get; set; }

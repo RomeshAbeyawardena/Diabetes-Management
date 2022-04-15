@@ -20,6 +20,51 @@ CREATE TABLE [dbo].[User] (
      ,INDEX IX_USER NONCLUSTERED ([DisplayName],[EmailAddress],[Password])
 )
 
+CREATE TABLE [dbo].[Application] (
+     [ApplicationId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_APPLICATION PRIMARY KEY
+    ,[UserId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT FK_Application_User
+        REFERENCES [dbo].[User]
+    ,[Name] VARCHAR(200) NOT NULL
+    ,[Name_CS] VARCHAR(200) NOT NULL
+    ,[DisplayName] VARCHAR(200) NOT NULL
+    ,[DisplayName_CS] VARCHAR(200) NOT NULL
+    ,[Intent] VARCHAR(200) NOT NULL
+    ,[Enabled] BIT NOT NULL
+    ,[Hash] VARCHAR(MAX) NOT NULL
+    ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Expires] DATETIMEOFFSET NULL
+    ,CONSTRAINT UQ_Application UNIQUE ([UserId],[Name], [Intent])
+    ,INDEX IX_Application NONCLUSTERED ([UserId],[Name], [Intent])
+)
+
+CREATE TABLE [dbo].[AccessToken] (
+     [AccessTokenId]  UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_ACCESSTOKEN PRIMARY KEY
+    ,[ApplicationId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT FK_AccessToken_Application
+        REFERENCES [dbo].[Application]
+    ,[Key] VARCHAR(200) NOT NULL
+    ,[Value] VARCHAR(200) NOT NULL
+    ,[Enabled] BIT NOT NULL
+    ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Expires] DATETIMEOFFSET NULL
+)
+
+CREATE TABLE [dbo].[AccessToken_Claim] (
+     [AccessToken_ClaimId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_AccessToken_Claim PRIMARY KEY
+    ,[AccessTokenId]  UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT FK_AccessToken_Claim_AccessToken
+        REFERENCES [dbo].[AccessToken]
+    ,[Claim] VARCHAR(200) NOT NULL
+    ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Expires] DATETIMEOFFSET NULL
+    ,CONSTRAINT UQ_AccessToken_Claim UNIQUE ([AccessTokenId],[Claim])
+    ,INDEX IX_AccessToken_Claim NONCLUSTERED ([AccessTokenId],[Claim])
+)
+
 CREATE TABLE [dbo].[Session] (
      [SessionId]  UNIQUEIDENTIFIER NOT NULL
         CONSTRAINT PK_SESSION PRIMARY KEY
