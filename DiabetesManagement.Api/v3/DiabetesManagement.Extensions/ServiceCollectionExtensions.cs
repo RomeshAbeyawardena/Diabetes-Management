@@ -2,6 +2,7 @@
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Internal;
 
 namespace DiabetesManagement.Extensions;
 public static class ServiceCollectionExtensions
@@ -9,6 +10,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterCoreServices(this IServiceCollection services, params Type[] types)
     {
         return services
+            .AddSingleton<ISystemClock, SystemClock>()
             .AddSingleton<ApplicationSettings>()
             .AddDbContext<InventoryDbContext>(ConfigureDbContext)
             .AddMediatR(types)

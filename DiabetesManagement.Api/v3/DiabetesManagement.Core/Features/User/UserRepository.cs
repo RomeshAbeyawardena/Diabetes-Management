@@ -1,5 +1,4 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
+﻿using DiabetesManagement.Core.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.User;
 using Microsoft.EntityFrameworkCore;
