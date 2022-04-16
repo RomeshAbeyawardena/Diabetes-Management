@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Core.Base;
+﻿using DiabetesManagement.Contracts;
+using DiabetesManagement.Core.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.User;
 using Microsoft.EntityFrameworkCore;
@@ -16,7 +17,7 @@ namespace DiabetesManagement.Core.Features.User
             user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
         }
 
-        public UserRepository(InventoryDbContext context, ApplicationSettings applicationSettings) : base(context)
+        public UserRepository(IDbContextProvider context, ApplicationSettings applicationSettings) : base(context)
         {
             this.applicationSettings = applicationSettings;
         }

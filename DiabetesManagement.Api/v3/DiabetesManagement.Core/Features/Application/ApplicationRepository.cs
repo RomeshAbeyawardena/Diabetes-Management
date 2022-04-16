@@ -12,13 +12,13 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     private void PrepareEncryptedFields(Models.Application application)
     {
-        application.DisplayName = application.DisplayName.Encrypt(applicationSettings.Algorithm, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
+        application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
         application.DisplayNameCaseSignature = caseSignature;
-        application.Name = application.Name.Encrypt(applicationSettings.Algorithm, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
+        application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
         application.DisplayNameCaseSignature = caseSignature;
     }
 
-    public ApplicationRepository(InventoryDbContext context, ApplicationSettings applicationSettings, IClockProvider clockProvider) : base(context)
+    public ApplicationRepository(IDbContextProvider dbContextProvider, ApplicationSettings applicationSettings, IClockProvider clockProvider) : base(dbContextProvider)
     {
         this.applicationSettings = applicationSettings;
         this.clockProvider = clockProvider;
@@ -49,5 +49,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         {
             
         }
+
+        return default!;
     }
 }

@@ -10,7 +10,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
 {
     private readonly IClockProvider clockProvider;
 
-    public InventoryHistoryRepository(InventoryDbContext context, IClockProvider clockProvider) : base(context)
+    public InventoryHistoryRepository(IDbContextProvider context, IClockProvider clockProvider) : base(context)
     {
         this.clockProvider = clockProvider;
     }

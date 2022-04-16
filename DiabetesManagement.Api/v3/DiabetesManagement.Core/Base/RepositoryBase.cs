@@ -14,7 +14,7 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
     private readonly DbSet<T> dbSet;
     private bool isReadonly;
 
-    protected bool IsReadOnly { set => isReadonly = value; }
+    protected virtual bool IsReadOnly { set => isReadonly = value; }
 
     public RepositoryBase(IDbContextProvider dbContextProvider)
     {
@@ -27,22 +27,22 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     public IQueryable<T> DbSet => isReadonly ? dbSet.AsNoTracking() : dbSet;
 
-    public EntityEntry<T> Add(T entity)
+    public virtual EntityEntry<T> Add(T entity)
     {
         return dbSet.Add(entity);
     }
 
-    public void Detach(EntityEntry<T> entityEntry)
+    public virtual void Detach(EntityEntry<T> entityEntry)
     {
         entityEntry.State = EntityState.Detached;
     }
 
-    public Task<T?> FindAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken)
+    public virtual Task<T?> FindAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken)
     {
         return DbSet.FirstOrDefaultAsync(whereExpression, cancellationToken);
     }
 
-    public EntityEntry<T> Update(T entity)
+    public virtual EntityEntry<T> Update(T entity)
     {
         return dbSet.Update(entity);
     }

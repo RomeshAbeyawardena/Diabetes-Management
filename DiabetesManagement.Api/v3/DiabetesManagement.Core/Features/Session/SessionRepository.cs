@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Core.Base;
+﻿using DiabetesManagement.Contracts;
+using DiabetesManagement.Core.Base;
 using DiabetesManagement.Features.Session;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +9,7 @@ namespace DiabetesManagement.Core.Features.Session
     {
         private readonly ApplicationSettings applicationSettings;
 
-        public SessionRepository(InventoryDbContext context, ApplicationSettings applicationSettings) : base(context)
+        public SessionRepository(IDbContextProvider context, ApplicationSettings applicationSettings) : base(context)
         {
             this.applicationSettings = applicationSettings;
         }

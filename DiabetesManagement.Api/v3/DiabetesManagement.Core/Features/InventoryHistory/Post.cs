@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Contracts;
 using InventoryFeature = DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
 using MediatR;
@@ -11,7 +10,7 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
     private readonly IMapper mapper;
     private readonly IInventoryHistoryRepository inventoryHistoryRepository;
     private readonly InventoryFeature.IInventoryRepository inventoryRepository;
-    public Post(IMapper mapper, IInventoryHistoryRepository inventoryHistoryRepository, InventoryFeature.IInventoryRepository inventoryRepository, IClockProvider clockProvider)
+    public Post(IMapper mapper, IInventoryHistoryRepository inventoryHistoryRepository, InventoryFeature.IInventoryRepository inventoryRepository)
     {
         this.mapper = mapper;
         this.inventoryHistoryRepository = inventoryHistoryRepository;
