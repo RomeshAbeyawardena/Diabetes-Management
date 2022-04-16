@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Features.Inventory;
+using DiabetesManagement.Contracts;
+using InventoryFeature = DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
 using MediatR;
 
@@ -9,9 +10,8 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
 {
     private readonly IMapper mapper;
     private readonly IInventoryHistoryRepository inventoryHistoryRepository;
-    private readonly IInventoryRepository inventoryRepository;
-
-    public Post(IMapper mapper, IInventoryHistoryRepository inventoryHistoryRepository, IInventoryRepository inventoryRepository)
+    private readonly InventoryFeature.IInventoryRepository inventoryRepository;
+    public Post(IMapper mapper, IInventoryHistoryRepository inventoryHistoryRepository, InventoryFeature.IInventoryRepository inventoryRepository, IClockProvider clockProvider)
     {
         this.mapper = mapper;
         this.inventoryHistoryRepository = inventoryHistoryRepository;
@@ -20,14 +20,14 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
 
     public async Task<Models.InventoryHistory> Handle(PostCommand request, CancellationToken cancellationToken)
     {
-        var getRequest = mapper.Map<GetRequest>(request);
+        var getRequest = mapper.Map<InventoryFeature.GetRequest>(request);
         //check if inventory exists;
         var inventory = (await inventoryRepository.Get(getRequest, cancellationToken)).SingleOrDefault();
         var version = 1;
         //create inventory
         if (inventory == null)
         {
-            inventory = await inventoryRepository.Save(new DiabetesManagement.Features.Inventory.SaveCommand
+            inventory = await inventoryRepository.Save(new InventoryFeature.SaveCommand
             {
                 Inventory = new Models.Inventory
                 {
@@ -42,11 +42,14 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
         {
             //increment version for new item
             version = await inventoryHistoryRepository.GetLatestVersion(getRequest, cancellationToken) + 1;
-            //set modified date
-            inventory.Modified = DateTimeOffset.UtcNow;
+            //update modified flag
+            await inventoryRepository.Save(new InventoryFeature.SaveCommand { 
+                Inventory = inventory, 
+                CommitChanges = false 
+            }, cancellationToken);
         }
 
-        return await inventoryHistoryRepository.Save(new DiabetesManagement.Features.InventoryHistory.SaveCommand
+        return await inventoryHistoryRepository.Save(new SaveCommand
         {
             InventoryHistory = new Models.InventoryHistory
             {

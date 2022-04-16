@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Core.Base;
+﻿using DiabetesManagement.Contracts;
+using DiabetesManagement.Core.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.InventoryHistory;
 using Microsoft.EntityFrameworkCore;
@@ -7,9 +8,11 @@ namespace DiabetesManagement.Core.Features.InventoryHistory;
 
 public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.InventoryHistory>, IInventoryHistoryRepository
 {
-    public InventoryHistoryRepository(InventoryDbContext context) : base(context)
-    {
+    private readonly IClockProvider clockProvider;
 
+    public InventoryHistoryRepository(InventoryDbContext context, IClockProvider clockProvider) : base(context)
+    {
+        this.clockProvider = clockProvider;
     }
 
     public async Task<IEnumerable<Models.InventoryHistory>> Get(DiabetesManagement.Features.Inventory.GetRequest request, CancellationToken cancellationToken)
@@ -71,7 +74,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         }
 
         var inventoryHistory = request.InventoryHistory;
-        inventoryHistory.Created = DateTimeOffset.UtcNow;
+        inventoryHistory.Created = clockProvider.Clock.UtcNow;
         inventoryHistory.Hash = inventoryHistory.GetHash();
 
         Add(inventoryHistory);

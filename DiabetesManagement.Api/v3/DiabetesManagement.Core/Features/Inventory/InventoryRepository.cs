@@ -1,4 +1,5 @@
-﻿using DiabetesManagement.Core.Base;
+﻿using DiabetesManagement.Contracts;
+using DiabetesManagement.Core.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
 using Microsoft.EntityFrameworkCore;
@@ -7,8 +8,11 @@ namespace DiabetesManagement.Core.Features.Inventory;
 
 public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, IInventoryRepository
 {
-    public InventoryRepository(InventoryDbContext context) : base(context)
+    private readonly IClockProvider clockProvider;
+
+    public InventoryRepository(InventoryDbContext context, IClockProvider clockProvider) : base(context)
     {
+        this.clockProvider = clockProvider;
     }
 
     public async Task<IEnumerable<Models.Inventory>> Get(GetRequest request, CancellationToken cancellationToken)
@@ -26,7 +30,7 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
         }
 
         var inventory = postRequest.Inventory;
-        var currentDate = DateTimeOffset.UtcNow;
+        var currentDate = clockProvider.Clock.UtcNow;
         if (inventory.InventoryId == default)
         {
             inventory.InventoryId = Guid.NewGuid();
