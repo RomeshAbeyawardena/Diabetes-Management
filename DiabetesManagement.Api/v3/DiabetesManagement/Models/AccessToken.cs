@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DiabetesManagement.Models;
 
-[Table(nameof(Application)),
+[Table(nameof(AccessToken)),
      MessagePack.MessagePackObject(true)]
 public class AccessToken
 {

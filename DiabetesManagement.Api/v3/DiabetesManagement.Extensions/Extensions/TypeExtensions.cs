@@ -25,6 +25,6 @@ public static class TypeExtensions
 
     public static bool IsDefaultValue(this object value)
     {
-        return value.GetDefaultValue() == value;
+        return value.GetDefaultValue().Equals(value);
     }
 }

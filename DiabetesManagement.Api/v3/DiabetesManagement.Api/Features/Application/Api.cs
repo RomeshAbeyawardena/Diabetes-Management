@@ -19,9 +19,9 @@ public class Api : ApiBase
     [FunctionName("save-application")]
     public async Task<IActionResult> SaveApplication(
         [HttpTrigger(Microsoft.Azure.WebJobs.Extensions.Http.AuthorizationLevel.Function, "POST", 
-        Route = BaseUrl)]HttpRequest request)
+        Route = BaseUrl)]HttpRequest request, CancellationToken cancellationToken)
     {
-        
-        return new OkObjectResult(request.Form.Bind<PostCommand>(ConvertorFactory));
+        var command = request.Form.Bind<PostCommand>(ConvertorFactory);
+        return new OkObjectResult(await Mediator.Send(command, cancellationToken));
     }
 }

@@ -1,8 +1,15 @@
-﻿DROP TABLE [SESSION]
-DROP TABLE INVENTORY_HISTORY
-DROP TABLE INVENTORY
-DROP TABLE [USER]
+﻿ALTER DATABASE InventoryDb
+SET SINGLE_USER WITH ROLLBACK IMMEDIATE
+GO
 
+USE master
+DROP DATABASE InventoryDb
+GO
+
+CREATE DATABASE InventoryDb
+GO
+
+USE InventoryDb
 
 CREATE TABLE [dbo].[User] (
       [UserId] UNIQUEIDENTIFIER NOT NULL
@@ -34,6 +41,7 @@ CREATE TABLE [dbo].[Application] (
     ,[Enabled] BIT NOT NULL
     ,[Hash] VARCHAR(MAX) NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Modified] DATETIMEOFFSET NULL
     ,[Expires] DATETIMEOFFSET NULL
     ,CONSTRAINT UQ_Application UNIQUE ([UserId],[Name], [Intent])
     ,INDEX IX_Application NONCLUSTERED ([UserId],[Name], [Intent])

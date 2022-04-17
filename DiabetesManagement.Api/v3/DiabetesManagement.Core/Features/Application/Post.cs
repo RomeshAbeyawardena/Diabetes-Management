@@ -2,6 +2,7 @@
 using AccessTokenFeature = DiabetesManagement.Features.AccessToken;
 using DiabetesManagement.Features.Application;
 using MediatR;
+using System.Collections.ObjectModel;
 
 namespace DiabetesManagement.Core.Features.Application;
 
@@ -21,7 +22,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 
     public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
     {
-        var hasClaims = request.Claims != null && !request.Claims.Any();
+        var hasClaims = request.Claims != null && request.Claims.Any();
 
         var application = await applicationRepository.Save(new SaveCommand
         {
@@ -40,7 +41,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 
         if (hasClaims)
         {
-            await accessTokenRepository.Save(new Models.AccessToken
+            var accessToken = await accessTokenRepository.Save(new Models.AccessToken
             {
                 Value = request.AccessToken,
                 Expires = request.Expires.HasValue
@@ -48,6 +49,18 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
                     : null,
                 ApplicationId = application.ApplicationId
             }, cancellationToken);
+
+            accessToken.Entity.AccessTokenClaims ??= new Collection<Models.AccessTokenClaim>();
+            
+            foreach (var claim in request.Claims!)
+            {
+                accessToken.Entity.AccessTokenClaims.Add(new Models.AccessTokenClaim { 
+                    Claim = claim, 
+                    Created = clockProvider.Clock.UtcNow, 
+                    Expires = clockProvider.Clock.UtcNow.AddDays(365) 
+                });
+            }
+
         }
 
         return application;

@@ -1,9 +1,10 @@
-﻿using DiabetesManagement.Contracts;
+﻿using DiabetesManagement.Attributes;
+using DiabetesManagement.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace DiabetesManagement.Core.Defaults;
-
+[RegisterService(ServiceLifetime.Scoped)]
 public class DefaultDbContextProvider : IDbContextProvider
 {
     private readonly IServiceProvider serviceProvider;
