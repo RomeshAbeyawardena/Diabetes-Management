@@ -10,6 +10,13 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
 {
     private readonly IClockProvider clockProvider;
 
+    protected override Task<bool> Add(Models.InventoryHistory inventoryHistory, CancellationToken cancellationToken)
+    {
+        inventoryHistory.Created = clockProvider.Clock.UtcNow;
+        inventoryHistory.Hash = inventoryHistory.GetHash();
+        return Task.FromResult(true);
+    }
+
     public InventoryHistoryRepository(IDbContextProvider context, IClockProvider clockProvider) : base(context)
     {
         this.clockProvider = clockProvider;
@@ -19,10 +26,10 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
     {
         if (request.InventoryHistoryId.HasValue)
         {
-            return await DbSet.Where(i => i.InventoryHistoryId == request.InventoryHistoryId).ToArrayAsync(cancellationToken);
+            return await Query.Where(i => i.InventoryHistoryId == request.InventoryHistoryId).ToArrayAsync(cancellationToken);
         }
 
-        var includeQuery = DbSet
+        var includeQuery = Query
                 .Include(i => i.Inventory);
 
         if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Key)
@@ -52,7 +59,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
 
     public async Task<int> GetLatestVersion(DiabetesManagement.Features.Inventory.GetRequest request, CancellationToken cancellationToken)
     {
-        var includeQuery = DbSet
+        var includeQuery = Query
                 .Include(i => i.Inventory);
 
         if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Key)
@@ -74,10 +81,8 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         }
 
         var inventoryHistory = request.InventoryHistory;
-        inventoryHistory.Created = clockProvider.Clock.UtcNow;
-        inventoryHistory.Hash = inventoryHistory.GetHash();
 
-        Add(inventoryHistory);
+        await Save(inventoryHistory, cancellationToken);
 
         if (request.CommitChanges)
         {

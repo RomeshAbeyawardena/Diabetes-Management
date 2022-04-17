@@ -9,7 +9,17 @@ namespace DiabetesManagement.Core.Features.User
 {
     public class UserRepository : InventoryDbRepositoryBase<Models.User>, IUserRepository
     {
+        private readonly IClockProvider clockProvider;
         private readonly ApplicationSettings applicationSettings;
+        private bool prepareEncryptedFields = false;
+        private void PrepareEncrpytedFields(Models.User user)
+        {
+            user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
+            user.DisplayNameCaseSignature = str;
+            user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
+            user.EmailAddressCaseSignature = str;
+            user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+        }
 
         private void DecryptFields(Models.User user)
         {
@@ -17,8 +27,29 @@ namespace DiabetesManagement.Core.Features.User
             user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
         }
 
-        public UserRepository(IDbContextProvider context, ApplicationSettings applicationSettings) : base(context)
+        protected override Task<bool> Add(Models.User user, CancellationToken cancellationToken)
         {
+            PrepareEncrpytedFields(user);
+            
+            user.Created = clockProvider.Clock.UtcNow;
+            user.Hash = user.GetHash();
+            return AcceptChanges;
+        }
+
+        protected override Task<bool> Update(Models.User user, CancellationToken cancellationToken)
+        {
+            if (prepareEncryptedFields)
+            {
+                PrepareEncrpytedFields(user);
+            }
+
+            user.Modified = clockProvider.Clock.UtcNow;
+            return AcceptChanges;
+        }
+
+        public UserRepository(IDbContextProvider context, IClockProvider clockProvider, ApplicationSettings applicationSettings) : base(context)
+        {
+            this.clockProvider = clockProvider;
             this.applicationSettings = applicationSettings;
         }
 
@@ -37,11 +68,11 @@ namespace DiabetesManagement.Core.Features.User
             {
                 var password = request.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
 
-                foundUser = await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress && u.Password == password, cancellationToken);
+                foundUser = await Query.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress && u.Password == password, cancellationToken);
             }
             else
             {
-                foundUser = await DbSet.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
+                foundUser = await Query.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
             }
 
 
@@ -56,14 +87,7 @@ namespace DiabetesManagement.Core.Features.User
         public async Task<Models.User> SaveUser(SaveCommand command, CancellationToken cancellationToken)
         {
             EntityEntry<Models.User> entityEntry;
-            void PrepareEncrpytedFields(Models.User user)
-            {
-                user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
-                user.DisplayNameCaseSignature = str;
-                user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
-                user.EmailAddressCaseSignature = str;
-                user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
-            }
+           
 
             if (command.User == null)
             {
@@ -71,30 +95,14 @@ namespace DiabetesManagement.Core.Features.User
             }
 
             var user = command.User;
-            var currentDate = DateTimeOffset.UtcNow;
-            if (user.UserId == default)
-            {
-                PrepareEncrpytedFields(user);
-
-                user.Created = currentDate;
-                user.Hash = user.GetHash();
-
-                entityEntry = Add(user);
-            }
-            else
-            {
-                if (command.PrepareEncryptedFields)
-                {
-                    PrepareEncrpytedFields(user);
-                }
-                user.Modified = currentDate;
-                entityEntry = Update(user);
-            }
+            prepareEncryptedFields = command.PrepareEncryptedFields;
+            entityEntry = await Save(user, cancellationToken);
 
             if (command.CommitChanges)
             {
                 await Context.SaveChangesAsync(cancellationToken);
             }
+
             Detach(entityEntry);
 
             DecryptFields(user);

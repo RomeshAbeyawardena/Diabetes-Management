@@ -8,6 +8,8 @@ public class ApplicationSettings
         configuration.Bind(this);
         DefaultConnectionString = configuration.GetConnectionString("default");
     }
+
+    public TimeSpan? DefaultApplicationExpiry { get; set; }
     public string DefaultConnectionString { get; }
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();
     public byte[] ConfidentialServerKeyBytes => !string.IsNullOrWhiteSpace(PersonalDataServerKey) ? Convert.FromBase64String(PersonalDataServerKey!) : Array.Empty<byte>();

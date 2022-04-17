@@ -1,8 +1,11 @@
 ﻿using DiabetesManagement.Attributes;
 using DiabetesManagement.Contracts;
+using DiabetesManagement.Extensions.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace DiabetesManagement.Core.Base;
 
@@ -14,7 +17,34 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
     private readonly DbSet<T> dbSet;
     private bool isReadonly;
 
+    private static PropertyInfo? GetIdProperty()
+    {
+        var properties = typeof(T).GetProperties();
+        foreach (var property in properties)
+        {
+            if (property.GetCustomAttribute<KeyAttribute>() != null)
+            {
+                return property;
+            }
+        }
+
+        return default!;
+    }
+
+    protected Task<bool> AcceptChanges => Task.FromResult(true);
+    protected Task<bool> RejectChanges => Task.FromResult(false);
+
     protected virtual bool IsReadOnly { set => isReadonly = value; }
+
+    protected virtual Task<bool> Add(T model, CancellationToken cancellationToken)
+    {
+        return RejectChanges;
+    }
+
+    protected virtual Task<bool> Update(T model, CancellationToken cancellationToken)
+    {
+        return RejectChanges;
+    }
 
     public RepositoryBase(IDbContextProvider dbContextProvider)
     {
@@ -25,7 +55,7 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     public TDbContext Context { get; }
 
-    public IQueryable<T> DbSet => isReadonly ? dbSet.AsNoTracking() : dbSet;
+    public IQueryable<T> Query => isReadonly ? dbSet.AsNoTracking() : dbSet;
 
     public virtual EntityEntry<T> Add(T entity)
     {
@@ -39,11 +69,37 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     public virtual Task<T?> FindAsync(Expression<Func<T, bool>> whereExpression, CancellationToken cancellationToken)
     {
-        return DbSet.FirstOrDefaultAsync(whereExpression, cancellationToken);
+        return Query.FirstOrDefaultAsync(whereExpression, cancellationToken);
     }
 
     public virtual EntityEntry<T> Update(T entity)
     {
         return dbSet.Update(entity);
+    }
+
+    public async Task<EntityEntry<T>> Save(T model, CancellationToken cancellationToken)
+    {
+        PropertyInfo? idProperty = GetIdProperty();
+        if (idProperty != null && model != null) 
+        {
+            var idValue = idProperty.GetValue(model);
+
+            if(idValue.IsDefaultValue())
+            {
+                if(await Add(model, cancellationToken))
+                {
+                    return Add(model);
+                }
+            }
+            else
+            {
+                if (await Update(model, cancellationToken))
+                {
+                    return Update(model);
+                }
+            }
+        }
+
+        return default!;
     }
 }

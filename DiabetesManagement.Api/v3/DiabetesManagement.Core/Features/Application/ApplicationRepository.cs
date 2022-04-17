@@ -18,13 +18,36 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         application.DisplayNameCaseSignature = caseSignature;
     }
 
+    protected override Task<bool> Add(Models.Application application, CancellationToken cancellationToken)
+    {
+        var currentDate = clockProvider.Clock.UtcNow;
+        PrepareEncryptedFields(application);
+        application.Created = currentDate;
+        application.Enabled = true;
+
+        if (!application.Expires.HasValue && applicationSettings.DefaultApplicationExpiry.HasValue)
+        {
+            application.Expires = currentDate.Add(applicationSettings.DefaultApplicationExpiry.Value);
+        }
+
+        application.Hash = application.GetHash();
+        Add(application);
+        return Task.FromResult(true);
+    }
+
+    protected override Task<bool> Update(Models.Application application, CancellationToken cancellationToken)
+    {
+        application.Hash = application.GetHash();
+        return Task.FromResult(true);
+    }
+
     public ApplicationRepository(IDbContextProvider dbContextProvider, ApplicationSettings applicationSettings, IClockProvider clockProvider) : base(dbContextProvider)
     {
         this.applicationSettings = applicationSettings;
         this.clockProvider = clockProvider;
     }
 
-    public Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
+    public async Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
     {
         if(saveCommand.Application == null)
         {
@@ -32,24 +55,14 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         }
 
         var application = saveCommand.Application;
-        var currentDate = clockProvider.Clock.UtcNow;
 
-        if(application.ApplicationId != default)
+        await Save(application, cancellationToken);
+
+        if (saveCommand.CommitChanges)
         {
-            PrepareEncryptedFields(application);
-            application.Created = currentDate;
-            application.Enabled = true;
-
-            if (!application.Expires.HasValue)
-            {
-
-            }
-        }
-        else
-        {
-            
+            await Context.SaveChangesAsync(cancellationToken);
         }
 
-        return default!;
+        return application!;
     }
 }
