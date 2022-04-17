@@ -11,17 +11,24 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     private readonly ApplicationSettings applicationSettings;
     private readonly IClockProvider clockProvider;
 
+    private void DecryptFields(Models.Application application)
+    {
+        application.DisplayName = application.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.DisplayName);
+
+        application.Name = application.Name!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.NameCaseSignature);
+    }
+
     private void PrepareEncryptedFields(Models.Application application)
     {
         application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
         application.DisplayNameCaseSignature = caseSignature;
         application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
-        application.DisplayNameCaseSignature = caseSignature;
+        application.NameCaseSignature = caseSignature;
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
     {
-        return Query.AnyAsync(a => a.ApplicationId == application.ApplicationId 
+        return Query.AnyAsync(a => a.ApplicationId == application.ApplicationId
             && a.Hash == application.Hash, cancellationToken);
     }
 
@@ -61,6 +68,8 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     public async Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
     {
-        return await base.Save(saveCommand, cancellationToken);
+        var savedResult = await base.Save(saveCommand, cancellationToken);
+        DecryptFields(savedResult);
+        return savedResult;
     }
 }

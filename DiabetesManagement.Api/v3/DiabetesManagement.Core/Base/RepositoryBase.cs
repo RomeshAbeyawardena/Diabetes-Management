@@ -45,12 +45,17 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
         }
 
         var entityEntry = await Save(request.Model, cancellationToken);
-
-        if(entityEntry != null && request.CommitChanges)
+        
+        if (entityEntry != null)
         {
-            await Context.SaveChangesAsync(cancellationToken);
-        }
+            if (request.CommitChanges)
+            {
+                await Context.SaveChangesAsync(cancellationToken);
+            }
 
+            Detach(entityEntry);
+        }
+        
         return request.Model;
     }
 

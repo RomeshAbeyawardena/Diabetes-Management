@@ -87,28 +87,12 @@ namespace DiabetesManagement.Core.Features.User
 
         public async Task<Models.User> SaveUser(SaveCommand command, CancellationToken cancellationToken)
         {
-            EntityEntry<Models.User> entityEntry;
-           
-
-            if (command.User == null)
-            {
-                throw new NullReferenceException();
-            }
-
-            var user = command.User;
             prepareEncryptedFields = command.PrepareEncryptedFields;
-            entityEntry = await Save(user, cancellationToken);
+            var savedResult = await base.Save(command, cancellationToken);
+            
+            DecryptFields(savedResult);
 
-            if (command.CommitChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-
-            Detach(entityEntry);
-
-            DecryptFields(user);
-
-            return user;
+            return savedResult;
         }
     }
 }
