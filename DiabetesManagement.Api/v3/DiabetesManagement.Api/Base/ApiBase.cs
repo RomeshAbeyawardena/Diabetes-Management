@@ -1,10 +1,12 @@
-﻿using DiabetesManagement.Contracts;
+﻿using DiabetesManagement.Api.Features;
+using DiabetesManagement.Contracts;
 using DiabetesManagement.Features.Session;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiabetesManagement.Api.Base;
+[AuthoriseActionFilter]
 public abstract class ApiBase
 {
     private readonly IConvertorFactory convertorFactory;
