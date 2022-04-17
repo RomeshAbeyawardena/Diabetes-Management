@@ -2,6 +2,7 @@
 using DiabetesManagement.Core.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Application;
+using Microsoft.EntityFrameworkCore;
 
 namespace DiabetesManagement.Core.Features.Application;
 
@@ -18,6 +19,12 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         application.DisplayNameCaseSignature = caseSignature;
     }
 
+    protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
+    {
+        return Query.AnyAsync(a => a.ApplicationId == application.ApplicationId 
+            && a.Hash == application.Hash, cancellationToken);
+    }
+
     protected override Task<bool> Add(Models.Application application, CancellationToken cancellationToken)
     {
         var currentDate = clockProvider.Clock.UtcNow;
@@ -31,14 +38,19 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         }
 
         application.Hash = application.GetHash();
-        Add(application);
-        return Task.FromResult(true);
+        return AcceptChanges;
     }
 
-    protected override Task<bool> Update(Models.Application application, CancellationToken cancellationToken)
+    protected override async Task<bool> Update(Models.Application application, CancellationToken cancellationToken)
     {
-        application.Hash = application.GetHash();
-        return Task.FromResult(true);
+        if (await IsMatch(application, cancellationToken))
+        {
+            application.Modified = clockProvider.Clock.UtcNow;
+            application.Hash = application.GetHash();
+            return true;
+        }
+
+        return false;
     }
 
     public ApplicationRepository(IDbContextProvider dbContextProvider, ApplicationSettings applicationSettings, IClockProvider clockProvider) : base(dbContextProvider)
@@ -49,20 +61,6 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     public async Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
     {
-        if(saveCommand.Application == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        var application = saveCommand.Application;
-
-        await Save(application, cancellationToken);
-
-        if (saveCommand.CommitChanges)
-        {
-            await Context.SaveChangesAsync(cancellationToken);
-        }
-
-        return application!;
+        return await base.Save(saveCommand, cancellationToken);
     }
 }

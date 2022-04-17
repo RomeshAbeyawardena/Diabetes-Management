@@ -26,6 +26,7 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
         var currentDate = clockProvider.Clock.UtcNow;
 
         inventory.Modified = currentDate;
+        inventory.Hash = inventory.GetHash();
         return Task.FromResult(true);
     }
 
@@ -43,20 +44,6 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
 
     public async Task<Models.Inventory> Save(SaveCommand postRequest, CancellationToken cancellationToken)
     {
-        if(postRequest.Inventory == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        var inventory = postRequest.Inventory;
-
-        await Save(inventory, cancellationToken);
-
-        if (postRequest.CommitChanges)
-        {
-            await Context.SaveChangesAsync(cancellationToken);
-        }
-
-        return inventory;
+        return await base.Save(postRequest, cancellationToken);
     }
 }

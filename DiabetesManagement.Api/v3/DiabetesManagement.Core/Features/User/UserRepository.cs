@@ -44,6 +44,7 @@ namespace DiabetesManagement.Core.Features.User
             }
 
             user.Modified = clockProvider.Clock.UtcNow;
+            user.Hash = user.GetHash();
             return AcceptChanges;
         }
 

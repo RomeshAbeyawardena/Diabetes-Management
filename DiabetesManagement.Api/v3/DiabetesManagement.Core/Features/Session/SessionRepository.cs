@@ -74,23 +74,10 @@ namespace DiabetesManagement.Core.Features.Session
             return null!;
         }
 
-        public async Task<Models.Session> Save(SaveCommand command, CancellationToken cancellationToken)
+        public Task<Models.Session> Save(SaveCommand command, CancellationToken cancellationToken)
         {
-            var session = command.Session;
-
-            if (session == null)
-            {
-                throw new NullReferenceException();
-            }
             expireSession = command.ExpireSession;
-            await Save(session, cancellationToken);
-
-            if (command.CommitChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-
-            return session;
+            return base.Save(command, cancellationToken);
         }
     }
 }

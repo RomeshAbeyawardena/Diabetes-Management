@@ -73,22 +73,8 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
 
         return 0;
     }
-    public async Task<Models.InventoryHistory> Save(SaveCommand request, CancellationToken cancellationToken)
+    public Task<Models.InventoryHistory> Save(SaveCommand request, CancellationToken cancellationToken)
     {
-        if (request.InventoryHistory == null)
-        {
-            throw new NullReferenceException();
-        }
-
-        var inventoryHistory = request.InventoryHistory;
-
-        await Save(inventoryHistory, cancellationToken);
-
-        if (request.CommitChanges)
-        {
-            await Context.SaveChangesAsync(cancellationToken);
-        }
-
-        return inventoryHistory;
+        return base.Save(request, cancellationToken);
     }
 }

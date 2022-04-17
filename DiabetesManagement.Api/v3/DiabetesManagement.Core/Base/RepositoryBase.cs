@@ -36,6 +36,24 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     protected virtual bool IsReadOnly { set => isReadonly = value; }
 
+    protected async virtual Task<T> Save<TRequest>(TRequest request, CancellationToken cancellationToken)
+        where TRequest : ITransactionalCommand<T>
+    {
+        if (request.Model == null)
+        {
+            throw new NullReferenceException();
+        }
+
+        var entityEntry = await Save(request.Model, cancellationToken);
+
+        if(entityEntry != null && request.CommitChanges)
+        {
+            await Context.SaveChangesAsync(cancellationToken);
+        }
+
+        return request.Model;
+    }
+
     protected virtual Task<bool> Add(T model, CancellationToken cancellationToken)
     {
         return RejectChanges;
@@ -84,7 +102,7 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
         {
             var idValue = idProperty.GetValue(model);
 
-            if(idValue.IsDefaultValue())
+            if(idValue == null || idValue.IsDefaultValue())
             {
                 if(await Add(model, cancellationToken))
                 {

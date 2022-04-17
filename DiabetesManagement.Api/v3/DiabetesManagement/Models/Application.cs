@@ -25,6 +25,7 @@ public class Application
     public bool? Enabled { get; set; }
     public string? Hash { get; set; }
     public DateTimeOffset Created { get; set; }
+    public DateTimeOffset? Modified { get; set; }
     public DateTimeOffset? Expires { get; set; }
 
     public virtual User? User { get; set; }
