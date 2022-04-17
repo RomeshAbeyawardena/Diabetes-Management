@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DiabetesManagement.Attributes;
 
 namespace DiabetesManagement.Features.AccessToken
 {
+    [RequiresClaims(Permissions.AccessToken_View)]
     public class PostCommand
     {
 

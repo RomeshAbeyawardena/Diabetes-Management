@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using DiabetesManagement.Attributes;
+using MediatR;
 
 namespace DiabetesManagement.Features.Application;
 
+[RequiresClaims(Permissions.Application_Edit)]
 public class PostCommand : IRequest<Models.Application>
 {
     public string? AccessToken { get; set; }

@@ -1,12 +1,11 @@
 ﻿using DiabetesManagement.Attributes;
 using MediatR;
-using System.ComponentModel.DataAnnotations;
 
 namespace DiabetesManagement.Features.Inventory;
 
+[RequiresClaims(Permissions.Inventory_View)]
 public class GetRequest : IRequest<IEnumerable<Models.InventoryHistory>>
 {
-    
     public string? Key { get; set; }
     
     public Guid? UserId { get; set; }
