@@ -19,7 +19,7 @@ public class AccessTokenRespository : InventoryDbRepositoryBase<Models.AccessTok
 
     public Task<Models.AccessToken?> Get(GetRequest request, CancellationToken cancellationToken)
     {
-        return Query.FirstOrDefaultAsync(a => a.AccessTokenId == request.Key 
+        return Query.Include(a => a.AccessTokenClaims).FirstOrDefaultAsync(a => a.AccessTokenId == request.Key 
             && a.Key == request.Intent 
             && a.Value == request.AccessToken, cancellationToken);
     }
