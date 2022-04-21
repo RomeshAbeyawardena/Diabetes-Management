@@ -25,46 +25,35 @@ public class Api : ApiBase
     [FunctionName("get-inventory")]
     public async Task<IActionResult> GetInventory(
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
     {
         var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-
-        return await Validate(request, getRequest.UserId!.Value, async () =>
-        {
-            var result = await Mediator.Send(getRequest);
-            return new OkObjectResult(new Models.Response(result));
-        });
+        return await TryHandler(request, getRequest.UserId!.Value, async (ct) => 
+            await Mediator.Send(getRequest, ct), cancellationToken);
     }
 
     [FunctionName("list-inventory")]
     public async Task<IActionResult> ListInventory(
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
     {
         var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
 
-        return await Validate(request, getRequest.UserId!.Value, async () =>
+        return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
         {
-            var result = await Mediator.Send(getRequest);
-            var versions = mapper.Map<IEnumerable<Models.Version>>(result);
-
-            return new OkObjectResult(new Models.Response(versions));
-        });
-        
-
+            var result = await Mediator.Send(getRequest, ct);
+            return mapper.Map<IEnumerable<Models.Version>>(result);
+        }, cancellationToken);
     }
 
     [FunctionName("save-inventory")]
     public async Task<IActionResult> SaveInventory(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
     {
         var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
 
-        return await Validate(request, postRequest.UserId.Value, async () =>
-        {
-            var result = await Mediator.Send(postRequest);
-            return new OkObjectResult(new Models.Response(result));
-        });
+        return await TryHandler(request, postRequest.UserId.Value, async (ct) => await Mediator
+            .Send(postRequest, ct), cancellationToken);
     }
 }

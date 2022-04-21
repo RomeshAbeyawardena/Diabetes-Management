@@ -12,17 +12,16 @@ namespace DiabetesManagement.Features;
 public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequest>
     where TRequest : class
 {
-    private readonly IHttpContextAccessor httpContext;
-    private readonly IMediator mediator;
-    private readonly IJwtProvider jwtProvider;
     private readonly ApplicationSettings applicationSettings;
-    private readonly TokenValidationParameters validationParameters;
+    private readonly IHttpContextAccessor httpContext;
+    private readonly IJwtProvider jwtProvider;
+    private readonly IMediator mediator;
 
     private async Task<IEnumerable<string?>> GetClaims(string accessTokenKey, string accessTokenValue)
     {
-        if(accessTokenKey == "sys.admin" && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
+        if(accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
-
+            return Permissions.SysAdmin;
         }
 
         if (Guid.TryParse(accessTokenKey, out var key))
@@ -38,22 +37,12 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
         throw new UnauthorizedAccessException();
     }
 
-    public AuthenticationRequestHandler(IHttpContextAccessor httpContext, IMediator mediator, IJwtProvider jwtProvider, ApplicationSettings applicationSettings)
+    public AuthenticationRequestHandler(ApplicationSettings applicationSettings, IHttpContextAccessor httpContext, IJwtProvider jwtProvider, IMediator mediator)
     {
-        this.httpContext = httpContext;
-        this.mediator = mediator;
-        this.jwtProvider = jwtProvider;
         this.applicationSettings = applicationSettings;
-        var securityKey = new SymmetricSecurityKey(applicationSettings.ConfidentialServerKeyBytes);
-
-        validationParameters = new TokenValidationParameters
-        {
-           ValidateAudience = true,
-           ValidAudience = applicationSettings.Audience,
-           ValidIssuer = applicationSettings.Issuer,
-           IssuerSigningKey = securityKey,
-           ValidateIssuerSigningKey = true
-        };
+        this.httpContext = httpContext;
+        this.jwtProvider = jwtProvider;
+        this.mediator = mediator;
     }
 
     public IHttpContextAccessor HttpContext => httpContext;
@@ -69,30 +58,33 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
         if(context.Request.Headers.TryGetValue("x-api-acc-token", out var accessToken))
         {
-
-            var parameters = jwtProvider.Extract(accessToken, validationParameters);
-            IEnumerable<string> claims = Array.Empty<string>();
-            if (parameters != null && parameters.TryGetValue("api-key", out var apiKey)
-                && parameters.TryGetValue("api-value", out var value))
-            {
-                claims = await GetClaims(apiKey, value);
-            }
             var requestType = request.GetType();
             var claimsAttribute = requestType.GetCustomAttribute<RequiresClaimsAttribute>();
-
-            if(claimsAttribute == null || !claimsAttribute.Claims.Any())
+            if (claimsAttribute == null || claimsAttribute.Claims.Contains(Permissions.Anonymous_Access))
             {
                 //if the request does not have any claims it is assumed accessible publicly 
                 return;
             }
-            else if(claims.Any(c => claimsAttribute.Claims.Contains(c)))
+
+            var parameters = jwtProvider.Extract(accessToken, jwtProvider.DefaultTokenValidationParameters);
+
+            IEnumerable<string> claims = Array.Empty<string>();
+            if (parameters != null && parameters.TryGetValue(Keys.ApiToken, out var apiKey)
+                && parameters.TryGetValue(Keys.ApiTokenChallenge, out var value))
+            {
+                claims = await GetClaims(apiKey, value);
+            }
+            
+            if (claims.Any(c => claimsAttribute.Claims.Contains(c)))
             {
                 //consists of matching claims grant access
                 return;
             }
+
+
         }
 
         //no access granted either the http context isn't properly authorised or the session does not match the specified claim
-        //throw new UnauthorizedAccessException();
+        throw new UnauthorizedAccessException();
     }
 }

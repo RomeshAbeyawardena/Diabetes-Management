@@ -3,8 +3,7 @@ using MediatR;
 
 namespace DiabetesManagement.Features.AccessToken;
 [RequiresClaims(Permissions.Anonymous_Access)]
-public class SignRequest : IRequest<string>
+public class ValidateRequest : IRequest<IDictionary<string, string>>
 {
-    public string? ApiKey { get; set; }
-    public string? ApiChallenge { get; set; }
+    public string? Token { get; set; }
 }

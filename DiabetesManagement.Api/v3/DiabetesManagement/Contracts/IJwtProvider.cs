@@ -1,8 +1,11 @@
-﻿namespace DiabetesManagement.Contracts
+﻿using Microsoft.IdentityModel.Tokens;
+
+namespace DiabetesManagement.Contracts
 {
     public interface IJwtProvider
     {
-        string BuildToken(IDictionary<string, object> tokenValues, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters);
-        IDictionary<string, string> Extract(string token, Microsoft.IdentityModel.Tokens.TokenValidationParameters validationParameters);
+        TokenValidationParameters DefaultTokenValidationParameters { get; }
+        string BuildToken(IDictionary<string, object> tokenValues, TokenValidationParameters validationParameters);
+        IDictionary<string, string> Extract(string token, TokenValidationParameters validationParameters);
     }
 }

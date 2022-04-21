@@ -23,16 +23,8 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var result = await Mediator.Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory), cancellationToken);
-                return new OkObjectResult(new Models.Response(result));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return new BadRequestObjectResult(new Models.Response(400, ex.Message));
-            }
-
+            return await TryHandler(async(ct) => await Mediator
+                .Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory), ct), cancellationToken);   
         }
 
         [FunctionName("login-user")]
@@ -42,14 +34,14 @@ namespace DiabetesManagement.Api.Features.User
         {
             var getRequest = request.Form.Bind<UserFeature.GetRequest>(ConvertorFactory);
             getRequest.AuthenticateUser = true;
-
-            var result = await Mediator.Send(getRequest);
-            object finalResult;
-            try
+            return await TryHandler(async (ct) =>
             {
+                var result = await Mediator.Send(getRequest);
+                object finalResult;
+
                 if (result == null)
                 {
-                    throw new InvalidOperationException("Invalid username or password");
+                    throw new UnauthorizedAccessException("Invalid username or password");
                 }
 
                 //check for existing session
@@ -61,33 +53,31 @@ namespace DiabetesManagement.Api.Features.User
                     UserId = result.UserId,
                 }, cancellationToken);
 
-                return new OkObjectResult(new Models.Response(finalResult));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return new UnauthorizedObjectResult(new Models.Response(401, ex.Message));
-            }
+                return finalResult;
+            }, cancellationToken);
         }
 
         [FunctionName("logout-user")]
         public async Task<IActionResult> Logout(
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/logout")]
-        HttpRequest request)
+        HttpRequest request, CancellationToken cancellationToken)
         {
-            var session = await GetSession(request);
+            return await TryHandler(async (ct) => {
+                var session = await GetSession(request);
 
-            if(session == null)
-            {
-                return new BadRequestObjectResult(new Models.Response(StatusCodes.Status400BadRequest, "Session invalid"));
-            }
+                if (session == null)
+                {
+                    throw new InvalidOperationException("Session invalid");
+                }
 
-            var expiredSession = await Mediator.Send(new SessionFeature.PostCommand
-            {
-                SessionId = session?.SessionId,
-                ExpireSession = true
-            });
+                var expiredSession = await Mediator.Send(new SessionFeature.PostCommand
+                {
+                    SessionId = session?.SessionId,
+                    ExpireSession = true
+                });
 
-            return new OkObjectResult(new Models.Response(expiredSession));
+                return expiredSession;
+            }, cancellationToken);
         }
     }
 }

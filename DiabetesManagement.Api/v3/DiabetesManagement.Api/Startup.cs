@@ -4,6 +4,7 @@ using DiabetesManagement.Extensions;
 using DiabetesManagement.Core.Features.InventoryHistory;
 using DiabetesManagement.Features;
 using DiabetesManagement.Persistence;
+using DiabetesManagement.Core.Base;
 
 [assembly: FunctionsStartup(typeof(DiabetesManagement.Api.Startup))]
 namespace DiabetesManagement.Api
@@ -13,7 +14,7 @@ namespace DiabetesManagement.Api
         public override void Configure(IFunctionsHostBuilder builder)
         {
             builder.Services
-                .RegisterCoreServices(typeof(Startup), typeof(Get))
+                .RegisterCoreServices(typeof(Startup), typeof(Get), typeof(RepositoryBase<,>))
                 .RegisterDbServices()
                 .AddTransient(typeof(MediatR.Pipeline.IRequestPreProcessor<>), typeof(AuthenticationRequestHandler<>));
         }

@@ -22,6 +22,6 @@ public class Api : ApiBase
         Route = BaseUrl)]HttpRequest request, CancellationToken cancellationToken)
     {
         var command = request.Form.Bind<PostCommand>(ConvertorFactory);
-        return new OkObjectResult(await Mediator.Send(command, cancellationToken));
+        return await TryHandler(async(ct) => await Mediator.Send(command, ct), cancellationToken);
     }
 }

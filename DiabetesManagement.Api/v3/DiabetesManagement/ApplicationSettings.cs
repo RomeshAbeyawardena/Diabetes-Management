@@ -1,14 +1,17 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Diagnostics;
 
 namespace DiabetesManagement;
 public class ApplicationSettings
 {
+    private string systemAdministratorUser;
     public ApplicationSettings(IConfiguration configuration)
     {
         configuration.Bind(this);
         DefaultConnectionString = configuration.GetConnectionString("default");
+        Debug.WriteLine(SystemAdministratorUser);
     }
-    public string SystemAdministratorUser => Guid.NewGuid().ToString("D");
+    public string SystemAdministratorUser => systemAdministratorUser??= Guid.NewGuid().ToString("D");
     public TimeSpan? DefaultApplicationExpiry { get; set; }
     public string DefaultConnectionString { get; }
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();

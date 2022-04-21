@@ -49,14 +49,34 @@ public abstract class ApiBase
         return false;
     }
 
-    protected async Task<IActionResult> Validate(HttpRequest httpRequest, Guid userId, Func<Task<IActionResult>> successAction)
+    protected async Task<IActionResult> TryHandler<T>(HttpRequest httpRequest, Guid userId, Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
     {
         if (!await ValidateSession(httpRequest, userId))
         {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised request"));
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status400BadRequest, "Unauthorised session"));
         }
 
-        return await successAction();
+        return await TryHandler(attempt, cancellationToken);
+    }
+
+    protected async Task<IActionResult> TryHandler<T>(Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return new ObjectResult(new Models.Response(await attempt(cancellationToken)));
+        }
+        catch (InvalidOperationException exception)
+        {
+            return new BadRequestObjectResult(new Models.Response(StatusCodes.Status406NotAcceptable, exception.Message));
+        }
+        catch (InvalidDataException exception)
+        {
+            return new BadRequestObjectResult(new Models.Response(StatusCodes.Status400BadRequest, exception.Message));
+        }
+        catch (UnauthorizedAccessException exception)
+        {
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, exception.Message));
+        }
     }
 
     public ApiBase(IConvertorFactory convertorFactory, IMediator mediator)
