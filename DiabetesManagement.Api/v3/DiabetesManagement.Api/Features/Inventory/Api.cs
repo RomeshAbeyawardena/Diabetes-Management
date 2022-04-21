@@ -51,7 +51,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
+        var postRequest = request.Form.Bind<InventoryHistoryFeature.PostCommand>(ConvertorFactory);
 
         return await TryHandler(request, postRequest.UserId.Value, async (ct) => await Mediator
             .Send(postRequest, ct), cancellationToken);

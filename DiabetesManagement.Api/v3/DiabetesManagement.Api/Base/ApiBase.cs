@@ -53,7 +53,7 @@ public abstract class ApiBase
     {
         if (!await ValidateSession(httpRequest, userId))
         {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status400BadRequest, "Unauthorised session"));
+            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised session"));
         }
 
         return await TryHandler(attempt, cancellationToken);
