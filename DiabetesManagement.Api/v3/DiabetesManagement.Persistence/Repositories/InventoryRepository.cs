@@ -4,7 +4,7 @@ using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Core.Features.Inventory;
+namespace DiabetesManagement.Persistence.Repositories;
 
 public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, IInventoryRepository
 {
@@ -37,8 +37,13 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
 
     public async Task<IEnumerable<Models.Inventory>> Get(GetRequest request, CancellationToken cancellationToken)
     {
+        if (request.InventoryId.HasValue)
+        {
+            return await Query.Where(i => i.InventoryId == request.InventoryId.Value).ToArrayAsync(cancellationToken);
+        }
+
         return await Query
-            .Where(i => i.UserId == request.UserId && i.Subject == request.Key && i.DefaultIntent == request.Type)
+            .Where(i => i.UserId == request.UserId && i.Subject == request.Subject && i.DefaultIntent == request.Intent)
             .ToArrayAsync(cancellationToken);
     }
 

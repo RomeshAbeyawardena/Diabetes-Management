@@ -3,7 +3,7 @@ using DiabetesManagement.Core.Base;
 using DiabetesManagement.Features.Session;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Core.Features.Session
+namespace DiabetesManagement.Persistence.Repositories
 {
     public class SessionRepository : InventoryDbRepositoryBase<Models.Session>, ISessionRepository
     {
@@ -53,7 +53,7 @@ namespace DiabetesManagement.Core.Features.Session
 
         public async Task<Models.Session?> Get(GetRequest request, CancellationToken cancellationToken)
         {
-            if(request.AuthenticateSession)
+            if (request.AuthenticateSession)
             {
                 return await Query.Include(s => s.User)
                     .FirstOrDefaultAsync(s => s.SessionId == request.SessionId && s.UserId == request.UserId && s.Enabled

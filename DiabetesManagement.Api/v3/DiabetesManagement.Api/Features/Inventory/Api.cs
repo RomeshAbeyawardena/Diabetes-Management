@@ -10,7 +10,7 @@ namespace DiabetesManagement.Api.Features.Inventory;
 using DiabetesManagement.Api.Base;
 using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Inventory;
-using DiabetesManagement.Features.InventoryHistory;
+using InventoryHistoryFeature = DiabetesManagement.Features.InventoryHistory;
 
 public class Api : ApiBase
 {
@@ -61,7 +61,7 @@ public class Api : ApiBase
     {
         var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
 
-        return await Validate(request, postRequest.UserId!.Value, async () =>
+        return await Validate(request, postRequest.UserId.Value, async () =>
         {
             var result = await Mediator.Send(postRequest);
             return new OkObjectResult(new Models.Response(result));

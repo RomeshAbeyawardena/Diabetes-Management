@@ -1,5 +1,6 @@
 ﻿using DiabetesManagement.Contracts;
 using DiabetesManagement.Core.Features.Application;
+using DiabetesManagement.Features.Application;
 using DiabetesManagement.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
@@ -13,7 +14,7 @@ namespace DiabetesManagement.Tests.Repositories;
 
 public class ApplicationRepositoryTests
 {
-    private ApplicationRepository? sut;
+    private IApplicationRepository? sut;
 
     private Mock<IDbContextProvider>? dbContextProviderMock;
     private Mock<IClockProvider>? clockProvider;

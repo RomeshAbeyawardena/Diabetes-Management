@@ -1,9 +1,10 @@
-﻿using DiabetesManagement.Models;
+﻿using DiabetesManagement.Contracts;
+using DiabetesManagement.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement;
+namespace DiabetesManagement.Persistence;
 
-public class InventoryDbContext : DbContext
+public class InventoryDbContext : DbContext, IInventoryDbContext
 {
     public InventoryDbContext(DbContextOptions dbContextOptions)
         : base(dbContextOptions)

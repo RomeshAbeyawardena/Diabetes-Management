@@ -14,12 +14,12 @@ public class DefaultDbContextProvider : IDbContextProvider
         this.serviceProvider = serviceProvider;
     }
 
-    public DbContext? GetDbContext(Type dbContextType)
+    public IDbContext? GetDbContext(Type dbContextType)
     {
-        return serviceProvider.GetService(dbContextType) as DbContext;
+        return serviceProvider.GetService(dbContextType) as IDbContext;
     }
 
-    public T? GetDbContext<T>() where T : DbContext
+    public T? GetDbContext<T>() where T : IDbContext
     {
         return serviceProvider.GetService<T>();
     }

@@ -6,6 +6,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UserSecretsId>69d25d03-4ac1-45fb-b85a-0287d532f73a</UserSecretsId>
+    <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
@@ -15,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\DiabetesManagement.Core\DiabetesManagement.Core.csproj" />
     <ProjectReference Include="..\DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj" />
+    <ProjectReference Include="..\DiabetesManagement.Persistence\DiabetesManagement.Persistence.csproj" />
     <ProjectReference Include="..\DiabetesManagement\DiabetesManagement.csproj" />
   </ItemGroup>
   <ItemGroup>

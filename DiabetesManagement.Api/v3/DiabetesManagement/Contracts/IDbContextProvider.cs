@@ -4,7 +4,7 @@ namespace DiabetesManagement.Contracts;
 
 public interface IDbContextProvider
 {
-    DbContext? GetDbContext(Type dbContextType);
+    IDbContext? GetDbContext(Type dbContextType);
     T? GetDbContext<T>()
-        where T: DbContext;
+        where T: IDbContext;
 }

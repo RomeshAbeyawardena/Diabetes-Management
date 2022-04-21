@@ -4,7 +4,7 @@ using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.Application;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Core.Features.Application;
+namespace DiabetesManagement.Persistence.Repositories;
 
 public class ApplicationRepository : InventoryDbRepositoryBase<Models.Application>, IApplicationRepository
 {

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Features.Inventory;
 using DiabetesManagement.Features.InventoryHistory;
 
 namespace DiabetesManagement.Core.Features.InventoryHistory;

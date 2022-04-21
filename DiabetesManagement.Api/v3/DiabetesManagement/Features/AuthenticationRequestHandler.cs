@@ -1,8 +1,10 @@
 ﻿using DiabetesManagement.Attributes;
+using DiabetesManagement.Contracts;
 using DiabetesManagement.Features.AccessToken;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Http;
+using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 namespace DiabetesManagement.Features;
@@ -12,23 +14,46 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 {
     private readonly IHttpContextAccessor httpContext;
     private readonly IMediator mediator;
+    private readonly IJwtProvider jwtProvider;
+    private readonly ApplicationSettings applicationSettings;
+    private readonly TokenValidationParameters validationParameters;
 
-    private async Task<IEnumerable<string?>> GetClaims(string accessTokenValue)
+    private async Task<IEnumerable<string?>> GetClaims(string accessTokenKey, string accessTokenValue)
     {
-        var accessToken = await mediator.Send(new GetRequest { AccessToken = accessTokenValue });
-
-        if(accessToken == null || accessToken.AccessTokenClaims == null)
+        if(accessTokenKey == "sys.admin" && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
-            throw new UnauthorizedAccessException();
+
         }
 
-        return accessToken.AccessTokenClaims.Select(a => a.Claim);
+        if (Guid.TryParse(accessTokenKey, out var key))
+        {
+            var accessToken = await mediator.Send(new GetRequest { Key = key, AccessToken = accessTokenValue });
+
+            if (accessToken != null && accessToken.AccessTokenClaims != null)
+            {
+                return accessToken.AccessTokenClaims.Select(a => a.Claim);
+            }
+        }
+
+        throw new UnauthorizedAccessException();
     }
 
-    public AuthenticationRequestHandler(IHttpContextAccessor httpContext, IMediator mediator)
+    public AuthenticationRequestHandler(IHttpContextAccessor httpContext, IMediator mediator, IJwtProvider jwtProvider, ApplicationSettings applicationSettings)
     {
         this.httpContext = httpContext;
         this.mediator = mediator;
+        this.jwtProvider = jwtProvider;
+        this.applicationSettings = applicationSettings;
+        var securityKey = new SymmetricSecurityKey(applicationSettings.ConfidentialServerKeyBytes);
+
+        validationParameters = new TokenValidationParameters
+        {
+           ValidateAudience = true,
+           ValidAudience = applicationSettings.Audience,
+           ValidIssuer = applicationSettings.Issuer,
+           IssuerSigningKey = securityKey,
+           ValidateIssuerSigningKey = true
+        };
     }
 
     public IHttpContextAccessor HttpContext => httpContext;
@@ -44,8 +69,14 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
         if(context.Request.Headers.TryGetValue("x-api-acc-token", out var accessToken))
         {
-            var claims = await GetClaims(accessToken.FirstOrDefault()!);
 
+            var parameters = jwtProvider.Extract(accessToken, validationParameters);
+            IEnumerable<string> claims = Array.Empty<string>();
+            if (parameters != null && parameters.TryGetValue("api-key", out var apiKey)
+                && parameters.TryGetValue("api-value", out var value))
+            {
+                claims = await GetClaims(apiKey, value);
+            }
             var requestType = request.GetType();
             var claimsAttribute = requestType.GetCustomAttribute<RequiresClaimsAttribute>();
 

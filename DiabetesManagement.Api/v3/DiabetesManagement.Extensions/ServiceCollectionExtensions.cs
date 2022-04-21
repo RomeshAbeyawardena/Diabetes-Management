@@ -12,7 +12,6 @@ public static class ServiceCollectionExtensions
         return services
             .AddSingleton<ISystemClock, SystemClock>()
             .AddSingleton<ApplicationSettings>()
-            .AddDbContext<InventoryDbContext>(ConfigureDbContext)
             .AddMediatR(types)
             .AddAutoMapper(types)
             .Scan(s => s
@@ -26,11 +25,5 @@ public static class ServiceCollectionExtensions
                 .AddClasses(c => c.WithAttribute<RegisterServiceAttribute>(s => s.ServiceLifetime == ServiceLifetime.Transient))
                 .AsImplementedInterfaces()
                 .WithTransientLifetime());
-    }
-
-    private static void ConfigureDbContext(IServiceProvider serviceProvider, DbContextOptionsBuilder builder)
-    {
-        var applicationSettings = serviceProvider.GetService<ApplicationSettings>();
-        builder.UseSqlServer(applicationSettings!.DefaultConnectionString);
     }
 }

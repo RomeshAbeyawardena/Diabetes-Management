@@ -4,7 +4,7 @@ using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Features.InventoryHistory;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Core.Features.InventoryHistory;
+namespace DiabetesManagement.Persistence.Repositories;
 
 public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.InventoryHistory>, IInventoryHistoryRepository
 {
@@ -22,7 +22,7 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         this.clockProvider = clockProvider;
     }
 
-    public async Task<IEnumerable<Models.InventoryHistory>> Get(DiabetesManagement.Features.Inventory.GetRequest request, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Models.InventoryHistory>> Get(GetRequest request, CancellationToken cancellationToken)
     {
         if (request.InventoryHistoryId.HasValue)
         {
@@ -32,11 +32,11 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         var includeQuery = Query
                 .Include(i => i.Inventory);
 
-        if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Key)
-            && !string.IsNullOrWhiteSpace(request.Type))
+        if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Subject)
+            && !string.IsNullOrWhiteSpace(request.Intent))
         {
             var query = includeQuery
-                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Key && i.Intent == request.Type);
+                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Subject && i.Intent == request.Intent);
 
             if (request.Version.HasValue)
             {
@@ -57,16 +57,16 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
         return Array.Empty<Models.InventoryHistory>();
     }
 
-    public async Task<int> GetLatestVersion(DiabetesManagement.Features.Inventory.GetRequest request, CancellationToken cancellationToken)
+    public async Task<int> GetLatestVersion(GetVersionRequest request, CancellationToken cancellationToken)
     {
         var includeQuery = Query
                 .Include(i => i.Inventory);
 
-        if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Key)
-           && !string.IsNullOrWhiteSpace(request.Type))
+        if (request.UserId.HasValue && !string.IsNullOrWhiteSpace(request.Subject)
+           && !string.IsNullOrWhiteSpace(request.Intent))
         {
             return await includeQuery
-                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Key && i.Intent == request.Type)
+                .Where(i => i.Inventory!.UserId == request.UserId && i.Inventory.Subject == request.Subject && i.Intent == request.Intent)
                 .Select(i => i.Version)
                 .MaxAsync(cancellationToken);
         }
@@ -77,4 +77,5 @@ public class InventoryHistoryRepository : InventoryDbRepositoryBase<Models.Inven
     {
         return base.Save(request, cancellationToken);
     }
+
 }

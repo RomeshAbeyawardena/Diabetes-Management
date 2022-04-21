@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DiabetesManagement.Api.Base;
-[AuthoriseActionFilter]
+
 public abstract class ApiBase
 {
     private readonly IConvertorFactory convertorFactory;

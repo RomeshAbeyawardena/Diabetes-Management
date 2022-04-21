@@ -11,7 +11,7 @@ namespace DiabetesManagement.Core.Base;
 
 [RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped)]
 public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
-    where TDbContext : DbContext
+    where TDbContext : IDbContext
     where T : class
 {
     private readonly DbSet<T> dbSet;

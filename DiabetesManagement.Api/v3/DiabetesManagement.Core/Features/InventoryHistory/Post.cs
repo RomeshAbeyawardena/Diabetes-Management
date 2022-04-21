@@ -8,41 +8,39 @@ namespace DiabetesManagement.Core.Features.InventoryHistory;
 public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
 {
     private readonly IMapper mapper;
+    private readonly IMediator mediator;
     private readonly IInventoryHistoryRepository inventoryHistoryRepository;
-    private readonly InventoryFeature.IInventoryRepository inventoryRepository;
-    public Post(IMapper mapper, IInventoryHistoryRepository inventoryHistoryRepository, InventoryFeature.IInventoryRepository inventoryRepository)
+    public Post(IMapper mapper, IMediator mediator, IInventoryHistoryRepository inventoryHistoryRepository)
     {
         this.mapper = mapper;
+        this.mediator = mediator;
         this.inventoryHistoryRepository = inventoryHistoryRepository;
-        this.inventoryRepository = inventoryRepository;
     }
 
     public async Task<Models.InventoryHistory> Handle(PostCommand request, CancellationToken cancellationToken)
     {
         var getRequest = mapper.Map<InventoryFeature.GetRequest>(request);
-        //check if inventory exists;
-        var inventory = (await inventoryRepository.Get(getRequest, cancellationToken)).SingleOrDefault();
+        
+        var inventory = (await mediator.Send(getRequest, cancellationToken)).FirstOrDefault();
         var version = 1;
-        //create inventory
+        //check if inventory exists;
         if (inventory == null)
         {
-            inventory = await inventoryRepository.Save(new InventoryFeature.SaveCommand
+            //create inventory
+            inventory = await mediator.Send(new InventoryFeature.PostCommand
             {
-                Inventory = new Models.Inventory
-                {
                     DefaultIntent = request.Type,
                     Subject = request.Key,
-                    UserId = request.UserId!.Value
-                },
+                    UserId = request.UserId!.Value,
                 CommitChanges = false
             }, cancellationToken);
         }
         else
         {
-            //increment version for new item
-            version = await inventoryHistoryRepository.GetLatestVersion(getRequest, cancellationToken) + 1;
+            //increment version for new version
+            version = await inventoryHistoryRepository.GetLatestVersion(mapper.Map<GetVersionRequest>(request), cancellationToken) + 1;
             //update modified flag
-            await inventoryRepository.Save(new InventoryFeature.SaveCommand { 
+            await mediator.Send(new InventoryFeature.PostCommand { 
                 Inventory = inventory, 
                 CommitChanges = false 
             }, cancellationToken);

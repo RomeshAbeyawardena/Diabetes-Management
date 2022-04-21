@@ -8,7 +8,7 @@ public class ApplicationSettings
         configuration.Bind(this);
         DefaultConnectionString = configuration.GetConnectionString("default");
     }
-
+    public string SystemAdministratorUser => Guid.NewGuid().ToString("D");
     public TimeSpan? DefaultApplicationExpiry { get; set; }
     public string DefaultConnectionString { get; }
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();

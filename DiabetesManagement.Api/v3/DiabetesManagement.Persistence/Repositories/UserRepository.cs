@@ -5,7 +5,7 @@ using DiabetesManagement.Features.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace DiabetesManagement.Core.Features.User
+namespace DiabetesManagement.Persistence.Repositories
 {
     public class UserRepository : InventoryDbRepositoryBase<Models.User>, IUserRepository
     {
@@ -30,7 +30,7 @@ namespace DiabetesManagement.Core.Features.User
         protected override Task<bool> Add(Models.User user, CancellationToken cancellationToken)
         {
             PrepareEncrpytedFields(user);
-            
+
             user.Created = clockProvider.Clock.UtcNow;
             user.Hash = user.GetHash();
             return AcceptChanges;
@@ -89,7 +89,7 @@ namespace DiabetesManagement.Core.Features.User
         {
             prepareEncryptedFields = command.PrepareEncryptedFields;
             var savedResult = await base.Save(command, cancellationToken);
-            
+
             DecryptFields(savedResult);
 
             return savedResult;
