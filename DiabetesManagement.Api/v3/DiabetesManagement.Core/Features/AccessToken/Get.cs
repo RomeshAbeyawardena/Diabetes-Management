@@ -14,6 +14,6 @@ public class Get : IRequestHandler<GetRequest, Models.AccessToken>
 
     public Task<Models.AccessToken> Handle(GetRequest request, CancellationToken cancellationToken)
     {
-        return accessTokenRepository.Get(request.AccessToken!, cancellationToken);
+        return accessTokenRepository.Get(request, cancellationToken);
     }
 }

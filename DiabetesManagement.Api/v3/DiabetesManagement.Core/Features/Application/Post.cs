@@ -22,7 +22,9 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 
     public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
     {
-        var hasClaims = request.Claims != null && request.Claims.Any();
+        var claims = request.Claims.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        
+        var hasClaims = claims.Any();
 
         var application = await applicationRepository.Save(new SaveCommand
         {
@@ -36,30 +38,38 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
                 Intent = request.Intent,
                 UserId = request.UserId ?? throw new NullReferenceException()
             },
-            CommitChanges = request.Claims == null || !request.Claims.Any()
+            CommitChanges = !claims.Any()
         }, cancellationToken);
 
         if (hasClaims)
         {
-            var accessToken = await accessTokenRepository.Save(new Models.AccessToken
+            var accessToken = new Models.AccessToken
             {
+                Key = request.Intent,
                 Value = request.AccessToken,
                 Expires = request.Expires.HasValue
                     ? clockProvider.Clock.UtcNow.Add(request.Expires.Value)
                     : null,
-                ApplicationId = application.ApplicationId
-            }, cancellationToken);
+                ApplicationId = application.ApplicationId,
+            };
 
-            accessToken.Entity.AccessTokenClaims ??= new Collection<Models.AccessTokenClaim>();
-            
-            foreach (var claim in request.Claims!)
+            accessToken.AccessTokenClaims ??= new Collection<Models.AccessTokenClaim>();
+
+            foreach (var claim in claims!)
             {
-                accessToken.Entity.AccessTokenClaims.Add(new Models.AccessTokenClaim { 
-                    Claim = claim, 
-                    Created = clockProvider.Clock.UtcNow, 
-                    Expires = clockProvider.Clock.UtcNow.AddDays(365) 
+                accessToken.AccessTokenClaims.Add(new Models.AccessTokenClaim
+                {
+                    Claim = claim,
+                    Created = clockProvider.Clock.UtcNow,
+                    Expires = clockProvider.Clock.UtcNow.AddDays(365)
                 });
             }
+
+            await accessTokenRepository.Save(new AccessTokenFeature.SaveCommand
+            {
+                AccessToken = accessToken,
+                CommitChanges = true
+            }, cancellationToken);
 
         }
 

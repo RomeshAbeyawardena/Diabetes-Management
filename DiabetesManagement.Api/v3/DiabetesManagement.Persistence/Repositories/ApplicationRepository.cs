@@ -13,7 +13,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     private void DecryptFields(Models.Application application)
     {
-        application.DisplayName = application.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.DisplayName);
+        application.DisplayName = application.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.DisplayNameCaseSignature);
 
         application.Name = application.Name!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.NameCaseSignature);
     }
@@ -22,6 +22,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     {
         application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
         application.DisplayNameCaseSignature = caseSignature;
+        
         application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
         application.NameCaseSignature = caseSignature;
     }

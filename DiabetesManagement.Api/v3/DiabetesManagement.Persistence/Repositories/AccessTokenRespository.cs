@@ -7,13 +7,21 @@ namespace DiabetesManagement.Persistence.Repositories;
 
 public class AccessTokenRespository : InventoryDbRepositoryBase<Models.AccessToken>, IAccessTokenRepository
 {
+    protected override Task<bool> Add(Models.AccessToken entity, CancellationToken cancellationToken)
+    {
+        entity.Enabled = true;
+        return AcceptChanges;
+    }
+
     public AccessTokenRespository(IDbContextProvider dbContextProvider) : base(dbContextProvider)
     {
     }
 
-    public Task<Models.AccessToken?> Get(string accessToken, CancellationToken cancellationToken)
+    public Task<Models.AccessToken?> Get(GetRequest request, CancellationToken cancellationToken)
     {
-        return Query.FirstOrDefaultAsync(a => a.Value == accessToken, cancellationToken);
+        return Query.FirstOrDefaultAsync(a => a.AccessTokenId == request.Key 
+            && a.Key == request.Intent 
+            && a.Value == request.AccessToken, cancellationToken);
     }
 
     public Task<Models.AccessToken> Save(SaveCommand saveCommand, CancellationToken cancellationToken)

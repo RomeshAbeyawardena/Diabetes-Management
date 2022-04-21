@@ -77,6 +77,15 @@ public abstract class ApiBase
         {
             return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, exception.Message));
         }
+        catch (Exception exception)
+        {
+#if DEBUG
+            throw;
+#else
+            return new UnprocessableEntityObjectResult(new Models.Response(StatusCodes.Status500InternalServerError, exception.Message));
+#endif
+
+        }
     }
 
     public ApiBase(IConvertorFactory convertorFactory, IMediator mediator)

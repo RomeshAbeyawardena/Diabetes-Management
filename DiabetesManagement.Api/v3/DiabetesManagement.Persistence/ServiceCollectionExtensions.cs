@@ -8,8 +8,8 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterDbServices(this IServiceCollection services)
     {
         return services
-            .AddTransient<IDbContext, InventoryDbContext>()
-            .AddDbContext<InventoryDbContext>(ConfigureDbContext);
+            .AddDbContext<InventoryDbContext>(ConfigureDbContext)
+            .AddTransient<IInventoryDbContext>(s => s.GetRequiredService<InventoryDbContext>());
     }
 
 

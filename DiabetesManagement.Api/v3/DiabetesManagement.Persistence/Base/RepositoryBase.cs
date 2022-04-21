@@ -57,12 +57,12 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     protected virtual Task<bool> Add(T model, CancellationToken cancellationToken)
     {
-        return RejectChanges;
+        return AcceptChanges;
     }
 
     protected virtual Task<bool> Update(T model, CancellationToken cancellationToken)
     {
-        return RejectChanges;
+        return AcceptChanges;
     }
 
     public RepositoryBase(IDbContextProvider dbContextProvider)

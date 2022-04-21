@@ -18,7 +18,8 @@ public class Sign : IRequestHandler<SignRequest, string>
     {
         await Task.CompletedTask;
         return jwtProvider.BuildToken(new Dictionary<string, object> { 
-            { Keys.ApiToken, request.ApiKey! }, 
+            { Keys.ApiToken, request.ApiKey! },
+            { Keys.ApiIntent, request.ApiIntent! },
             { Keys.ApiTokenChallenge, request.ApiChallenge! } }, jwtProvider.DefaultTokenValidationParameters);
     }
 }

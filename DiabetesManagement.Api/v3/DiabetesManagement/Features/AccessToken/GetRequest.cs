@@ -8,5 +8,6 @@ namespace DiabetesManagement.Features.AccessToken
     {
         public Guid Key { get; set; }
         public string? AccessToken { get; set; }
+        public string? Intent { get; set; }
     }
 }

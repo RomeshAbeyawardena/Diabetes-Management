@@ -7,7 +7,7 @@ namespace DiabetesManagement.Features.Application;
 public class PostCommand : IRequest<Models.Application>
 {
     public string? AccessToken { get; set; }
-    public IEnumerable<string>? Claims { get; set; }
+    public string? Claims { get; set; }
     public string? DisplayName { get; set; }
     public TimeSpan? Expires { get; set; }
     public string? Intent { get; set; }

@@ -17,7 +17,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
     private readonly IJwtProvider jwtProvider;
     private readonly IMediator mediator;
 
-    private async Task<IEnumerable<string?>> GetClaims(string accessTokenKey, string accessTokenValue)
+    private async Task<IEnumerable<string?>> GetClaims(string accessTokenKey, string accessTokenIntent, string accessTokenValue)
     {
         if(accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
@@ -26,7 +26,11 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
         if (Guid.TryParse(accessTokenKey, out var key))
         {
-            var accessToken = await mediator.Send(new GetRequest { Key = key, AccessToken = accessTokenValue });
+            var accessToken = await mediator.Send(new GetRequest { 
+                Key = key, 
+                Intent = accessTokenIntent, 
+                AccessToken = accessTokenValue 
+            });
 
             if (accessToken != null && accessToken.AccessTokenClaims != null)
             {
@@ -70,9 +74,10 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
             IEnumerable<string> claims = Array.Empty<string>();
             if (parameters != null && parameters.TryGetValue(Keys.ApiToken, out var apiKey)
+                && parameters.TryGetValue(Keys.ApiIntent, out var intent)
                 && parameters.TryGetValue(Keys.ApiTokenChallenge, out var value))
             {
-                claims = await GetClaims(apiKey, value);
+                claims = await GetClaims(apiKey, intent, value);
             }
             
             if (claims.Any(c => claimsAttribute.Claims.Contains(c)))
