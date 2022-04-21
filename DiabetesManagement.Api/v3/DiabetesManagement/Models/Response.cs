@@ -2,14 +2,14 @@
 
 public class Response
 {
-    public Response(object data, int statusCode, string statusMessage)
+    public Response(object? data, int statusCode, string statusMessage)
     {
         Data = data;
         StatusCode = statusCode;
         StatusMessage = statusMessage;
     }
 
-    public Response(object data)
+    public Response(object? data)
         : this(data, 200, string.Empty)
     {
         
@@ -23,5 +23,5 @@ public class Response
 
     public int StatusCode { get; }
     public string StatusMessage { get; }
-    public object Data { get; }
+    public object? Data { get; }
 }

@@ -53,7 +53,7 @@ public class Api : ApiBase
     {
         var postRequest = request.Form.Bind<InventoryHistoryFeature.PostCommand>(ConvertorFactory);
 
-        return await TryHandler(request, postRequest.UserId.Value, async (ct) => await Mediator
+        return await TryHandler(request, postRequest.UserId!.Value, async (ct) => await Mediator
             .Send(postRequest, ct), cancellationToken);
     }
 }

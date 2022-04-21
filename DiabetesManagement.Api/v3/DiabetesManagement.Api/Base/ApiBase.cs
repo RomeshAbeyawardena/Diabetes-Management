@@ -15,7 +15,7 @@ public abstract class ApiBase
     protected IConvertorFactory ConvertorFactory => convertorFactory;
     protected IMediator Mediator => mediator;
 
-    protected bool TryGetSessionId(HttpRequest httpRequest, out Guid sessionId)
+    protected static bool TryGetSessionId(HttpRequest httpRequest, out Guid sessionId)
     {
         sessionId = default;
         return httpRequest.Headers.TryGetValue("X-API-SESSION-KEY", out var sessionValue)
@@ -59,7 +59,7 @@ public abstract class ApiBase
         return await TryHandler(attempt, cancellationToken);
     }
 
-    protected async Task<IActionResult> TryHandler<T>(Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
+    protected static async Task<IActionResult> TryHandler<T>(Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
     {
         try
         {

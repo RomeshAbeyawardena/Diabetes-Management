@@ -22,7 +22,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 
     public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
     {
-        var claims = request.Claims.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+        var claims = request.Claims!.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         
         var hasClaims = claims.Any();
 

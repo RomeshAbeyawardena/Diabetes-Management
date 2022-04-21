@@ -17,7 +17,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
     private readonly IJwtProvider jwtProvider;
     private readonly IMediator mediator;
 
-    private async Task<IEnumerable<string?>> GetClaims(string accessTokenKey, string accessTokenIntent, string accessTokenValue)
+    private async Task<IEnumerable<string?>?> GetClaims(string accessTokenKey, string accessTokenIntent, string accessTokenValue)
     {
         if(accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
@@ -72,7 +72,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
             var parameters = jwtProvider.Extract(accessToken, jwtProvider.DefaultTokenValidationParameters);
 
-            IEnumerable<string> claims = Array.Empty<string>();
+            IEnumerable<string?>? claims = Array.Empty<string>();
             if (parameters != null && parameters.TryGetValue(Keys.ApiToken, out var apiKey)
                 && parameters.TryGetValue(Keys.ApiIntent, out var intent)
                 && parameters.TryGetValue(Keys.ApiTokenChallenge, out var value))
@@ -80,7 +80,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
                 claims = await GetClaims(apiKey, intent, value);
             }
             
-            if (claims.Any(c => claimsAttribute.Claims.Contains(c)))
+            if (claims!.Any(c => claimsAttribute.Claims.Contains(c)))
             {
                 //consists of matching claims grant access
                 return;

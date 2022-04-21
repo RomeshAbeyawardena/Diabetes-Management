@@ -8,10 +8,9 @@ namespace DiabetesManagement.Core.Features.AccessToken;
 public class Sign : IRequestHandler<SignRequest, string>
 {
     private readonly IJwtProvider jwtProvider;
-    public Sign(ApplicationSettings applicationSettings, IJwtProvider jwtProvider)
+    public Sign(IJwtProvider jwtProvider)
     {
         this.jwtProvider = jwtProvider;
-        var securityKey = new SymmetricSecurityKey(applicationSettings.ConfidentialServerKeyBytes);
     }
 
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)

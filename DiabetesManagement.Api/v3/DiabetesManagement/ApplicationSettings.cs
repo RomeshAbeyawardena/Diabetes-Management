@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace DiabetesManagement;
 public class ApplicationSettings
 {
-    private string systemAdministratorUser;
+    private string? systemAdministratorUser;
     public ApplicationSettings(IConfiguration configuration)
     {
         configuration.Bind(this);

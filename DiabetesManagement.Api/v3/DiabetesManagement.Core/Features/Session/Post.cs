@@ -23,7 +23,7 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
         {
             session = new Models.Session
             {
-                SessionId = request.SessionId.HasValue ? request.SessionId.Value : default,
+                SessionId = request.SessionId ?? default,
                 UserId = request.UserId!.Value,
                 Enabled = true
             };
