@@ -1,6 +1,6 @@
 ﻿using DiabetesManagement.Api.Base;
 using DiabetesManagement.Contracts;
-using DiabetesManagement.Extensions.Extensions;
+using DiabetesManagement.Extensions;
 using DiabetesManagement.Features.Application;
 using MediatR;
 using Microsoft.AspNetCore.Http;

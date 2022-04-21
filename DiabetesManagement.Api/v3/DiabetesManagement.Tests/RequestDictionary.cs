@@ -2,11 +2,11 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Primitives;
-using DiabetesManagement.Extensions.Extensions;
 using DiabetesManagement.Contracts;
 using DiabetesManagement.Core.Convertors;
 using DiabetesManagement.Core.Defaults;
 using System.ComponentModel.DataAnnotations;
+using DiabetesManagement.Extensions;
 
 namespace DiabetesManagement.Tests;
 

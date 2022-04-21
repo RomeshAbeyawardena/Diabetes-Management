@@ -8,8 +8,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 namespace DiabetesManagement.Api.Features.Inventory;
 
 using DiabetesManagement.Api.Base;
-using DiabetesManagement.Extensions.Extensions;
-using DiabetesManagement.Features.Inventory;
+using DiabetesManagement.Extensions;
 using InventoryHistoryFeature = DiabetesManagement.Features.InventoryHistory;
 
 public class Api : ApiBase
@@ -27,7 +26,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
+        var getRequest = request.Query.Bind<InventoryHistoryFeature.GetRequest>(ConvertorFactory);
         return await TryHandler(request, getRequest.UserId!.Value, async (ct) => 
             await Mediator.Send(getRequest, ct), cancellationToken);
     }
@@ -37,7 +36,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
+        var getRequest = request.Query.Bind<InventoryHistoryFeature.GetRequest>(ConvertorFactory);
 
         return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
         {

@@ -1,6 +1,6 @@
 ﻿using DiabetesManagement.Contracts;
 using DiabetesManagement.Core.Base;
-using DiabetesManagement.Extensions.Extensions;
+using DiabetesManagement.Extensions;
 using DiabetesManagement.Features.Inventory;
 using Microsoft.EntityFrameworkCore;
 

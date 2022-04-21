@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace DiabetesManagement.Extensions.Extensions;
+namespace DiabetesManagement.Extensions;
 
 public static class StringExtensions
 {

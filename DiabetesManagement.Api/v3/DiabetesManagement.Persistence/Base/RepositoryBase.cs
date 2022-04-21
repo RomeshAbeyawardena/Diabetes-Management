@@ -1,6 +1,6 @@
 ﻿using DiabetesManagement.Attributes;
 using DiabetesManagement.Contracts;
-using DiabetesManagement.Extensions.Extensions;
+using DiabetesManagement.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel.DataAnnotations;
