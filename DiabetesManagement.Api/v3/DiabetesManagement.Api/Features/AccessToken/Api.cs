@@ -18,7 +18,8 @@ public class Api : ApiBase
     }
 
     [FunctionName("Sign")]
-    public async Task<IActionResult> Sign([HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)] HttpRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Sign([HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)] 
+        HttpRequest request, CancellationToken cancellationToken)
     {
         return new OkObjectResult(await Mediator
             .Send(request.Form.Bind<SignRequest>(ConvertorFactory), cancellationToken));

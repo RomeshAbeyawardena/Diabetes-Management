@@ -27,12 +27,12 @@ public class ApplicationRepositoryTests
         clockProvider = new();
         
         //dbContextProviderMock.Setup(s => s.GetDbContext<InventoryDbContext>()).Returns(new InventoryDbContext(options));
-        sut = new (dbContextProviderMock.Object, new ApplicationSettings(configurationMock.Object), clockProvider.Object);
+        //sut = new (dbContextProviderMock.Object, new ApplicationSettings(configurationMock.Object), clockProvider.Object);
     }
 
     [Test]
     public async Task Save()
     {
-        await sut.Save(new Application { }, CancellationToken.None);
+        //await sut.Save(new Application { }, CancellationToken.None);
     }
 }
