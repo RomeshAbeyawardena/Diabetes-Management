@@ -37,7 +37,7 @@ namespace Inventory.Persistence.Repositories
 
             return await (entityState == EntityState.Added
                 ? Query.AnyAsync(u => u.EmailAddress == model.EmailAddress, cancellationToken)
-                : Query.AnyAsync(u => u.UserId != model.UserId && u.EmailAddress == model.EmailAddress, cancellationToken));
+                : Query.AnyAsync(u => u.UserId != model.UserId && u.EmailAddress == model.EmailAddress, cancellationToken)) == false;
         }
 
         protected override Task<bool> Add(Models.User user, CancellationToken cancellationToken)

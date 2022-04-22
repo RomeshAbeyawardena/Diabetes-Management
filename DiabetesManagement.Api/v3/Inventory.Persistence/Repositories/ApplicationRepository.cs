@@ -33,7 +33,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         
         return await (entityState == EntityState.Added 
             ? Query.AnyAsync(a => a.Name == model.Name, cancellationToken)
-            : Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name, cancellationToken));
+            : Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name, cancellationToken)) == false;
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)

@@ -36,7 +36,7 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
             ? Query.AnyAsync(i => i.UserId == model.UserId && i.DefaultIntent == model.DefaultIntent 
                 && i.Subject == model.Subject, cancellationToken)
             : Query.AnyAsync(i => i.InventoryId != model.InventoryId && i.UserId == model.UserId 
-                && i.DefaultIntent == model.DefaultIntent && i.Subject == model.Subject, cancellationToken));
+                && i.DefaultIntent == model.DefaultIntent && i.Subject == model.Subject, cancellationToken)) == false;
     }
 
     public InventoryRepository(IDbContextProvider context, IClockProvider clockProvider) : base(context)
