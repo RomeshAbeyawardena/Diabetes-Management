@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace DiabetesManagement.Api.Features.Inventory;
+namespace Inventory.Api.Features.Inventory;
 
 public class MappingProfile : Profile
 {

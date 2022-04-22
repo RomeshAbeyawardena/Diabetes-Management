@@ -1,10 +1,10 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
 
-namespace DiabetesManagement.Extensions;
+namespace Inventory.Extensions;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterCoreServices(this IServiceCollection services, params Type[] types)

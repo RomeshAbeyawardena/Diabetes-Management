@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Contracts;
+namespace Inventory.Contracts;
 
 public interface IDbContextProvider
 {
     IDbContext? GetDbContext(Type dbContextType);
     T? GetDbContext<T>()
-        where T: IDbContext;
+        where T : IDbContext;
 }

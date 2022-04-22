@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DiabetesManagement;
+namespace Inventory;
 
 public class UnauthorizedObjectResult : ObjectResult
 {
@@ -10,5 +10,5 @@ public class UnauthorizedObjectResult : ObjectResult
     {
         StatusCode = StatusCodes.Status401Unauthorized;
     }
-    
+
 }

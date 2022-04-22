@@ -1,13 +1,15 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
-using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Features;
+using Inventory;
+using Inventory.Attributes;
+using Inventory.Contracts;
+using Inventory.Features.AccessToken;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
-namespace DiabetesManagement.Features;
+namespace Inventory.Features;
 
 public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequest>
     where TRequest : class
@@ -19,17 +21,18 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
     private async Task<IEnumerable<string?>?> GetClaims(string accessTokenKey, string accessTokenIntent, string accessTokenValue)
     {
-        if(accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
+        if (accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
             return Permissions.SysAdmin;
         }
 
         if (Guid.TryParse(accessTokenKey, out var key))
         {
-            var accessToken = await mediator.Send(new GetRequest { 
-                Key = key, 
-                Intent = accessTokenIntent, 
-                AccessToken = accessTokenValue 
+            var accessToken = await mediator.Send(new GetRequest
+            {
+                Key = key,
+                Intent = accessTokenIntent,
+                AccessToken = accessTokenValue
             });
 
             if (accessToken != null && accessToken.AccessTokenClaims != null)
@@ -53,14 +56,14 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
     public async Task Process(TRequest request, CancellationToken cancellationToken)
     {
-        if(httpContext.HttpContext == null)
+        if (httpContext.HttpContext == null)
         {
             throw new NullReferenceException();
         }
 
         var context = httpContext.HttpContext;
 
-        if(context.Request.Headers.TryGetValue("x-api-acc-token", out var accessToken))
+        if (context.Request.Headers.TryGetValue("x-api-acc-token", out var accessToken))
         {
             var requestType = request.GetType();
             var claimsAttribute = requestType.GetCustomAttribute<RequiresClaimsAttribute>();
@@ -79,7 +82,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
             {
                 claims = await GetClaims(apiKey, intent, value);
             }
-            
+
             if (claims!.Any(c => claimsAttribute.Claims.Contains(c)))
             {
                 //consists of matching claims grant access

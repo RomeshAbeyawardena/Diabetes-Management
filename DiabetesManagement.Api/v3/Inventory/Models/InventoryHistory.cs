@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DiabetesManagement.Models
+namespace Inventory.Models
 {
     [MessagePack.MessagePackObject(true),
      Table("INVENTORY_HISTORY")]

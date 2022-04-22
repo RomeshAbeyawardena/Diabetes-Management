@@ -1,8 +1,7 @@
-﻿using InventoryHistoryFeature = DiabetesManagement.Features.InventoryHistory;
-using MediatR;
-using DiabetesManagement.Features.InventoryHistory;
+﻿using MediatR;
+using Inventory.Features.InventoryHistory;
 
-namespace DiabetesManagement.Core.Features.InventoryHistory;
+namespace Inventory.Core.Features.InventoryHistory;
 
 public class Get : IRequestHandler<GetRequest, IEnumerable<Models.InventoryHistory>>
 {

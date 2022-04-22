@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Extensions;
+﻿namespace Inventory.Extensions;
 
 public static class ObjectExtensions
 {

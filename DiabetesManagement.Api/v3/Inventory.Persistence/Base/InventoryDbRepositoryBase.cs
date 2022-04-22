@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Persistence;
+﻿using Inventory.Persistence;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Base;
+namespace Inventory.Persistence.Base;
 
 public abstract class InventoryDbRepositoryBase<T> : RepositoryBase<IInventoryDbContext, T>
     where T : class
@@ -11,7 +11,7 @@ public abstract class InventoryDbRepositoryBase<T> : RepositoryBase<IInventoryDb
         return RejectChanges;
     }
 
-    protected InventoryDbRepositoryBase(IDbContextProvider dbContextProvider) 
+    protected InventoryDbRepositoryBase(IDbContextProvider dbContextProvider)
         : base(dbContextProvider)
     {
     }

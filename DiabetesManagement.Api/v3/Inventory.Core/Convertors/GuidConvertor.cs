@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Convertors;
+namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class GuidConvertor : IConvertor
@@ -9,7 +9,7 @@ public class GuidConvertor : IConvertor
     private Guid? value;
     public bool CanConvert(Type type, object value)
     {
-        if(type != typeof(Guid) && type != typeof(Guid?))
+        if (type != typeof(Guid) && type != typeof(Guid?))
         {
             return false;
         }

@@ -1,13 +1,13 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
-using DiabetesManagement.Extensions;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
+using Inventory.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace DiabetesManagement.Core.Base;
+namespace Inventory.Persistence.Base;
 
 [RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Scoped)]
 public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
@@ -45,13 +45,13 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
         }
 
         var entityEntry = await Save(request.Model, cancellationToken);
-        
+
         if (entityEntry != null && request.CommitChanges)
         {
             await Context.SaveChangesAsync(cancellationToken);
             Detach(entityEntry);
         }
-        
+
         return request.Model;
     }
 
@@ -99,13 +99,13 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
     public async Task<EntityEntry<T>> Save(T model, CancellationToken cancellationToken)
     {
         PropertyInfo? idProperty = GetIdProperty();
-        if (idProperty != null && model != null) 
+        if (idProperty != null && model != null)
         {
             var idValue = idProperty.GetValue(model);
 
-            if(idValue == null || idValue.IsDefaultValue())
+            if (idValue == null || idValue.IsDefaultValue())
             {
-                if(await Add(model, cancellationToken))
+                if (await Add(model, cancellationToken))
                 {
                     return Add(model);
                 }

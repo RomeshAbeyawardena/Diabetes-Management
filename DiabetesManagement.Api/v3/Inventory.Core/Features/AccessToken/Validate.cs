@@ -1,8 +1,8 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Contracts;
+using Inventory.Features.AccessToken;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.AccessToken;
+namespace Inventory.Core.Features.AccessToken;
 
 public class Validate : IRequestHandler<ValidateRequest, IDictionary<string, string>>
 {

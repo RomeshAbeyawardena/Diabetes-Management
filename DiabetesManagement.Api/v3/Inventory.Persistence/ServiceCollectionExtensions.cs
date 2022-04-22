@@ -1,8 +1,9 @@
-﻿using DiabetesManagement.Contracts;
+﻿using Inventory;
+using Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DiabetesManagement.Persistence;
+namespace Inventory.Persistence;
 public static class ServiceCollectionExtensions
 {
     public static IServiceCollection RegisterDbServices(this IServiceCollection services)

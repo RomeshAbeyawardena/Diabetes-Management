@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Contracts;
+﻿namespace Inventory.Contracts;
 
 public interface ITransactionalCommand<T>
     where T : class

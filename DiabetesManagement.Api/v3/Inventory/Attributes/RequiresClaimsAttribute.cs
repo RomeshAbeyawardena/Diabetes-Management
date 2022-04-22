@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Attributes
+namespace Inventory.Attributes
 {
     public class RequiresClaimsAttribute : Attribute
     {

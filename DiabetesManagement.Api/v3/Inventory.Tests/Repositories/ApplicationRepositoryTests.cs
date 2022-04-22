@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Features.Application;
-using DiabetesManagement.Features.Application;
-using DiabetesManagement.Models;
+﻿using Inventory.Core.Features.Application;
+using Inventory.Models;
+using Inventory.Contracts;
+using Inventory.Features.Application;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure.Internal;
 using Microsoft.Extensions.Configuration;
@@ -10,7 +10,7 @@ using NUnit.Framework;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace DiabetesManagement.Tests.Repositories;
+namespace Inventory.Tests.Repositories;
 
 public class ApplicationRepositoryTests
 {
@@ -25,7 +25,7 @@ public class ApplicationRepositoryTests
         dbContextProviderMock = new();
         configurationMock = new();
         clockProvider = new();
-        
+
         //dbContextProviderMock.Setup(s => s.GetDbContext<InventoryDbContext>()).Returns(new InventoryDbContext(options));
         //sut = new (dbContextProviderMock.Object, new ApplicationSettings(configurationMock.Object), clockProvider.Object);
     }

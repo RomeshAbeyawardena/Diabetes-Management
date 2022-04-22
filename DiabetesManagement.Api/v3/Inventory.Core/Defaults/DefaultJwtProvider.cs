@@ -1,11 +1,12 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory;
+using Inventory.Contracts;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace DiabetesManagement.Core.Defaults
+namespace Inventory.Core.Defaults
 {
     [RegisterService]
     public class DefaultJwtProvider : IJwtProvider
@@ -54,7 +55,7 @@ namespace DiabetesManagement.Core.Defaults
                 SigningCredentials = new SigningCredentials(key2, SecurityAlgorithms.HmacSha512Signature),
                 IssuedAt = clockProvider.Clock.UtcNow.DateTime,
             });
-            
+
             return handler.WriteToken(token);
         }
 
@@ -62,7 +63,7 @@ namespace DiabetesManagement.Core.Defaults
         {
             var s = handler.ValidateToken(token, validationParameters, out var securityToken);
             return s.Claims.ToDictionary(c => c.Type, c => c.Value);
-            
+
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 using System.ComponentModel.DataAnnotations;
 
-namespace DiabetesManagement.Features.InventoryHistory;
+namespace Inventory.Features.InventoryHistory;
 
 [RequiresClaims(Permissions.InventoryHistory_Edit)]
 public class PostCommand : IRequest<Models.InventoryHistory>

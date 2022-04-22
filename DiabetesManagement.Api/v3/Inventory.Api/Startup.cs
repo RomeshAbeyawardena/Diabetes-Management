@@ -1,13 +1,14 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using DiabetesManagement.Extensions;
-using DiabetesManagement.Core.Features.InventoryHistory;
-using DiabetesManagement.Features;
-using DiabetesManagement.Persistence;
-using DiabetesManagement.Core.Base;
+using Inventory.Persistence.Base;
+using Inventory.Extensions;
+using Inventory.Api;
+using Inventory.Persistence;
+using Inventory.Features;
+using Inventory.Core.Features.InventoryHistory;
 
-[assembly: FunctionsStartup(typeof(DiabetesManagement.Api.Startup))]
-namespace DiabetesManagement.Api
+[assembly: FunctionsStartup(typeof(Startup))]
+namespace Inventory.Api
 {
     public class Startup : FunctionsStartup
     {

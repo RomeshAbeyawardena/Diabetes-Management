@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Features.Session;
+using Inventory.Features.Session;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.Session;
+namespace Inventory.Core.Features.Session;
 
 public class Post : IRequestHandler<PostCommand, Models.Session>
 {
@@ -19,7 +19,7 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
     {
         var session = await sessionRepository.Get(mapper.Map<GetRequest>(request), cancellationToken);
 
-        if(session == null)
+        if (session == null)
         {
             session = new Models.Session
             {

@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Defaults
+namespace Inventory.Core.Defaults
 {
     [RegisterService]
     public class DefaultConvertorFactory : IConvertorFactory

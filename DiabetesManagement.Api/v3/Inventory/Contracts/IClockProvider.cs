@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Internal;
 
-namespace DiabetesManagement.Contracts;
+namespace Inventory.Contracts;
 
 public interface IClockProvider
 {

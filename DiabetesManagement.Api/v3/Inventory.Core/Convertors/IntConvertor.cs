@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Convertors;
+namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class IntConvertor : IConvertor

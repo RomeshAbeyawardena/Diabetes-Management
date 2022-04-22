@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Features.InventoryHistory;
+﻿using Inventory.Contracts;
+using Inventory.Features.InventoryHistory;
 
-namespace DiabetesManagement.Features.Inventory;
+namespace Inventory.Features.Inventory;
 
 public interface IInventoryRepository : IRepository<IInventoryDbContext, Models.Inventory>
 {

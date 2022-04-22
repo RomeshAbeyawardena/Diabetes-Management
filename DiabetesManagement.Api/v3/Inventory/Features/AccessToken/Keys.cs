@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Features.AccessToken;
+﻿namespace Inventory.Features.AccessToken;
 
 public static class Keys
 {

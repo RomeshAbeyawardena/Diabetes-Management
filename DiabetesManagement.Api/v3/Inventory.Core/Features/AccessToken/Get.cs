@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Features.AccessToken;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.AccessToken;
+namespace Inventory.Core.Features.AccessToken;
 
 public class Get : IRequestHandler<GetRequest, Models.AccessToken?>
 {

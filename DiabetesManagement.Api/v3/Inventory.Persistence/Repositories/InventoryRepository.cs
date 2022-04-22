@@ -1,10 +1,10 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
-using DiabetesManagement.Extensions;
-using DiabetesManagement.Features.Inventory;
+﻿using Inventory.Contracts;
+using Inventory.Extensions;
+using Inventory.Features.Inventory;
+using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Persistence.Repositories;
+namespace Inventory.Persistence.Repositories;
 
 public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, IInventoryRepository
 {

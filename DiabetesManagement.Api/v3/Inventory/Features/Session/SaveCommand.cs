@@ -1,6 +1,6 @@
-﻿using DiabetesManagement.Contracts;
+﻿using Inventory.Contracts;
 
-namespace DiabetesManagement.Features.Session
+namespace Inventory.Features.Session
 {
     public class SaveCommand : ITransactionalCommand<Models.Session>
     {

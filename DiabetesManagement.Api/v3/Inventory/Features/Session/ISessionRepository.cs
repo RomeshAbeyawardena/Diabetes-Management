@@ -1,6 +1,6 @@
-﻿using DiabetesManagement.Contracts;
+﻿using Inventory.Contracts;
 
-namespace DiabetesManagement.Features.Session
+namespace Inventory.Features.Session
 {
     public interface ISessionRepository : IRepository<IInventoryDbContext, Models.Session>
     {

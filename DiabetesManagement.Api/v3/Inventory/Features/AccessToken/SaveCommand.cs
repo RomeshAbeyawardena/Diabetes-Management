@@ -1,6 +1,6 @@
-﻿using DiabetesManagement.Contracts;
+﻿using Inventory.Contracts;
 
-namespace DiabetesManagement.Features.AccessToken
+namespace Inventory.Features.AccessToken
 {
     public class SaveCommand : ITransactionalCommand<Models.AccessToken>
     {

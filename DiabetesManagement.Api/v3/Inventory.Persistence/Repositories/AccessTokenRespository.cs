@@ -1,9 +1,9 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
-using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Contracts;
+using Inventory.Features.AccessToken;
+using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Persistence.Repositories;
+namespace Inventory.Persistence.Repositories;
 
 public class AccessTokenRespository : InventoryDbRepositoryBase<Models.AccessToken>, IAccessTokenRepository
 {
@@ -19,8 +19,8 @@ public class AccessTokenRespository : InventoryDbRepositoryBase<Models.AccessTok
 
     public Task<Models.AccessToken?> Get(GetRequest request, CancellationToken cancellationToken)
     {
-        return Query.Include(a => a.AccessTokenClaims).FirstOrDefaultAsync(a => a.AccessTokenId == request.Key 
-            && a.Key == request.Intent 
+        return Query.Include(a => a.AccessTokenClaims).FirstOrDefaultAsync(a => a.AccessTokenId == request.Key
+            && a.Key == request.Intent
             && a.Value == request.AccessToken, cancellationToken);
     }
 

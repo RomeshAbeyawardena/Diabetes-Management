@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DiabetesManagement.Models;
+namespace Inventory.Models;
 
 [Table(nameof(AccessToken)),
      MessagePack.MessagePackObject(true)]
@@ -15,7 +15,7 @@ public class AccessToken
     public bool? Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset? Expires { get; set; }
-    
+
     public virtual Application? Application { get; set; }
     public virtual ICollection<AccessTokenClaim>? AccessTokenClaims { get; set; }
 }

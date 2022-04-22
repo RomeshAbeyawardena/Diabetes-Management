@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 
-namespace DiabetesManagement.Features.AccessToken
+namespace Inventory.Features.AccessToken
 {
     [RequiresClaims(Permissions.AccessToken_Edit)]
     public class PostCommand : IRequest<Models.AccessToken>

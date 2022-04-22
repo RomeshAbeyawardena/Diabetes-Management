@@ -1,9 +1,9 @@
 ﻿
 using AutoMapper;
-using DiabetesManagement.Features.User;
+using Inventory.Features.User;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.User;
+namespace Inventory.Core.Features.User;
 
 public class Post : IRequestHandler<PostCommand, Models.User>
 {
@@ -15,12 +15,12 @@ public class Post : IRequestHandler<PostCommand, Models.User>
         this.mapper = mapper;
         this.userRepository = userRepository;
     }
-    
+
     public async Task<Models.User> Handle(PostCommand request, CancellationToken cancellationToken)
     {
         var user = await userRepository.GetUser(mapper.Map<GetRequest>(request), cancellationToken);
 
-        if(user != null)
+        if (user != null)
         {
             throw new InvalidOperationException("User already exists");
         }

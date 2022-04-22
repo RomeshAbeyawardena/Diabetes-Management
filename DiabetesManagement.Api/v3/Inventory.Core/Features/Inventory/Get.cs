@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Features.Inventory;
+﻿using Inventory.Features.Inventory;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.Inventory;
+namespace Inventory.Core.Features.Inventory;
 
 public class Get : IRequestHandler<GetRequest, IEnumerable<Models.Inventory>>
 {

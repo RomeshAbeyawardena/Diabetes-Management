@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Features.InventoryHistory;
+﻿using Inventory.Features.InventoryHistory;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.InventoryHistory;
+namespace Inventory.Core.Features.InventoryHistory;
 
 public class GetVersion : IRequestHandler<GetVersionRequest, int>
 {

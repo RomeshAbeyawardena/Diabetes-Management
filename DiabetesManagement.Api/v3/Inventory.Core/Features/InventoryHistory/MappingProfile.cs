@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Features.InventoryHistory;
-using InventoryFeature = DiabetesManagement.Features.Inventory;
+using Inventory.Features.InventoryHistory;
+using InventoryFeature = Inventory.Features.Inventory;
 
-namespace DiabetesManagement.Core.Features.InventoryHistory;
+namespace Inventory.Core.Features.InventoryHistory;
 
 public class MappingProfile : Profile
 {

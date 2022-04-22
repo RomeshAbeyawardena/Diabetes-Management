@@ -1,6 +1,6 @@
-﻿using DiabetesManagement.Contracts;
+﻿using Inventory.Contracts;
 
-namespace DiabetesManagement.Features.User
+namespace Inventory.Features.User
 {
     public interface IUserRepository : IRepository<IInventoryDbContext, Models.User>
     {

@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Features.Application;
+﻿namespace Inventory.Features.Application;
 
 public interface IApplicationRepository
 {

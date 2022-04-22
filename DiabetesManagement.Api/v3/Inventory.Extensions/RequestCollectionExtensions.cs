@@ -3,9 +3,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Humanizer;
 
-namespace DiabetesManagement.Extensions;
+namespace Inventory.Extensions;
 
-using DiabetesManagement.Contracts;
+using Inventory.Contracts;
+
 public static class RequestCollectionExtensions
 {
     public static TRequest Bind<TRequest>(this IEnumerable<KeyValuePair<string, StringValues>> requestCollection, IConvertorFactory convertorFactory)

@@ -1,6 +1,6 @@
 {
   "profiles": {
-    "DiabetesManagement.Api": {
+    "Inventory.Api": {
       "commandName": "Project",
       "commandLineArgs": "--verbose"
     }

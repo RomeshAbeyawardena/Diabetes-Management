@@ -1,8 +1,8 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Contracts;
+using Inventory.Features.AccessToken;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.AccessToken;
+namespace Inventory.Core.Features.AccessToken;
 
 public class Sign : IRequestHandler<SignRequest, string>
 {
@@ -16,7 +16,7 @@ public class Sign : IRequestHandler<SignRequest, string>
     }
 
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
-    {   
+    {
         var jwtdict = new Dictionary<string, object> {
             { Keys.ApiToken, request.ApiKey! },
             { Keys.ApiIntent, request.ApiIntent! },
@@ -31,7 +31,7 @@ public class Sign : IRequestHandler<SignRequest, string>
                 AccessToken = request.ApiChallenge
             }, cancellationToken);
 
-            if(accessToken != null)
+            if (accessToken != null)
             {
                 jwtdict.Add(Keys.ApplicationId, accessToken.ApplicationId);
             }

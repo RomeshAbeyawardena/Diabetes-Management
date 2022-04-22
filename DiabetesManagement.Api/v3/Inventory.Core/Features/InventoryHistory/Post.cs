@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using InventoryFeature = DiabetesManagement.Features.Inventory;
-using DiabetesManagement.Features.InventoryHistory;
+using InventoryFeature = Inventory.Features.Inventory;
 using MediatR;
+using Inventory.Features.InventoryHistory;
 
-namespace DiabetesManagement.Core.Features.InventoryHistory;
+namespace Inventory.Core.Features.InventoryHistory;
 
 public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
 {
@@ -20,7 +20,7 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
     public async Task<Models.InventoryHistory> Handle(PostCommand request, CancellationToken cancellationToken)
     {
         var getRequest = mapper.Map<InventoryFeature.GetRequest>(request);
-        
+
         var inventory = (await mediator.Send(getRequest, cancellationToken)).FirstOrDefault();
         var version = 1;
         //check if inventory exists;
@@ -29,9 +29,9 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
             //create inventory
             inventory = await mediator.Send(new InventoryFeature.PostCommand
             {
-                    DefaultIntent = request.Type,
-                    Subject = request.Key,
-                    UserId = request.UserId!.Value,
+                DefaultIntent = request.Type,
+                Subject = request.Key,
+                UserId = request.UserId!.Value,
                 CommitChanges = false
             }, cancellationToken);
         }
@@ -40,9 +40,10 @@ public class Post : IRequestHandler<PostCommand, Models.InventoryHistory>
             //increment version for new version
             version = await inventoryHistoryRepository.GetLatestVersion(mapper.Map<GetVersionRequest>(request), cancellationToken) + 1;
             //update modified flag
-            await mediator.Send(new InventoryFeature.PostCommand { 
-                Inventory = inventory, 
-                CommitChanges = false 
+            await mediator.Send(new InventoryFeature.PostCommand
+            {
+                Inventory = inventory,
+                CommitChanges = false
             }, cancellationToken);
         }
 

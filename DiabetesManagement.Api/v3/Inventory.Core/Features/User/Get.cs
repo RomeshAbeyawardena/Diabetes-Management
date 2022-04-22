@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Features.User;
+﻿using Inventory.Features.User;
 using MediatR;
 
-namespace DiabetesManagement.Core.Features.User;
+namespace Inventory.Core.Features.User;
 
 public class Get : IRequestHandler<GetRequest, Models.User>
 {

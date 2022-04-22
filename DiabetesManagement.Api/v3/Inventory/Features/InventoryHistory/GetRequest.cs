@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 
-namespace DiabetesManagement.Features.InventoryHistory;
+namespace Inventory.Features.InventoryHistory;
 
 [RequiresClaims(Permissions.InventoryHistory_View)]
 public class GetRequest : IRequest<IEnumerable<Models.InventoryHistory>>

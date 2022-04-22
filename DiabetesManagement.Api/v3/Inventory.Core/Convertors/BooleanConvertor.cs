@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Convertors;
+namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class BooleanConvertor : IConvertor
@@ -9,12 +9,12 @@ public class BooleanConvertor : IConvertor
     private bool? result;
     public bool CanConvert(Type type, object value)
     {
-        if(type != typeof(bool) && type != typeof(bool?))
+        if (type != typeof(bool) && type != typeof(bool?))
         {
             return false;
         }
 
-        if(bool.TryParse(value.ToString(), out bool res))
+        if (bool.TryParse(value.ToString(), out bool res))
         {
             result = res;
             return true;

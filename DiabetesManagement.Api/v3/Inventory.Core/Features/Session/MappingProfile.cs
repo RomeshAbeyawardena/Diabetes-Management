@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using DiabetesManagement.Features.Session;
+using Inventory.Features.Session;
 
-namespace DiabetesManagement.Core.Features.Session;
+namespace Inventory.Core.Features.Session;
 
 public class MappingProfile : Profile
 {

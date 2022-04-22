@@ -1,10 +1,10 @@
-﻿using DiabetesManagement.Contracts;
-using AccessTokenFeature = DiabetesManagement.Features.AccessToken;
-using DiabetesManagement.Features.Application;
+﻿using AccessTokenFeature = Inventory.Features.AccessToken;
+using Inventory.Features.Application;
 using MediatR;
 using System.Collections.ObjectModel;
+using Inventory.Contracts;
 
-namespace DiabetesManagement.Core.Features.Application;
+namespace Inventory.Core.Features.Application;
 
 public class Post : IRequestHandler<PostCommand, Models.Application>
 {
@@ -23,7 +23,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
     public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
     {
         var claims = request.Claims!.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        
+
         var hasClaims = claims.Any();
 
         var application = await applicationRepository.Save(new SaveCommand

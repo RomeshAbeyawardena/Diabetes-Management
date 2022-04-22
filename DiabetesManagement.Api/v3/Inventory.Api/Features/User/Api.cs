@@ -1,15 +1,16 @@
-﻿using DiabetesManagement.Api.Base;
-using DiabetesManagement.Contracts;
-using DiabetesManagement.Extensions;
+﻿using Inventory.Api.Base;
+using Inventory.Contracts;
+using Inventory.Extensions;
+using Inventory.Features.User;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
-using SessionFeature = DiabetesManagement.Features.Session;
-using UserFeature = DiabetesManagement.Features.User;
+using SessionFeature = Inventory.Features.Session;
+using UserFeature = Inventory.Features.User;
 
-namespace DiabetesManagement.Api.Features.User
+namespace Inventory.Api.Features.User
 {
     public class Api : ApiBase
     {
@@ -23,8 +24,8 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            return await TryHandler(async(ct) => await Mediator
-                .Send(request.Form.Bind<UserFeature.PostCommand>(ConvertorFactory), ct), cancellationToken);   
+            return await TryHandler(async (ct) => await Mediator
+                .Send(request.Form.Bind<PostCommand>(ConvertorFactory), ct), cancellationToken);
         }
 
         [FunctionName("login-user")]
@@ -32,7 +33,7 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            var getRequest = request.Form.Bind<UserFeature.GetRequest>(ConvertorFactory);
+            var getRequest = request.Form.Bind<GetRequest>(ConvertorFactory);
             getRequest.AuthenticateUser = true;
             return await TryHandler(async (ct) =>
             {
@@ -62,7 +63,8 @@ namespace DiabetesManagement.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/logout")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            return await TryHandler(async (ct) => {
+            return await TryHandler(async (ct) =>
+            {
                 var session = await GetSession(request);
 
                 if (session == null)

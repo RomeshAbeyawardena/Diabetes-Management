@@ -1,9 +1,10 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
-using DiabetesManagement.Features.Session;
+﻿using Inventory;
+using Inventory.Contracts;
+using Inventory.Features.Session;
+using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Persistence.Repositories
+namespace Inventory.Persistence.Repositories
 {
     public class SessionRepository : InventoryDbRepositoryBase<Models.Session>, ISessionRepository
     {

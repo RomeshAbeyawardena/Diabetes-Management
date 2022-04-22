@@ -1,33 +1,33 @@
 ﻿using AutoMapper;
+using Inventory.Api.Base;
+using Inventory.Contracts;
+using Inventory.Extensions;
+using Inventory.Features.InventoryHistory;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DiabetesManagement.Api.Features.Inventory;
-
-using DiabetesManagement.Api.Base;
-using DiabetesManagement.Extensions;
-using InventoryHistoryFeature = DiabetesManagement.Features.InventoryHistory;
+namespace Inventory.Api.Features.Inventory;
 
 public class Api : ApiBase
 {
     public const string BaseUrl = "inventory";
     private readonly IMapper mapper;
 
-    public Api(IMediator mediator, Contracts.IConvertorFactory convertorFactor, IMapper mapper) : base(convertorFactor, mediator)
+    public Api(IMediator mediator, IConvertorFactory convertorFactor, IMapper mapper) : base(convertorFactor, mediator)
     {
         this.mapper = mapper;
     }
 
     [FunctionName("get-inventory")]
     public async Task<IActionResult> GetInventory(
-        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)] 
+        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<InventoryHistoryFeature.GetRequest>(ConvertorFactory);
-        return await TryHandler(request, getRequest.UserId!.Value, async (ct) => 
+        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
+        return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
             await Mediator.Send(getRequest, ct), cancellationToken);
     }
 
@@ -36,7 +36,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<InventoryHistoryFeature.GetRequest>(ConvertorFactory);
+        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
 
         return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
         {
@@ -50,7 +50,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var postRequest = request.Form.Bind<InventoryHistoryFeature.PostCommand>(ConvertorFactory);
+        var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
 
         return await TryHandler(request, postRequest.UserId!.Value, async (ct) => await Mediator
             .Send(postRequest, ct), cancellationToken);

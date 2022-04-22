@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 
-namespace DiabetesManagement.Features.Session;
+namespace Inventory.Features.Session;
 
 [RequiresClaims(Permissions.Session_Edit)]
 public class PostCommand : IRequest<Models.Session>

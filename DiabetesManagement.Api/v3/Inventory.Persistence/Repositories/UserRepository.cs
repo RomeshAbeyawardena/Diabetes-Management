@@ -1,11 +1,12 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
-using DiabetesManagement.Extensions;
-using DiabetesManagement.Features.User;
+﻿using Inventory;
+using Inventory.Contracts;
+using Inventory.Extensions;
+using Inventory.Features.User;
+using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 
-namespace DiabetesManagement.Persistence.Repositories
+namespace Inventory.Persistence.Repositories
 {
     public class UserRepository : InventoryDbRepositoryBase<Models.User>, IUserRepository
     {

@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Models;
+﻿namespace Inventory.Models;
 
 public class SessionValidation
 {

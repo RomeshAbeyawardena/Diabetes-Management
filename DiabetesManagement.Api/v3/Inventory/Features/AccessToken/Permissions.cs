@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Features;
+﻿namespace Inventory.Features;
 
 public static partial class Permissions
 {

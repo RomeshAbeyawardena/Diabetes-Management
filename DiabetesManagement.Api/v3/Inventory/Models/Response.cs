@@ -1,4 +1,4 @@
-﻿namespace DiabetesManagement.Models;
+﻿namespace Inventory.Models;
 
 public class Response
 {
@@ -12,7 +12,7 @@ public class Response
     public Response(object? data)
         : this(data, 200, string.Empty)
     {
-        
+
     }
 
     public Response(int statusCode, string statusMessage)

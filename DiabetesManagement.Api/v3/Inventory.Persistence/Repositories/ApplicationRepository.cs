@@ -1,10 +1,10 @@
-﻿using DiabetesManagement.Contracts;
-using DiabetesManagement.Core.Base;
-using DiabetesManagement.Extensions;
-using DiabetesManagement.Features.Application;
+﻿using Inventory.Extensions;
+using Inventory.Contracts;
+using Inventory.Features.Application;
+using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace DiabetesManagement.Persistence.Repositories;
+namespace Inventory.Persistence.Repositories;
 
 public class ApplicationRepository : InventoryDbRepositoryBase<Models.Application>, IApplicationRepository
 {
@@ -22,7 +22,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     {
         application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
         application.DisplayNameCaseSignature = caseSignature;
-        
+
         application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
         application.NameCaseSignature = caseSignature;
     }

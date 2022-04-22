@@ -1,8 +1,7 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DiabetesManagement.Models;
+namespace Inventory.Models;
 [Table(nameof(ApplicationInstance)),
  MessagePack.MessagePackObject(true)]
 public class ApplicationInstance

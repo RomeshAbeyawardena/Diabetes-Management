@@ -1,7 +1,6 @@
-﻿
-using MediatR;
+﻿using MediatR;
 
-namespace DiabetesManagement.Features.User;
+namespace Inventory.Features.User;
 
 public class PostCommand : IRequest<Models.User>
 {

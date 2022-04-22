@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace DiabetesManagement.Contracts
+namespace Inventory.Contracts
 {
     public interface IJwtProvider
     {

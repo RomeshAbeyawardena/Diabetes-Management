@@ -1,11 +1,12 @@
-﻿using DiabetesManagement.Api.Features;
-using DiabetesManagement.Contracts;
-using DiabetesManagement.Features.Session;
+﻿using Inventory;
+using Inventory.Api.Features;
+using Inventory.Features.Session;
+using Inventory.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DiabetesManagement.Api.Base;
+namespace Inventory.Api.Base;
 
 public abstract class ApiBase
 {

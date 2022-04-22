@@ -1,9 +1,9 @@
-﻿using DiabetesManagement.Attributes;
-using DiabetesManagement.Contracts;
+﻿using Inventory.Attributes;
+using Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace DiabetesManagement.Core.Defaults;
+namespace Inventory.Core.Defaults;
 [RegisterService(ServiceLifetime.Scoped)]
 public class DefaultDbContextProvider : IDbContextProvider
 {

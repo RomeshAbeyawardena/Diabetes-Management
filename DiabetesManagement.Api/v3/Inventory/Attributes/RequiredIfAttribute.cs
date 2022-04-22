@@ -1,12 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace DiabetesManagement.Attributes;
+namespace Inventory.Attributes;
 
 public class RequiredIfAttribute : RequiredAttribute
 {
     public RequiredIfAttribute()
     {
-            
+
     }
 
     public override bool IsValid(object? value)

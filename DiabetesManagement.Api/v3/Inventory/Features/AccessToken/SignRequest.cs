@@ -1,7 +1,7 @@
-﻿using DiabetesManagement.Attributes;
+﻿using Inventory.Attributes;
 using MediatR;
 
-namespace DiabetesManagement.Features.AccessToken;
+namespace Inventory.Features.AccessToken;
 [RequiresClaims(Permissions.Anonymous_Access)]
 public class SignRequest : IRequest<string>
 {

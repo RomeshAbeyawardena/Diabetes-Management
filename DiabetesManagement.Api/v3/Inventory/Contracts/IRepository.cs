@@ -1,10 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Linq.Expressions;
 
-namespace DiabetesManagement.Contracts;
+namespace Inventory.Contracts;
 
 public interface IRepository<TDbContext, T>
-    where T: class
+    where TDbContext : IDbContext
+    where T : class
 {
     TDbContext Context { get; }
     IQueryable<T> Query { get; }

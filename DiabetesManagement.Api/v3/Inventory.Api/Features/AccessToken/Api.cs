@@ -1,14 +1,14 @@
-﻿using DiabetesManagement.Api.Base;
-using DiabetesManagement.Contracts;
-using DiabetesManagement.Extensions;
-using DiabetesManagement.Features.AccessToken;
+﻿using Inventory.Api.Base;
+using Inventory.Contracts;
+using Inventory.Extensions;
+using Inventory.Features.AccessToken;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 
-namespace DiabetesManagement.Api.Features.AccessToken;
+namespace Inventory.Api.Features.AccessToken;
 
 public class Api : ApiBase
 {
@@ -18,7 +18,7 @@ public class Api : ApiBase
     }
 
     [FunctionName("Sign")]
-    public async Task<IActionResult> Sign([HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)] 
+    public async Task<IActionResult> Sign([HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
         return await TryHandler(async (ct) => await Mediator
