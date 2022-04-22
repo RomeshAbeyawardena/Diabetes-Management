@@ -27,9 +27,11 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         application.NameCaseSignature = caseSignature;
     }
 
-    protected override Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
+    protected override async Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
     {
-        return base.Validate(entityState, model, cancellationToken);
+        PrepareEncryptedFields(model);
+        var foundModel = await FindAsync(a => a.Name == model.Name, cancellationToken);
+        return foundModel != null;
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
