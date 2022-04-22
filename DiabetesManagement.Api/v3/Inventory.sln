@@ -3,22 +3,22 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32319.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement", "DiabetesManagement\DiabetesManagement.csproj", "{7F4FAC0F-3DAD-4CBE-B4C6-03EA8DC69804}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory", "Inventory\Inventory.csproj", "{7F4FAC0F-3DAD-4CBE-B4C6-03EA8DC69804}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement.Api", "DiabetesManagement.Api\DiabetesManagement.Api.csproj", "{9CDE2E1F-B843-4C00-A346-94062485A10D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Api", "Inventory.Api\Inventory.Api.csproj", "{9CDE2E1F-B843-4C00-A346-94062485A10D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement.Core", "DiabetesManagement.Core\DiabetesManagement.Core.csproj", "{1088AAB2-3A13-465A-A383-A51071F2F1A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Core", "Inventory.Core\Inventory.Core.csproj", "{1088AAB2-3A13-465A-A383-A51071F2F1A0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement.Extensions", "DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj", "{778EF4FB-AB73-4DAA-ACD2-FC523EC210CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Extensions", "Inventory.Extensions\Inventory.Extensions.csproj", "{778EF4FB-AB73-4DAA-ACD2-FC523EC210CF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement.Tests", "DiabetesManagement.Tests\DiabetesManagement.Tests.csproj", "{8C88E684-3425-43B4-BA8F-E67FED06158E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Tests", "Inventory.Tests\Inventory.Tests.csproj", "{8C88E684-3425-43B4-BA8F-E67FED06158E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0B405AA-519D-4208-8EC4-C112086E847B}"
 	ProjectSection(SolutionItems) = preProject
 		Install.sql = Install.sql
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DiabetesManagement.Persistence", "DiabetesManagement.Persistence\DiabetesManagement.Persistence.csproj", "{D1A98B26-AAB9-4D9F-B363-ABEA7C03C388}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Persistence", "Inventory.Persistence\Inventory.Persistence.csproj", "{D1A98B26-AAB9-4D9F-B363-ABEA7C03C388}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

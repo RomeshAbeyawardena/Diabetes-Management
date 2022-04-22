@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiabetesManagement.Core\DiabetesManagement.Core.csproj" />
-    <ProjectReference Include="..\DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj" />
+    <ProjectReference Include="..\Inventory.Core\Inventory.Core.csproj" />
+    <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
   </ItemGroup>
 
 </Project>

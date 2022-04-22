@@ -14,10 +14,10 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="4.1.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DiabetesManagement.Core\DiabetesManagement.Core.csproj" />
-    <ProjectReference Include="..\DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj" />
-    <ProjectReference Include="..\DiabetesManagement.Persistence\DiabetesManagement.Persistence.csproj" />
-    <ProjectReference Include="..\DiabetesManagement\DiabetesManagement.csproj" />
+    <ProjectReference Include="..\Inventory.Core\Inventory.Core.csproj" />
+    <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
+    <ProjectReference Include="..\Inventory.Persistence\Inventory.Persistence.csproj" />
+    <ProjectReference Include="..\Inventory\Inventory.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

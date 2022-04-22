@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiabetesManagement.Extensions\DiabetesManagement.Extensions.csproj" />
-    <ProjectReference Include="..\DiabetesManagement\DiabetesManagement.csproj" />
+    <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
+    <ProjectReference Include="..\Inventory\Inventory.csproj" />
   </ItemGroup>
 
 </Project>
