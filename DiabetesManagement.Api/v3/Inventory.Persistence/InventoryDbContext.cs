@@ -13,6 +13,7 @@ public class InventoryDbContext : DbContext, IInventoryDbContext
     }
 
     public DbSet<Application>? Applications { get; set; }
+    public DbSet<ApplicationInstance>? ApplicationInstance { get; set; }
     public DbSet<AccessToken>? AccessTokens { get; set; }
     public DbSet<AccessTokenClaim>? Claims { get; set; }
     public DbSet<Models.Inventory>? Inventories { get; set; }

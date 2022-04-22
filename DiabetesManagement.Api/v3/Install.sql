@@ -47,6 +47,17 @@ CREATE TABLE [dbo].[Application] (
     ,INDEX IX_Application NONCLUSTERED ([UserId],[Name], [Intent])
 )
 
+CREATE TABLE [dbo].[ApplicationInstance] (
+    [ApplicationInstanceId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_APPLICATIONINSTANCE PRIMARY KEY
+    ,[ApplicationId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT FK_ApplicationInstance_Application
+        REFERENCES [dbo].[Application]
+    ,[Enabled] BIT NOT NULL
+    ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Expires] DATETIMEOFFSET NULL
+)
+
 CREATE TABLE [dbo].[AccessToken] (
      [AccessTokenId]  UNIQUEIDENTIFIER NOT NULL
         CONSTRAINT PK_ACCESSTOKEN PRIMARY KEY

@@ -19,11 +19,20 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
     private readonly IJwtProvider jwtProvider;
     private readonly IMediator mediator;
 
-    private async Task<IEnumerable<string?>?> GetClaims(string accessTokenKey, string accessTokenIntent, string accessTokenValue)
+    private async Task<IEnumerable<string?>?> GetClaims(string accessTokenKey, string accessTokenIntent, 
+        string accessTokenValue, string? applicationInstanceId, CancellationToken cancellationToken)
     {
         if (accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
             return Permissions.SysAdmin;
+        }
+
+        if (!string.IsNullOrWhiteSpace(applicationInstanceId) && Guid.TryParse(applicationInstanceId, out var appInstanceId))
+        {
+            await mediator.Send(new ApplicationInstance.GetRequest
+            {
+
+            }, cancellationToken);
         }
 
         if (Guid.TryParse(accessTokenKey, out var key))
@@ -33,7 +42,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
                 Key = key,
                 Intent = accessTokenIntent,
                 AccessToken = accessTokenValue
-            });
+            }, cancellationToken);
 
             if (accessToken != null && accessToken.AccessTokenClaims != null)
             {
@@ -80,7 +89,8 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
                 && parameters.TryGetValue(Keys.ApiIntent, out var intent)
                 && parameters.TryGetValue(Keys.ApiTokenChallenge, out var value))
             {
-                claims = await GetClaims(apiKey, intent, value);
+                var applicationInstanceId = parameters.ContainsKey(Keys.ApplicationId) ? parameters[Keys.ApplicationId] : null;
+                claims = await GetClaims(apiKey, intent, value, applicationInstanceId, cancellationToken);
             }
 
             if (claims!.Any(c => claimsAttribute.Claims.Contains(c)))

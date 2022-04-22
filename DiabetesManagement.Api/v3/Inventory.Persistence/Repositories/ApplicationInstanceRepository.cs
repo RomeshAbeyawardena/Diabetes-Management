@@ -1,6 +1,7 @@
 ﻿using Inventory.Contracts;
 using Inventory.Features.ApplicationInstance;
 using Inventory.Persistence.Base;
+using Microsoft.EntityFrameworkCore;
 
 namespace Inventory.Persistence.Repositories
 {
@@ -20,21 +21,17 @@ namespace Inventory.Persistence.Repositories
             this.clockProvider = clockProvider;
         }
 
-        public async Task<Models.ApplicationInstance> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
+        public Task<Models.ApplicationInstance> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
         {
-            if(saveCommand == null || saveCommand.ApplicationInstance == null)
-            {
-                throw new NullReferenceException();
-            }
+            return base.Save(saveCommand, cancellationToken);
+        }
 
-            await Save(saveCommand.ApplicationInstance, cancellationToken);
-
-            if (saveCommand.CommitChanges)
-            {
-                await Context.SaveChangesAsync(cancellationToken);
-            }
-
-            return saveCommand.ApplicationInstance;
+        public async Task<IEnumerable<Models.ApplicationInstance>> Get(GetRequest request, CancellationToken cancellationToken)
+        {
+            var utcNow = clockProvider.Clock.UtcNow;
+            return await (request.ApplicationInstanceId.HasValue
+                ? Query.Where(a => a.ApplicationInstanceId == request.ApplicationInstanceId.Value && a.Enabled && a.Expires >= utcNow)
+                : Query.Where(a => a.ApplicationId == request.ApplicationId && a.Enabled && a.Expires >= utcNow)).ToArrayAsync(cancellationToken);
         }
     }
 }
