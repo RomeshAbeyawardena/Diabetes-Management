@@ -1,5 +1,6 @@
 ﻿using Inventory.Contracts;
 using Inventory.Features.AccessToken;
+using ApplicationInstanceFeature = Inventory.Features.ApplicationInstance;
 using MediatR;
 
 namespace Inventory.Core.Features.AccessToken;
@@ -8,11 +9,13 @@ public class Sign : IRequestHandler<SignRequest, string>
 {
     private readonly IJwtProvider jwtProvider;
     private readonly IMediator mediator;
+    private readonly IClockProvider clockProvider;
 
-    public Sign(IJwtProvider jwtProvider, IMediator mediator)
+    public Sign(IJwtProvider jwtProvider, IMediator mediator, IClockProvider clockProvider)
     {
         this.jwtProvider = jwtProvider;
         this.mediator = mediator;
+        this.clockProvider = clockProvider;
     }
 
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
@@ -33,7 +36,12 @@ public class Sign : IRequestHandler<SignRequest, string>
 
             if (accessToken != null)
             {
-                jwtdict.Add(Keys.ApplicationId, accessToken.ApplicationId);
+                var applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand { 
+                    ApplicationId = accessToken.ApplicationId, 
+                    Expires = clockProvider.Clock.UtcNow.Add(TimeSpan.FromHours(4)) }, cancellationToken);
+
+
+                jwtdict.Add(Keys.ApplicationId, applicationInstance.ApplicationInstanceId);
             }
         }
 

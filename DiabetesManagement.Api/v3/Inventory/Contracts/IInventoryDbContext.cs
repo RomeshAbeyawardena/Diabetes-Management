@@ -6,6 +6,7 @@ namespace Inventory.Contracts;
 public interface IInventoryDbContext : IDbContext
 {
     DbSet<Application>? Applications { get; set; }
+    DbSet<ApplicationInstance>? ApplicationsInstance { get; set; }
     DbSet<AccessToken>? AccessTokens { get; set; }
     DbSet<AccessTokenClaim>? Claims { get; set; }
     DbSet<Models.Inventory>? Inventories { get; set; }

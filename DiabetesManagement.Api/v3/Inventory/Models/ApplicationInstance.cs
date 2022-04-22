@@ -7,7 +7,7 @@ namespace Inventory.Models;
 public class ApplicationInstance
 {
     [Key]
-    public Guid Id { get; set; }
+    public Guid ApplicationInstanceId { get; set; }
     public Guid ApplicationId { get; set; }
     public bool Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
