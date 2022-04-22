@@ -27,6 +27,11 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         application.NameCaseSignature = caseSignature;
     }
 
+    protected override Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
+    {
+        return base.Validate(entityState, model, cancellationToken);
+    }
+
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
     {
         return Query.AnyAsync(a => a.ApplicationId == application.ApplicationId

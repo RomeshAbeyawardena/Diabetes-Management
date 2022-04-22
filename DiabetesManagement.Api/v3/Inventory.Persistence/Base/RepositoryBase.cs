@@ -65,6 +65,11 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
         return AcceptChanges;
     }
 
+    protected virtual Task<bool> Validate(EntityState entityState, T model, CancellationToken cancellationToken)
+    {
+        return AcceptChanges;
+    }
+
     public RepositoryBase(IDbContextProvider dbContextProvider)
     {
         Context = dbContextProvider.GetDbContext<TDbContext>()!;
@@ -99,12 +104,19 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
     public async Task<EntityEntry<T>> Save(T model, CancellationToken cancellationToken)
     {
         PropertyInfo? idProperty = GetIdProperty();
+
         if (idProperty != null && model != null)
         {
+
             var idValue = idProperty.GetValue(model);
 
             if (idValue == null || idValue.IsDefaultValue())
             {
+                if (!await Validate(EntityState.Added, model, cancellationToken))
+                {
+                    throw new ValidationException();
+                }
+
                 if (await Add(model, cancellationToken))
                 {
                     return Add(model);
@@ -112,6 +124,11 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
             }
             else
             {
+                if (!await Validate(EntityState.Modified, model, cancellationToken))
+                {
+                    throw new ValidationException();
+                }
+
                 if (await Update(model, cancellationToken))
                 {
                     return Update(model);

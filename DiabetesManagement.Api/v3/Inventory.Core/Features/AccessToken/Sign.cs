@@ -10,12 +10,14 @@ public class Sign : IRequestHandler<SignRequest, string>
     private readonly IJwtProvider jwtProvider;
     private readonly IMediator mediator;
     private readonly IClockProvider clockProvider;
+    private readonly ApplicationSettings applicationSettings;
 
-    public Sign(IJwtProvider jwtProvider, IMediator mediator, IClockProvider clockProvider)
+    public Sign(IJwtProvider jwtProvider, IMediator mediator, IClockProvider clockProvider, ApplicationSettings applicationSettings)
     {
         this.jwtProvider = jwtProvider;
         this.mediator = mediator;
         this.clockProvider = clockProvider;
+        this.applicationSettings = applicationSettings;
     }
 
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
@@ -38,7 +40,7 @@ public class Sign : IRequestHandler<SignRequest, string>
             {
                 var applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand { 
                     ApplicationId = accessToken.ApplicationId, 
-                    Expires = clockProvider.Clock.UtcNow.Add(TimeSpan.FromHours(4)) }, cancellationToken);
+                    Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4))}, cancellationToken);
 
 
                 jwtdict.Add(Keys.ApplicationId, applicationInstance.ApplicationInstanceId);
