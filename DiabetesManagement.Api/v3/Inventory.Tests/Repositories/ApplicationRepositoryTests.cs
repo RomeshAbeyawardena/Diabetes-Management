@@ -1,4 +1,5 @@
 ﻿using Inventory.Core.Features.Application;
+using Inventory.Persistence.Repositories;
 using Inventory.Models;
 using Inventory.Contracts;
 using Inventory.Features.Application;
@@ -14,7 +15,7 @@ namespace Inventory.Tests.Repositories;
 
 public class ApplicationRepositoryTests
 {
-    private IApplicationRepository? sut;
+    private ApplicationRepository? sut;
 
     private Mock<IDbContextProvider>? dbContextProviderMock;
     private Mock<IClockProvider>? clockProvider;

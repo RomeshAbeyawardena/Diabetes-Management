@@ -4,8 +4,8 @@ using Inventory.Persistence.Base;
 using Inventory.Extensions;
 using Inventory.Api;
 using Inventory.Persistence;
-using Inventory.Features;
 using Inventory.Core.Features.InventoryHistory;
+using Inventory.Core.Features;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 namespace Inventory.Api

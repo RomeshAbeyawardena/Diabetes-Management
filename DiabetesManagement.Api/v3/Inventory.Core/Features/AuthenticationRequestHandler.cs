@@ -1,5 +1,5 @@
-﻿using Inventory.Features;
-using Inventory;
+﻿using ApplicationInstanceFeature = Inventory.Features.ApplicationInstance;
+using Inventory.Features;
 using Inventory.Attributes;
 using Inventory.Contracts;
 using Inventory.Features.AccessToken;
@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
-namespace Inventory.Features;
+namespace Inventory.Core.Features;
 
 public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequest>
     where TRequest : class
@@ -29,7 +29,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
         if (!string.IsNullOrWhiteSpace(applicationInstanceId) && Guid.TryParse(applicationInstanceId, out var appInstanceId))
         {
-            var applicationInstance = await mediator.Send(new ApplicationInstance.GetRequest
+            var applicationInstance = await mediator.Send(new ApplicationInstanceFeature.GetRequest
             {
                 ApplicationInstanceId = appInstanceId
             }, cancellationToken);

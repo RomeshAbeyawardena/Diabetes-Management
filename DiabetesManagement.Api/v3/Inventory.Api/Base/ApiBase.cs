@@ -5,6 +5,7 @@ using Inventory.Contracts;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Inventory.Api.Base;
 
@@ -70,6 +71,10 @@ public abstract class ApiBase
         {
             return new BadRequestObjectResult(new Models.Response(StatusCodes.Status406NotAcceptable, exception.Message));
         }
+        catch (ValidationException exception)
+        {
+            return new BadRequestObjectResult(new Models.Response(StatusCodes.Status400BadRequest, exception.Message));
+        }
         catch (InvalidDataException exception)
         {
             return new BadRequestObjectResult(new Models.Response(StatusCodes.Status400BadRequest, exception.Message));
@@ -80,12 +85,7 @@ public abstract class ApiBase
         }
         catch (Exception exception)
         {
-#if DEBUG
-            throw;
-#else
             return new UnprocessableEntityObjectResult(new Models.Response(StatusCodes.Status500InternalServerError, exception.Message));
-#endif
-
         }
     }
 

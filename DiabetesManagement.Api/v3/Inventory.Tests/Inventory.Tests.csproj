@@ -21,6 +21,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Inventory.Core\Inventory.Core.csproj" />
     <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
+    <ProjectReference Include="..\Inventory.Persistence\Inventory.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -43,8 +43,8 @@ CREATE TABLE [dbo].[Application] (
     ,[Created] DATETIMEOFFSET NOT NULL
     ,[Modified] DATETIMEOFFSET NULL
     ,[Expires] DATETIMEOFFSET NULL
-    ,CONSTRAINT UQ_Application UNIQUE ([UserId],[Name], [Intent])
-    ,INDEX IX_Application NONCLUSTERED ([UserId],[Name], [Intent])
+    ,CONSTRAINT UQ_Application UNIQUE ([UserId],[Name],[Intent])
+    ,INDEX IX_Application NONCLUSTERED ([UserId],[Name],[Intent])
 )
 
 CREATE TABLE [dbo].[ApplicationInstance] (
@@ -69,6 +69,8 @@ CREATE TABLE [dbo].[AccessToken] (
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL
     ,[Expires] DATETIMEOFFSET NULL
+    ,CONSTRAINT UQ_AccessToken UNIQUE ([ApplicationId],[Key],[Value])
+    ,INDEX IX_AccessToken NONCLUSTERED ([ApplicationId],[Key],[Value])
 )
 
 CREATE TABLE [dbo].[AccessToken_Claim] (
@@ -124,8 +126,5 @@ CREATE TABLE [dbo].[Inventory_History] (
     ,CONSTRAINT UQ_INVENTORY_HISTORY UNIQUE ([InventoryId],[Intent],[Version])
     ,INDEX IX_INVENTORY_HISTORY NONCLUSTERED ([InventoryId],[Intent],[Version])
 )
-
+select * FROM [user]
 select * FROM applicationinstance
-
-update applicationinstance
-set expires = '2022-04-22 18:59:35.0911539 +00:00'

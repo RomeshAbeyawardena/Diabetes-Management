@@ -3,6 +3,8 @@ using Inventory.Contracts;
 using Inventory.Features.Application;
 using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
+using MediatR;
+using UserFeature = Inventory.Features.User;
 
 namespace Inventory.Persistence.Repositories;
 
@@ -10,6 +12,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 {
     private readonly ApplicationSettings applicationSettings;
     private readonly IClockProvider clockProvider;
+    private readonly IMediator mediator;
 
     private void DecryptFields(Models.Application application)
     {
@@ -29,6 +32,13 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     protected override async Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
     {
+        var user = await mediator.Send(new UserFeature.GetRequest { UserId = model.UserId }, cancellationToken);
+
+        if(user == null)
+        {
+            return false;
+        }
+
         PrepareEncryptedFields(model);
         
         return await (entityState == EntityState.Added 
@@ -70,10 +80,12 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
         return false;
     }
 
-    public ApplicationRepository(IDbContextProvider dbContextProvider, ApplicationSettings applicationSettings, IClockProvider clockProvider) : base(dbContextProvider)
+    public ApplicationRepository(IDbContextProvider dbContextProvider, ApplicationSettings applicationSettings, 
+        IClockProvider clockProvider, IMediator mediator) : base(dbContextProvider)
     {
         this.applicationSettings = applicationSettings;
         this.clockProvider = clockProvider;
+        this.mediator = mediator;
     }
 
     public async Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
