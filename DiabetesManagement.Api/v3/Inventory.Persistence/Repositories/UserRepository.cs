@@ -28,9 +28,21 @@ namespace Inventory.Persistence.Repositories
             user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
         }
 
+        protected override async Task<bool> Validate(EntityState entityState, Models.User model, CancellationToken cancellationToken)
+        {
+            if (entityState == EntityState.Added || prepareEncryptedFields)
+            {
+                PrepareEncrpytedFields(model);
+            }
+
+            return await (entityState == EntityState.Added
+                ? Query.AnyAsync(u => u.EmailAddress == model.EmailAddress, cancellationToken)
+                : Query.AnyAsync(u => u.UserId != model.UserId && u.EmailAddress == model.EmailAddress, cancellationToken));
+        }
+
         protected override Task<bool> Add(Models.User user, CancellationToken cancellationToken)
         {
-            PrepareEncrpytedFields(user);
+            
 
             user.Created = clockProvider.Clock.UtcNow;
             user.Hash = user.GetHash();

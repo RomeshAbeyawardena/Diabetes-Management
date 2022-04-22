@@ -30,8 +30,10 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     protected override async Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
     {
         PrepareEncryptedFields(model);
-        var foundModel = await FindAsync(a => a.Name == model.Name, cancellationToken);
-        return foundModel != null;
+        
+        return await (entityState == EntityState.Added 
+            ? Query.AnyAsync(a => a.Name == model.Name, cancellationToken)
+            : Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name, cancellationToken));
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
@@ -43,7 +45,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     protected override Task<bool> Add(Models.Application application, CancellationToken cancellationToken)
     {
         var currentDate = clockProvider.Clock.UtcNow;
-        PrepareEncryptedFields(application);
+        
         application.Created = currentDate;
         application.Enabled = true;
 

@@ -30,6 +30,15 @@ public class InventoryRepository : InventoryDbRepositoryBase<Models.Inventory>, 
         return Task.FromResult(true);
     }
 
+    protected override async Task<bool> Validate(EntityState entityState, Models.Inventory model, CancellationToken cancellationToken)
+    {
+        return await (entityState == EntityState.Added
+            ? Query.AnyAsync(i => i.UserId == model.UserId && i.DefaultIntent == model.DefaultIntent 
+                && i.Subject == model.Subject, cancellationToken)
+            : Query.AnyAsync(i => i.InventoryId != model.InventoryId && i.UserId == model.UserId 
+                && i.DefaultIntent == model.DefaultIntent && i.Subject == model.Subject, cancellationToken));
+    }
+
     public InventoryRepository(IDbContextProvider context, IClockProvider clockProvider) : base(context)
     {
         this.clockProvider = clockProvider;
