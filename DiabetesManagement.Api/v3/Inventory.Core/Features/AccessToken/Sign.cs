@@ -40,7 +40,8 @@ public class Sign : IRequestHandler<SignRequest, string>
             {
                 var applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand { 
                     ApplicationId = accessToken.ApplicationId, 
-                    Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4))}, cancellationToken);
+                    Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4))
+                }, cancellationToken);
 
 
                 jwtdict.Add(Keys.ApplicationId, applicationInstance.ApplicationInstanceId);

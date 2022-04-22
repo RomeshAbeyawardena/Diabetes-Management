@@ -29,10 +29,15 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
 
         if (!string.IsNullOrWhiteSpace(applicationInstanceId) && Guid.TryParse(applicationInstanceId, out var appInstanceId))
         {
-            await mediator.Send(new ApplicationInstance.GetRequest
+            var applicationInstance = await mediator.Send(new ApplicationInstance.GetRequest
             {
-
+                ApplicationInstanceId = appInstanceId
             }, cancellationToken);
+
+            if(applicationInstance == null || !applicationInstance.Any())
+            {
+                throw new UnauthorizedAccessException("Unable to resolve application instance");
+            }
         }
 
         if (Guid.TryParse(accessTokenKey, out var key))
@@ -50,7 +55,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
             }
         }
 
-        throw new UnauthorizedAccessException();
+        throw new UnauthorizedAccessException("Unable to authenticate api key");
     }
 
     public AuthenticationRequestHandler(ApplicationSettings applicationSettings, IHttpContextAccessor httpContext, IJwtProvider jwtProvider, IMediator mediator)

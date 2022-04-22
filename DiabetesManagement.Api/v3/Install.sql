@@ -124,3 +124,8 @@ CREATE TABLE [dbo].[Inventory_History] (
     ,CONSTRAINT UQ_INVENTORY_HISTORY UNIQUE ([InventoryId],[Intent],[Version])
     ,INDEX IX_INVENTORY_HISTORY NONCLUSTERED ([InventoryId],[Intent],[Version])
 )
+
+select * FROM applicationinstance
+
+update applicationinstance
+set expires = '2022-04-22 18:59:35.0911539 +00:00'
