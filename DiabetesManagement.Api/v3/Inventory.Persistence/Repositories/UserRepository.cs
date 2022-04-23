@@ -13,26 +13,12 @@ namespace Inventory.Persistence.Repositories
         private readonly IClockProvider clockProvider;
         private readonly ApplicationSettings applicationSettings;
         private bool prepareEncryptedFields = false;
-        private void PrepareEncrpytedFields(Models.User user)
-        {
-            user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
-            user.DisplayNameCaseSignature = str;
-            user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
-            user.EmailAddressCaseSignature = str;
-            user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
-        }
-
-        private void DecryptFields(Models.User user)
-        {
-            user.EmailAddress = user.EmailAddress!.Decrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.EmailAddressCaseSignature);
-            user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
-        }
-
+        
         protected override async Task<bool> Validate(EntityState entityState, Models.User model, CancellationToken cancellationToken)
         {
             if (entityState == EntityState.Added || prepareEncryptedFields)
             {
-                PrepareEncrpytedFields(model);
+                Encrypt(model);
             }
 
             return await (entityState == EntityState.Added
@@ -42,8 +28,6 @@ namespace Inventory.Persistence.Repositories
 
         protected override Task<bool> Add(Models.User user, CancellationToken cancellationToken)
         {
-            
-
             user.Created = clockProvider.Clock.UtcNow;
             user.Hash = user.GetHash();
             return AcceptChanges;
@@ -51,11 +35,6 @@ namespace Inventory.Persistence.Repositories
 
         protected override Task<bool> Update(Models.User user, CancellationToken cancellationToken)
         {
-            if (prepareEncryptedFields)
-            {
-                PrepareEncrpytedFields(user);
-            }
-
             user.Modified = clockProvider.Clock.UtcNow;
             user.Hash = user.GetHash();
             return AcceptChanges;
@@ -92,7 +71,7 @@ namespace Inventory.Persistence.Repositories
 
             if (foundUser != null)
             {
-                DecryptFields(foundUser);
+                Decrypt(foundUser);
             }
 
             return foundUser;
@@ -101,11 +80,22 @@ namespace Inventory.Persistence.Repositories
         public async Task<Models.User> SaveUser(SaveCommand command, CancellationToken cancellationToken)
         {
             prepareEncryptedFields = command.PrepareEncryptedFields;
-            var savedResult = await base.Save(command, cancellationToken);
+            return await base.Save(command, cancellationToken);
+        }
 
-            DecryptFields(savedResult);
+        public void Encrypt(Models.User user)
+        {
+            user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
+            user.DisplayNameCaseSignature = str;
+            user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
+            user.EmailAddressCaseSignature = str;
+            user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+        }
 
-            return savedResult;
+        public void Decrypt(Models.User user)
+        {
+            user.EmailAddress = user.EmailAddress!.Decrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.EmailAddressCaseSignature);
+            user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
         }
     }
 }

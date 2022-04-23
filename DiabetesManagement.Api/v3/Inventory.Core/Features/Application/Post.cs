@@ -36,7 +36,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
                     : null,
                 Name = request.Name,
                 Intent = request.Intent,
-                UserId = request.UserId ?? throw new NullReferenceException()
+                UserId = request.UserId ?? throw new NullReferenceException("User not specified")
             },
             CommitChanges = !claims.Any()
         }, cancellationToken);
@@ -72,6 +72,7 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
             }, cancellationToken);
 
         }
+        applicationRepository.Decrypt(application);
 
         return application;
     }

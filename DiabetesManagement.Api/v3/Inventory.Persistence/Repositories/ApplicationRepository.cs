@@ -13,22 +13,7 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
     private readonly ApplicationSettings applicationSettings;
     private readonly IClockProvider clockProvider;
     private readonly IMediator mediator;
-
-    private void DecryptFields(Models.Application application)
-    {
-        application.DisplayName = application.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.DisplayNameCaseSignature);
-
-        application.Name = application.Name!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.NameCaseSignature);
-    }
-
-    private void PrepareEncryptedFields(Models.Application application)
-    {
-        application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
-        application.DisplayNameCaseSignature = caseSignature;
-
-        application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
-        application.NameCaseSignature = caseSignature;
-    }
+    private bool prepareEncryptedFields = false;
 
     protected override async Task<bool> Validate(EntityState entityState, Models.Application model, CancellationToken cancellationToken)
     {
@@ -39,11 +24,19 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
             return false;
         }
 
-        PrepareEncryptedFields(model);
+        if (entityState == EntityState.Added || prepareEncryptedFields)
+        {
+            Encrypt(model);
+        }
+
+        var exists = false;
         
-        return await (entityState == EntityState.Added 
-            ? Query.AnyAsync(a => a.Name == model.Name, cancellationToken)
-            : Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name, cancellationToken)) == false;
+        if (entityState == EntityState.Added)
+            exists = await Query.AnyAsync(a => a.Name == model.Name && a.UserId == model.UserId, cancellationToken);
+        else
+            exists = await Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name && a.UserId == model.UserId, cancellationToken);
+
+        return !exists;
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)
@@ -90,8 +83,23 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
 
     public async Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken)
     {
-        var savedResult = await base.Save(saveCommand, cancellationToken);
-        DecryptFields(savedResult);
-        return savedResult;
+        prepareEncryptedFields = saveCommand.PrepareEncryptedFields;
+        return await base.Save(saveCommand, cancellationToken);
+    }
+
+    public void Encrypt(Models.Application application)
+    {
+        application.DisplayName = application.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string caseSignature);
+        application.DisplayNameCaseSignature = caseSignature;
+
+        application.Name = application.Name!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out caseSignature);
+        application.NameCaseSignature = caseSignature;
+    }
+
+    public void Decrypt(Models.Application application)
+    {
+        application.DisplayName = application.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.DisplayNameCaseSignature);
+
+        application.Name = application.Name!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, application.NameCaseSignature);
     }
 }

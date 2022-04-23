@@ -10,6 +10,7 @@ using Inventory.Contracts;
 public static class RequestCollectionExtensions
 {
     public static TRequest Bind<TRequest>(this IEnumerable<KeyValuePair<string, StringValues>> requestCollection, IConvertorFactory convertorFactory)
+        where TRequest : notnull
     {
         var instance = Activator.CreateInstance<TRequest>();
         var requestType = typeof(TRequest);

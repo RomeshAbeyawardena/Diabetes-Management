@@ -112,7 +112,8 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
             if (idValue == null || idValue.IsDefaultValue())
             {
-                if (!await Validate(EntityState.Added, model, cancellationToken))
+                var validationResult = await Validate(EntityState.Added, model, cancellationToken);
+                if (!validationResult)
                 {
                     throw new ValidationException();
                 }

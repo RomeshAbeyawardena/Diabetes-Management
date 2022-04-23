@@ -68,6 +68,7 @@ public abstract class ApiBase
         Func<T,Guid> getUserId, Func<T, CancellationToken, Task<TResult>> attempt, 
         CancellationToken cancellationToken, 
         Func<HttpRequest, IEnumerable<KeyValuePair<string, StringValues>>>? keyValue = default)
+        where T : notnull
     {
         return await TryHandler<T, TResult>(httpRequest, async(t, ct) => {
             var userId = getUserId(t);
@@ -97,6 +98,7 @@ public abstract class ApiBase
         Func<T, CancellationToken, Task<TResult>> attempt, 
         CancellationToken cancellationToken, 
         Func<HttpRequest, IEnumerable<KeyValuePair<string, StringValues>>>? keyValue = default)
+        where T : notnull
     {
         if(keyValue == default)
         {

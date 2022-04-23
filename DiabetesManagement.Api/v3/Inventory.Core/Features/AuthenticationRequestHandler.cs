@@ -72,7 +72,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
     {
         if (httpContext.HttpContext == null)
         {
-            throw new NullReferenceException();
+            throw new NullReferenceException("Unable to access http context");
         }
 
         var context = httpContext.HttpContext;
@@ -108,6 +108,6 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
         }
 
         //no access granted either the http context isn't properly authorised or the session does not match the specified claim
-        throw new UnauthorizedAccessException();
+        throw new UnauthorizedAccessException("Access denied");
     }
 }

@@ -25,7 +25,7 @@ public class Post : IRequestHandler<PostCommand, Models.User>
             throw new InvalidOperationException("User already exists");
         }
 
-        return await userRepository.SaveUser(new SaveCommand
+        var result = await userRepository.SaveUser(new SaveCommand
         {
             User = new Models.User
             {
@@ -35,5 +35,8 @@ public class Post : IRequestHandler<PostCommand, Models.User>
             },
             CommitChanges = true
         }, cancellationToken);
+
+        userRepository.Decrypt(result);
+        return result;
     }
 }
