@@ -126,3 +126,8 @@ CREATE TABLE [dbo].[Inventory_History] (
     ,CONSTRAINT UQ_INVENTORY_HISTORY UNIQUE ([InventoryId],[Intent],[Version])
     ,INDEX IX_INVENTORY_HISTORY NONCLUSTERED ([InventoryId],[Intent],[Version])
 )
+
+select * FROM [user]
+select * FROM [session]
+select * FROM [application]
+select * FROM [accesstoken]

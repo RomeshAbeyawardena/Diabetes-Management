@@ -115,7 +115,7 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
                 var validationResult = await Validate(EntityState.Added, model, cancellationToken);
                 if (!validationResult)
                 {
-                    throw new ValidationException();
+                    throw new ValidationException("Validation failed, entity already exists");
                 }
 
                 if (await Add(model, cancellationToken))
