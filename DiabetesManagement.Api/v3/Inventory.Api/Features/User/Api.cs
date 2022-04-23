@@ -33,11 +33,10 @@ namespace Inventory.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            return await TryHandler<GetRequest, object>(request, async (getRequest, ct) =>
+            return await TryHandler<GetRequest, Models.Session>(request, async (getRequest, ct) =>
             {
                 getRequest.AuthenticateUser = true;
                 var result = await Mediator.Send(getRequest, ct);
-                object finalResult;
 
                 if (result == null)
                 {
@@ -47,13 +46,11 @@ namespace Inventory.Api.Features.User
                 //check for existing session
                 var session = await Mediator.Send(new SessionFeature.GetRequest { UserId = result.UserId }, cancellationToken);
 
-                finalResult = await Mediator.Send(new SessionFeature.PostCommand
+                return await Mediator.Send(new SessionFeature.PostCommand
                 {
                     SessionId = session?.SessionId,
                     UserId = result.UserId,
                 }, cancellationToken);
-
-                return finalResult;
             }, cancellationToken, r => r.Form);
         }
 
