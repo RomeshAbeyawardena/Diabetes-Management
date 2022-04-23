@@ -63,7 +63,7 @@ namespace Inventory.Persistence.Repositories
 
             if (request.UserId.HasValue)
             {
-                return await Query.FirstOrDefaultAsync(s => s.UserId == request.UserId && s.Enabled
+                return await Query.Include(s => s.User).FirstOrDefaultAsync(s => s.UserId == request.UserId && s.Enabled
                     && s.Expires >= DateTimeOffset.UtcNow, cancellationToken);
             }
 

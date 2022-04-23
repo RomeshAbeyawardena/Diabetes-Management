@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Inventory.Contracts;
 using Inventory.Features.Session;
 using MediatR;
 
@@ -8,11 +9,13 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
 {
     private readonly IMapper mapper;
     private readonly ISessionRepository sessionRepository;
+    private readonly IDecrypt<Models.User> decryptor;
 
-    public Post(IMapper mapper, ISessionRepository sessionRepository)
+    public Post(IMapper mapper, ISessionRepository sessionRepository, IDecrypt<Models.User> decryptor)
     {
         this.mapper = mapper;
         this.sessionRepository = sessionRepository;
+        this.decryptor = decryptor;
     }
 
     public async Task<Models.Session> Handle(PostCommand request, CancellationToken cancellationToken)
@@ -29,11 +32,19 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
             };
         }
 
-        return await sessionRepository.Save(new SaveCommand
+        session = await sessionRepository.Save(new SaveCommand
         {
             ExpireSession = request.ExpireSession,
             Session = session,
             CommitChanges = true
         }, cancellationToken);
+
+
+        if (session.User != null)
+        {
+            decryptor.Decrypt(session.User);
+        }
+
+        return session;
     }
 }

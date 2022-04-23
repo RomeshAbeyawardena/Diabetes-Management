@@ -9,7 +9,7 @@ public class ApiModule : ModuleBase
     public ApiModule(ILogger logger)
         : base(nameof(ApiModule), GetAssembly<ApiModule>())
     {
-        logger.Information("Configuring API module...");
+        logger.Information("Configuring API module...", this);
     }
     public override bool CanRun()
     {

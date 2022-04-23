@@ -10,7 +10,7 @@ public class CoreModule : ModuleBase
     public CoreModule(ILogger logger)
         : base(nameof(CoreModule), GetAssembly<CoreModule>())
     {
-        logger.Information("Configuring core module...");
+        logger.Information("Configuring core module...", this);
     }
 
     public override bool CanRun()
