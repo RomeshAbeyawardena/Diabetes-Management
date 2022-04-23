@@ -65,6 +65,7 @@ CREATE TABLE [dbo].[AccessToken] (
         CONSTRAINT FK_AccessToken_Application
         REFERENCES [dbo].[Application]
     ,[Key] VARCHAR(200) NOT NULL
+    ,[Key_CS] VARCHAR(200) NOT NULL
     ,[Value] VARCHAR(200) NOT NULL
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL

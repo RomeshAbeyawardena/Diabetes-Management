@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Api.Base;
 using Inventory.Contracts;
-using Inventory.Extensions;
 using Inventory.Features.InventoryHistory;
 using MediatR;
 using Microsoft.AspNetCore.Http;

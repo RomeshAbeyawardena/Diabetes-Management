@@ -1,6 +1,5 @@
 ﻿using Inventory.Api.Base;
 using Inventory.Contracts;
-using Inventory.Extensions;
 using Inventory.Features.User;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -8,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using SessionFeature = Inventory.Features.Session;
-using UserFeature = Inventory.Features.User;
 
 namespace Inventory.Api.Features.User
 {

@@ -1,6 +1,5 @@
 ﻿using Inventory.Api.Base;
 using Inventory.Contracts;
-using Inventory.Extensions;
 using Inventory.Features.Application;
 using MediatR;
 using Microsoft.AspNetCore.Http;

@@ -6,7 +6,7 @@ public class DefaultServiceResolver : IServiceResolver
 {
     private readonly IEnumerable<IResolveableService> resolveableServices;
 
-    public DefaultServiceResolver(IEnumerable<IResolveableService> resolveableServices)
+    public DefaultServiceResolver(IEnumerable<IResolveableService>? resolveableServices)
     {
         this.resolveableServices = resolveableServices;
     }

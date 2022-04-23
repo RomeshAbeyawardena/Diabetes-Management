@@ -29,14 +29,10 @@ public class ApplicationRepository : InventoryDbRepositoryBase<Models.Applicatio
             Encrypt(model);
         }
 
-        var exists = false;
-        
-        if (entityState == EntityState.Added)
-            exists = await Query.AnyAsync(a => a.Name == model.Name && a.UserId == model.UserId, cancellationToken);
-        else
-            exists = await Query.AnyAsync(a => a.ApplicationId != model.ApplicationId && a.Name == model.Name && a.UserId == model.UserId, cancellationToken);
-
-        return !exists;
+        return await (entityState == EntityState.Added 
+            ? Query.AnyAsync(a => a.Name == model.Name && a.UserId == model.UserId, cancellationToken)
+            : Query.AnyAsync(a => a.ApplicationId != model.ApplicationId 
+                && a.Name == model.Name && a.UserId == model.UserId, cancellationToken)) == false;
     }
 
     protected override Task<bool> IsMatch(Models.Application application, CancellationToken cancellationToken)

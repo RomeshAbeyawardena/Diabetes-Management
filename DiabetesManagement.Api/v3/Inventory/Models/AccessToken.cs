@@ -11,6 +11,8 @@ public class AccessToken
     public Guid AccessTokenId { get; set; }
     public Guid ApplicationId { get; set; }
     public string? Key { get; set; }
+    [Column("Key_CS")]
+    public string? KeySignature { get; set; }
     public string? Value { get; set; }
     public bool? Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
