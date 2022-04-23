@@ -10,14 +10,14 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 {
     private readonly IClockProvider clockProvider;
     private readonly IApplicationRepository applicationRepository;
-    private readonly AccessTokenFeature.IAccessTokenRepository accessTokenRepository;
-
+    private readonly IMediator mediator;
+    
     public Post(IClockProvider clockProvider, IApplicationRepository applicationRepository,
-        AccessTokenFeature.IAccessTokenRepository accessTokenRepository)
+        IMediator mediator)
     {
         this.clockProvider = clockProvider;
         this.applicationRepository = applicationRepository;
-        this.accessTokenRepository = accessTokenRepository;
+        this.mediator = mediator;
     }
 
     public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
@@ -43,34 +43,16 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
 
         if (hasClaims)
         {
-            var accessToken = new Models.AccessToken
+            await mediator.Send(new AccessTokenFeature.PostCommand
             {
+                Claims = claims,
                 Key = request.Intent,
                 Value = request.AccessToken,
                 Expires = request.Expires.HasValue
                     ? clockProvider.Clock.UtcNow.Add(request.Expires.Value)
                     : null,
                 ApplicationId = application.ApplicationId,
-            };
-
-            accessToken.AccessTokenClaims ??= new Collection<Models.AccessTokenClaim>();
-
-            foreach (var claim in claims!)
-            {
-                accessToken.AccessTokenClaims.Add(new Models.AccessTokenClaim
-                {
-                    Claim = claim,
-                    Created = clockProvider.Clock.UtcNow,
-                    Expires = clockProvider.Clock.UtcNow.AddDays(365)
-                });
-            }
-
-            await accessTokenRepository.Save(new AccessTokenFeature.SaveCommand
-            {
-                AccessToken = accessToken,
-                CommitChanges = true
             }, cancellationToken);
-
         }
         applicationRepository.Decrypt(application);
 

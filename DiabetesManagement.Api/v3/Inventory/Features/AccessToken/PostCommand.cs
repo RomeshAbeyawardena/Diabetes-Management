@@ -10,5 +10,6 @@ namespace Inventory.Features.AccessToken
         public string? Key { get; set; }
         public string? Value { get; set; }
         public DateTimeOffset? Expires { get; set; }
+        public IEnumerable<string>? Claims { get; set; }
     }
 }
