@@ -9,9 +9,9 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
 {
     private readonly IMapper mapper;
     private readonly ISessionRepository sessionRepository;
-    private readonly IDecrypt<Models.User> decryptor;
+    private readonly IDecryptor<Models.User> decryptor;
 
-    public Post(IMapper mapper, ISessionRepository sessionRepository, IDecrypt<Models.User> decryptor)
+    public Post(IMapper mapper, ISessionRepository sessionRepository, IDecryptor<Models.User> decryptor)
     {
         this.mapper = mapper;
         this.sessionRepository = sessionRepository;

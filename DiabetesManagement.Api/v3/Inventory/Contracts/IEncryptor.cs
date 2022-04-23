@@ -1,6 +1,6 @@
 ﻿namespace Inventory.Contracts;
 
-public interface IEncrypt<T>
+public interface IEncryptor<T>
 {
     void Encrypt(T model);
 }

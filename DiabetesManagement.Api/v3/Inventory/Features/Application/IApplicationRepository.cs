@@ -2,7 +2,7 @@
 
 namespace Inventory.Features.Application;
 
-public interface IApplicationRepository : IRepository<IInventoryDbContext, Models.Application>, IEncrypt<Models.Application>, IDecrypt<Models.Application>
+public interface IApplicationRepository : IRepository<IInventoryDbContext, Models.Application>, IEncryptor<Models.Application>, IDecryptor<Models.Application>
 {
     Task<Models.Application> Save(SaveCommand saveCommand, CancellationToken cancellationToken);
 }
