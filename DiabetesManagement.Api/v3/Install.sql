@@ -127,4 +127,8 @@ CREATE TABLE [dbo].[Inventory_History] (
     ,INDEX IX_INVENTORY_HISTORY NONCLUSTERED ([InventoryId],[Intent],[Version])
 )
 select * FROM [user]
+
+select * FROM [application]
+select * FROM [accesstoken]
+select * FROM [accesstoken_claim]
 select * FROM applicationinstance

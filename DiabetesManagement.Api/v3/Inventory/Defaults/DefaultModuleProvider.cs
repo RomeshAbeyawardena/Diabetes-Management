@@ -8,17 +8,31 @@ namespace Inventory.Defaults;
 public class DefaultModuleProvider : IModuleProvider
 {
     private readonly Logger logger;
+    private IEnumerable<Assembly>? assemblies;
+    private IServiceResolver? serviceResolver;
+    private static bool HasInterface(Type type, Type interfaceType)
+    {
+        return !type.IsAbstract && type.GetInterfaces().Any(i => i == interfaceType);
+    }
 
     private bool CanResolve(Type type, out object? implementation)
     {
+        serviceResolver ??= new DefaultServiceResolver(
+            assemblies
+                .SelectMany(a => a.GetTypes().Where(t => HasInterface(t, typeof(IResolveableService))))
+                .Select(t => (IResolveableService)Activator.CreateInstance(t))
+            );
+
         implementation = null;
-        if(type == typeof(ILogger))
+        if (type == typeof(ILogger))
         {
             implementation = logger;
             return true;
         }
+        
+        implementation = serviceResolver.ResolveService(type);
 
-        return false;
+        return implementation != null;
     }
 
     private bool ResolveParameters(IEnumerable<ParameterInfo> parameters, out IEnumerable<object> constructorArguments)
@@ -89,8 +103,8 @@ public class DefaultModuleProvider : IModuleProvider
 
     public IEnumerable<IModule>? GetModules(IEnumerable<string> assemblyNames)
     {
-        var assemblies = assemblyNames.Select(a => Assembly.Load(a));
-        var moduleTypes = assemblies.SelectMany(a => a.GetTypes().Where(t => !t.IsAbstract && t.GetInterfaces().Any(i => i == typeof(IModule))));
+        assemblies = assemblyNames.Select(a => Assembly.Load(a));
+        var moduleTypes = assemblies.SelectMany(a => a.GetTypes().Where(t => HasInterface(t, typeof(IModule))));
 
         var modules = moduleTypes.Select(t => GetModuleFromType(t));
 

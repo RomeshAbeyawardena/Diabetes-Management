@@ -4,5 +4,6 @@ public interface IResolveableService
 {
     Type ServiceType { get; }
     Type ImplementationType { get; }
-    object Create(Type serviceType, IEnumerable<object> arguments);
+    bool CanResolve(Type serviceType);
+    object Create(Type serviceType);
 }
