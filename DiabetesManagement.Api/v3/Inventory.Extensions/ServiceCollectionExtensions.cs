@@ -3,7 +3,6 @@ using Inventory.Contracts;
 using Inventory.Defaults;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Internal;
 using System.Reflection;
 using System.Text.Json;
 
@@ -13,25 +12,37 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection RegisterCoreServices(this IServiceCollection services, string fileName)
     {
         var moduleData = JsonSerializer.Deserialize<ModuleData>(File.ReadAllText(fileName));
+
+        if (moduleData == null || moduleData.Modules == null || !moduleData.Modules.Any())
+        {
+            throw new NullReferenceException();
+        }
+
         var modules = new DefaultModuleProvider().GetModules(moduleData.Modules);
+
+        if(modules == null)
+        {
+            throw new NullReferenceException();
+        }
+
         return RegisterCoreServices(services, modules);
     }
 
     public static IServiceCollection RegisterCoreServices(this IServiceCollection services, IEnumerable<IModule> modules)
     {
+        var assemblies = new List<Assembly>();
         foreach(var module in modules)
         {
             module.RegisterServices(services);
+            assemblies.AddRange(module.Assemblies);
         }
 
-        return RegisterCoreServices(services, modules.SelectMany(m => m.Assemblies).ToArray());
+        return RegisterCoreServices(services, assemblies.ToArray());
     }
 
     public static IServiceCollection RegisterCoreServices(this IServiceCollection services, params Assembly[] assemblies)
     {
         return services
-            .AddSingleton<ISystemClock, SystemClock>()
-            .AddSingleton<ApplicationSettings>()
             .AddMediatR(assemblies)
             .AddAutoMapper(assemblies)
             .Scan(s => s
