@@ -1,6 +1,7 @@
 {
 	"Modules": [
 		"Inventory",
+		"Inventory.Api",
 		"Inventory.Core",
 		"Inventory.Persistence"
 	]

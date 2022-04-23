@@ -37,7 +37,7 @@ public class DefaultModuleProviderTests
     [Test]
     public void Test()
     {
-        var modules = sut.GetModules(new[] { "Inventory", "Inventory.Core", "Inventory.Persistence" });
+        var modules = sut.GetModules(new[] { "Inventory.Tests", "Inventory.Core", "Inventory.Persistence" });
         Assert.IsNotEmpty(modules);
         Assert.AreEqual(3, modules.Count());
     }
