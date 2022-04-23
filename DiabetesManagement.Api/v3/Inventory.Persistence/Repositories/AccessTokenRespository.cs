@@ -40,8 +40,11 @@ public class AccessTokenRespository : InventoryDbRepositoryBase<Models.AccessTok
 
     public Task<Models.AccessToken?> Get(GetRequest request, CancellationToken cancellationToken)
     {
+        var intent = request.Intent!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes,
+                applicationSettings.ServerInitialVectorBytes, out var caseSignature);
+
         return Query.Include(a => a.AccessTokenClaims).FirstOrDefaultAsync(a => a.AccessTokenId == request.Key
-            && a.Key == request.Intent
+            && a.Key == intent
             && a.Value == request.AccessToken, cancellationToken);
     }
 

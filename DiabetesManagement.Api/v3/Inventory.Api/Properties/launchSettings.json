@@ -2,7 +2,7 @@
   "profiles": {
     "Inventory.Api": {
       "commandName": "Project",
-      "commandLineArgs": "--verbose --csharp"
+      "commandLineArgs": "--verbose --csharp --cors *"
     }
   }
 }
