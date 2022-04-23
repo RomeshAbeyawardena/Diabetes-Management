@@ -24,8 +24,8 @@ namespace Inventory.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/register")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            return await TryHandler(async (ct) => await Mediator
-                .Send(request.Form.Bind<PostCommand>(ConvertorFactory), ct), cancellationToken);
+            return await TryHandler<PostCommand, Models.User>(request, async (command, ct) => await Mediator
+                .Send(command, ct), cancellationToken, r => r.Form);
         }
 
         [FunctionName("login-user")]
@@ -33,11 +33,10 @@ namespace Inventory.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/login")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            var getRequest = request.Form.Bind<GetRequest>(ConvertorFactory);
-            getRequest.AuthenticateUser = true;
-            return await TryHandler(async (ct) =>
+            return await TryHandler<GetRequest, object>(request, async (getRequest, ct) =>
             {
-                var result = await Mediator.Send(getRequest);
+                getRequest.AuthenticateUser = true;
+                var result = await Mediator.Send(getRequest, ct);
                 object finalResult;
 
                 if (result == null)
@@ -55,7 +54,7 @@ namespace Inventory.Api.Features.User
                 }, cancellationToken);
 
                 return finalResult;
-            }, cancellationToken);
+            }, cancellationToken, r => r.Form);
         }
 
         [FunctionName("logout-user")]
@@ -63,7 +62,7 @@ namespace Inventory.Api.Features.User
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/logout")]
         HttpRequest request, CancellationToken cancellationToken)
         {
-            return await TryHandler(async (ct) =>
+            return await TryHandler<object, Models.Session>(request, async (model, ct) =>
             {
                 var session = await GetSession(request);
 
@@ -76,7 +75,7 @@ namespace Inventory.Api.Features.User
                 {
                     SessionId = session?.SessionId,
                     ExpireSession = true
-                });
+                }, ct);
 
                 return expiredSession;
             }, cancellationToken);

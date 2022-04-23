@@ -21,7 +21,7 @@ public class Api : ApiBase
         [HttpTrigger(Microsoft.Azure.WebJobs.Extensions.Http.AuthorizationLevel.Function, "POST",
         Route = BaseUrl)]HttpRequest request, CancellationToken cancellationToken)
     {
-        var command = request.Form.Bind<PostCommand>(ConvertorFactory);
-        return await TryHandler(request, command.UserId!.Value, async (ct) => await Mediator.Send(command, ct), cancellationToken);
+        return await TryHandler<PostCommand, Models.Application>(request, c => c.UserId!.Value, 
+            async (command, ct) => await Mediator.Send(command, ct), cancellationToken, r => r.Form);
     }
 }

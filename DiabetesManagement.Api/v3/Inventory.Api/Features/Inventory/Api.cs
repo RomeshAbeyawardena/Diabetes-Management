@@ -26,9 +26,8 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-        return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
-            await Mediator.Send(getRequest, ct), cancellationToken);
+        return await TryHandler<GetRequest, IEnumerable<Models.InventoryHistory>>(request, r => r.UserId!.Value, 
+            async (getRequest, ct) => await Mediator.Send(getRequest, ct), cancellationToken);
     }
 
     [FunctionName("list-inventory")]
@@ -36,9 +35,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var getRequest = request.Query.Bind<GetRequest>(ConvertorFactory);
-
-        return await TryHandler(request, getRequest.UserId!.Value, async (ct) =>
+        return await TryHandler<GetRequest, IEnumerable<Models.Version>>(request, r => r.UserId!.Value, async (getRequest, ct) =>
         {
             var result = await Mediator.Send(getRequest, ct);
             return mapper.Map<IEnumerable<Models.Version>>(result);
@@ -50,9 +47,7 @@ public class Api : ApiBase
         [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        var postRequest = request.Form.Bind<PostCommand>(ConvertorFactory);
-
-        return await TryHandler(request, postRequest.UserId!.Value, async (ct) => await Mediator
-            .Send(postRequest, ct), cancellationToken);
+        return await TryHandler<PostCommand, Models.InventoryHistory>(request, c => c.UserId!.Value, async (postRequest, ct) => await Mediator
+            .Send(postRequest, ct), cancellationToken, r => r.Form);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Inventory.Api.Base;
 using Inventory.Contracts;
-using Inventory.Extensions;
 using Inventory.Features.AccessToken;
 using MediatR;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +20,7 @@ public class Api : ApiBase
     public async Task<IActionResult> Sign([HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
-        return await TryHandler(async (ct) => await Mediator
-            .Send(request.Form.Bind<SignRequest>(ConvertorFactory), ct), cancellationToken);
+        return await TryHandler<SignRequest, string>(request, async (signRequest, ct) => await Mediator
+            .Send(signRequest, ct), cancellationToken, r => r.Form);
     }
 }

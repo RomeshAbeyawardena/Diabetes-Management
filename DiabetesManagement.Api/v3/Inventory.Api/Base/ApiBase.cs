@@ -6,6 +6,8 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.Extensions.Primitives;
+using Inventory.Extensions;
 
 namespace Inventory.Api.Base;
 
@@ -51,21 +53,61 @@ public abstract class ApiBase
         return false;
     }
 
-    protected async Task<IActionResult> TryHandler<T>(HttpRequest httpRequest, Guid userId, Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
-    {
-        if (!await ValidateSession(httpRequest, userId))
-        {
-            return new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised session"));
-        }
 
-        return await TryHandler(attempt, cancellationToken);
+
+    /// <summary>
+    /// A try handler that expects a valid user session in order to proceed, calls the standard TryHandler once the user session is validated
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="httpRequest"></param>
+    /// <param name="userId"></param>
+    /// <param name="attempt"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected async Task<IActionResult> TryHandler<T, TResult>(HttpRequest httpRequest, 
+        Func<T,Guid> getUserId, Func<T, CancellationToken, Task<TResult>> attempt, 
+        CancellationToken cancellationToken, 
+        Func<HttpRequest, IEnumerable<KeyValuePair<string, StringValues>>>? keyValue = default)
+    {
+        return await TryHandler<T, TResult>(httpRequest, async(t, ct) => {
+            var userId = getUserId(t);
+            if (!await ValidateSession(httpRequest, userId))
+            {
+               throw new UnauthorizedAccessException("Unauthorised session");
+            }
+            return await attempt(t, ct);
+        }, cancellationToken, keyValue);
     }
 
-    protected static async Task<IActionResult> TryHandler<T>(Func<CancellationToken, Task<T>> attempt, CancellationToken cancellationToken)
+    /// <summary>
+    /// A try handler that will handle exceptions for the below, returning status code 400 for all except a few
+    /// <list type="bullet">
+    /// <item>InvalidOperationException</item>
+    /// <item>ValidationException</item>
+    /// <item>InvalidDataException</item>
+    /// <item>UnauthorizedAccessException (Unauthorised Object result)</item>
+    /// <item>Falls back to UnprocessableEntityObjectResult if the exception is not in this list</item>
+    /// </list>
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="attempt"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    protected async Task<IActionResult> TryHandler<T, TResult>(HttpRequest httpRequest, 
+        Func<T, CancellationToken, Task<TResult>> attempt, 
+        CancellationToken cancellationToken, 
+        Func<HttpRequest, IEnumerable<KeyValuePair<string, StringValues>>>? keyValue = default)
     {
+        if(keyValue == default)
+        {
+            keyValue = r => r.Query;
+        }
+
         try
         {
-            return new ObjectResult(new Models.Response(await attempt(cancellationToken)));
+            var value = keyValue(httpRequest).Bind<T>(ConvertorFactory);
+
+            return new ObjectResult(new Models.Response(await attempt(value, cancellationToken)));
         }
         catch (InvalidOperationException exception)
         {
