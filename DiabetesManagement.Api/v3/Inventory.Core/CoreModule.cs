@@ -2,14 +2,15 @@
 using Inventory.Core.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
+using Serilog;
 
 namespace Inventory.Core;
 public class CoreModule : ModuleBase
 {
-    public CoreModule()
+    public CoreModule(ILogger logger)
         : base(nameof(CoreModule), GetAssembly<CoreModule>())
     {
-
+        logger.Information("Configuring core module...");
     }
 
     public override bool CanRun()

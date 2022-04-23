@@ -1,14 +1,15 @@
 ﻿using Inventory.Base;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Inventory.Persistence;
 
 public class PersistenceModule : ModuleBase
 {
-    public PersistenceModule()
+    public PersistenceModule(ILogger logger)
         : base(nameof(PersistenceModule), GetAssembly<PersistenceModule>())
     {
-
+        logger.Information("Configuring persistence module...");
     }
 
     public override bool CanRun()

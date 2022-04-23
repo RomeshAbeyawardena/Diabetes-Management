@@ -18,7 +18,8 @@ public static class ServiceCollectionExtensions
             throw new NullReferenceException();
         }
 
-        var modules = new DefaultModuleProvider().GetModules(moduleData.Modules);
+        using var moduleProvider = new DefaultModuleProvider();
+        var modules = moduleProvider.GetModules(moduleData.Modules);
 
         if(modules == null)
         {

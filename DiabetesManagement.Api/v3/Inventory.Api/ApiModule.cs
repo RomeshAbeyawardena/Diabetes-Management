@@ -1,14 +1,15 @@
 ﻿using Inventory.Base;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Inventory.Api;
 
 public class ApiModule : ModuleBase
 {
-    public ApiModule()
+    public ApiModule(ILogger logger)
         : base(nameof(ApiModule), GetAssembly<ApiModule>())
     {
-
+        logger.Information("Configuring API module...");
     }
     public override bool CanRun()
     {
