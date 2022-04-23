@@ -1,5 +1,6 @@
 ﻿using Inventory.Base;
-using Inventory.Core.Defaults;
+using Inventory.Defaults;
+using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using System.Linq;
 using System.Reflection;
@@ -15,6 +16,11 @@ public class MyModule : ModuleBase
     public override bool CanRun()
     {
         return true;
+    }
+
+    public override void RegisterServices(IServiceCollection services)
+    {
+        throw new System.NotImplementedException();
     }
 }
 

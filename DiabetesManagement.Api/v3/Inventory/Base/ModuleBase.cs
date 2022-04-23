@@ -1,4 +1,5 @@
 ﻿using Inventory.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
 namespace Inventory.Base;
@@ -21,4 +22,5 @@ public abstract class ModuleBase : IModule
     public IEnumerable<Assembly> Assemblies { get; }
 
     public abstract bool CanRun();
+    public abstract void RegisterServices(IServiceCollection services);
 }

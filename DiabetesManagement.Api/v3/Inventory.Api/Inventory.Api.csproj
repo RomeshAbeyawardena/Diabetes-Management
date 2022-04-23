@@ -8,6 +8,16 @@
     <UserSecretsId>69d25d03-4ac1-45fb-b85a-0287d532f73a</UserSecretsId>
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="modules.json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="modules.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />

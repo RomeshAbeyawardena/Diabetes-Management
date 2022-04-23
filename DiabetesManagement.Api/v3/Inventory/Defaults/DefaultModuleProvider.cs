@@ -1,7 +1,7 @@
 ﻿using Inventory.Contracts;
 using System.Reflection;
 
-namespace Inventory.Core.Defaults;
+namespace Inventory.Defaults;
 
 public class DefaultModuleProvider : IModuleProvider
 {

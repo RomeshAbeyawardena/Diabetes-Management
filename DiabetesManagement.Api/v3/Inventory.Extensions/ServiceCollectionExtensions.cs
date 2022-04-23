@@ -1,21 +1,41 @@
 ﻿using Inventory.Attributes;
+using Inventory.Contracts;
+using Inventory.Defaults;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
+using System.Reflection;
+using System.Text.Json;
 
 namespace Inventory.Extensions;
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection RegisterCoreServices(this IServiceCollection services, params Type[] types)
+    public static IServiceCollection RegisterCoreServices(this IServiceCollection services, string fileName)
+    {
+        var moduleData = JsonSerializer.Deserialize<ModuleData>(File.ReadAllText(fileName));
+        var modules = new DefaultModuleProvider().GetModules(moduleData.Modules);
+        return RegisterCoreServices(services, modules);
+    }
+
+    public static IServiceCollection RegisterCoreServices(this IServiceCollection services, IEnumerable<IModule> modules)
+    {
+        foreach(var module in modules)
+        {
+            module.RegisterServices(services);
+        }
+
+        return RegisterCoreServices(services, modules.SelectMany(m => m.Assemblies).ToArray());
+    }
+
+    public static IServiceCollection RegisterCoreServices(this IServiceCollection services, params Assembly[] assemblies)
     {
         return services
             .AddSingleton<ISystemClock, SystemClock>()
             .AddSingleton<ApplicationSettings>()
-            .AddMediatR(types)
-            .AddAutoMapper(types)
+            .AddMediatR(assemblies)
+            .AddAutoMapper(assemblies)
             .Scan(s => s
-                .FromAssembliesOf(types)
+                .FromAssemblies(assemblies)
                 .AddClasses(c => c.WithAttribute<RegisterServiceAttribute>(s => s.ServiceLifetime == ServiceLifetime.Singleton))
                 .AsImplementedInterfaces()
                 .WithSingletonLifetime()

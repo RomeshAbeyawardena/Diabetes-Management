@@ -1,4 +1,6 @@
 ﻿using Inventory.Base;
+using Inventory.Core.Features;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Inventory.Core;
 public class CoreModule : ModuleBase
@@ -12,5 +14,10 @@ public class CoreModule : ModuleBase
     public override bool CanRun()
     {
         return true;
+    }
+
+    public override void RegisterServices(IServiceCollection services)
+    {
+        services.AddTransient(typeof(MediatR.Pipeline.IRequestPreProcessor<>), typeof(AuthenticationRequestHandler<>));
     }
 }

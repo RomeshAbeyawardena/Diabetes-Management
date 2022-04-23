@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Inventory.Contracts;
+using Microsoft.Extensions.Configuration;
 using System.Diagnostics;
 
 namespace Inventory;
@@ -26,4 +27,10 @@ public class ApplicationSettings
     public string? PersonalDataServerKey { get; set; }
     public string? ConfidentialServerKey { get; set; }
     public string? ServerInitialVector { get; set; }
+    public IEnumerable<string> Modules { get; set; }
+
+    public IEnumerable<IModule>? GetModules(IModuleProvider moduleProvider)
+    {
+        return moduleProvider.GetModules(Modules);
+    }
 }
