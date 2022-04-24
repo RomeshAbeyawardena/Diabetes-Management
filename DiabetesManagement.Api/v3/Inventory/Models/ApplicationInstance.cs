@@ -12,5 +12,6 @@ public class ApplicationInstance
     public string? AccessToken { get; set; }
     public bool Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
+    public DateTimeOffset Modified { get; set; }
     public DateTimeOffset? Expires { get; set; }
 }

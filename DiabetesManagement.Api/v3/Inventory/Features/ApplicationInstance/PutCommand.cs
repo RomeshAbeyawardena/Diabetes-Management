@@ -2,12 +2,9 @@
 using MediatR;
 
 namespace Inventory.Features.ApplicationInstance;
-
 [RequiresClaims(Permissions.Anonymous_Access, Permissions.ApplicationInstance_Edit)]
-public class PostCommand : IRequest<Models.ApplicationInstance>
+public class PutCommand : IRequest<Models.ApplicationInstance>
 {
-    public Guid ApplicationId { get; set; }
-    public string? AccessToken { get; set; }
-    public DateTimeOffset Expires { get; set; }
+    public Models.ApplicationInstance? ApplicationInstance { get; set; }
     public bool CommitChanges { get; set; }
 }

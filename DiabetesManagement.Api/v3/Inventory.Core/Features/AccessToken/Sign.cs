@@ -22,6 +22,7 @@ public class Sign : IRequestHandler<SignRequest, string>
 
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
     {
+        //build dictionary for jwt token
         var jwtdict = new Dictionary<string, object> {
             { Keys.ApiToken, request.ApiKey! },
             { Keys.ApiIntent, request.ApiIntent! },
@@ -29,14 +30,17 @@ public class Sign : IRequestHandler<SignRequest, string>
         
         Models.ApplicationInstance? applicationInstance = default;
 
+        //the caller wants the jwt token validated
         if (request.Validate && Guid.TryParse(request.ApiKey, out var key))
         {
+            //find the access token
             var accessToken = await mediator.Send(new GetRequest
             {
                 Key = key,
                 Intent = request.ApiIntent,
                 AccessToken = request.ApiChallenge
             }, cancellationToken);
+
 
             if (accessToken != null)
             {
@@ -49,15 +53,17 @@ public class Sign : IRequestHandler<SignRequest, string>
                 
                 if (applicationInstance == null)
                 {
+                    //we don't have an existing access token lets create one
                     applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand
                     {
                         ApplicationId = accessToken.ApplicationId,
-                        AccessToken = "AT",
+                        //AccessToken = "AT", we are unsure what the access token is lets add it once its generated
                         Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4)),
-                        CommitChanges = false
+                        CommitChanges = false //nothing to be commited yet
                     }, cancellationToken);
                 }
 
+                //access token found lets add the validation id to the dictionary 
                 jwtdict.Add(Keys.ApplicationId, applicationInstance.ApplicationInstanceId);
             }
         }
@@ -66,7 +72,11 @@ public class Sign : IRequestHandler<SignRequest, string>
 
         if(applicationInstance != null)
         {
-
+            applicationInstance.AccessToken = token;
+            await mediator.Send(new ApplicationInstanceFeature.PutCommand
+            { 
+                ApplicationInstance = applicationInstance, 
+                CommitChanges = true }, cancellationToken);
         }
 
         return token;

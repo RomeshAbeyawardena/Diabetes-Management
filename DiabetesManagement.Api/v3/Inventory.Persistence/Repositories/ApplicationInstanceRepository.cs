@@ -16,6 +16,12 @@ namespace Inventory.Persistence.Repositories
             return AcceptChanges;
         }
 
+        protected override Task<bool> Update(Models.ApplicationInstance model, CancellationToken cancellationToken)
+        {
+            model.Modified = clockProvider.Clock.UtcNow;
+            return AcceptChanges;
+        }
+
         public ApplicationInstanceRepository(IDbContextProvider dbContextProvider, IClockProvider clockProvider) : base(dbContextProvider)
         {
             this.clockProvider = clockProvider;
