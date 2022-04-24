@@ -21,7 +21,7 @@ public class Post : IRequestHandler<PostCommand, Models.ApplicationInstance>
                 ApplicationId = request.ApplicationId,
                 Expires = request.Expires
             },
-            CommitChanges = true
+            CommitChanges = request.CommitChanges
         }, cancellationToken);
     }
 }

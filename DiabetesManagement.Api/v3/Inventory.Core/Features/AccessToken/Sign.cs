@@ -26,6 +26,8 @@ public class Sign : IRequestHandler<SignRequest, string>
             { Keys.ApiToken, request.ApiKey! },
             { Keys.ApiIntent, request.ApiIntent! },
             { Keys.ApiTokenChallenge, request.ApiChallenge! } };
+        
+        Models.ApplicationInstance? applicationInstance = default;
 
         if (request.Validate && Guid.TryParse(request.ApiKey, out var key))
         {
@@ -38,16 +40,35 @@ public class Sign : IRequestHandler<SignRequest, string>
 
             if (accessToken != null)
             {
-                var applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand { 
-                    ApplicationId = accessToken.ApplicationId, 
-                    Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4))
+                var applicationInstances = await mediator.Send(new ApplicationInstanceFeature.GetRequest {
+                    ApplicationId = accessToken.ApplicationId,
+                    AccessToken = accessToken.Value
                 }, cancellationToken);
-
+                
+                applicationInstance = applicationInstances.FirstOrDefault();
+                
+                if (applicationInstance == null)
+                {
+                    applicationInstance = await mediator.Send(new ApplicationInstanceFeature.PostCommand
+                    {
+                        ApplicationId = accessToken.ApplicationId,
+                        AccessToken = "AT",
+                        Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4)),
+                        CommitChanges = false
+                    }, cancellationToken);
+                }
 
                 jwtdict.Add(Keys.ApplicationId, applicationInstance.ApplicationInstanceId);
             }
         }
 
-        return jwtProvider.BuildToken(jwtdict, jwtProvider.DefaultTokenValidationParameters);
+        var token = jwtProvider.BuildToken(jwtdict, jwtProvider.DefaultTokenValidationParameters);
+
+        if(applicationInstance != null)
+        {
+
+        }
+
+        return token;
     }
 }

@@ -8,5 +8,6 @@ namespace Inventory.Features.ApplicationInstance
     {
         public Guid? ApplicationInstanceId { get; set; }
         public Guid ApplicationId { get; set; }
+        public string? AccessToken { get; set; }
     }
 }

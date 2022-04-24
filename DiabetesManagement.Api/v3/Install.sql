@@ -53,6 +53,7 @@ CREATE TABLE [dbo].[ApplicationInstance] (
     ,[ApplicationId] UNIQUEIDENTIFIER NOT NULL
         CONSTRAINT FK_ApplicationInstance_Application
         REFERENCES [dbo].[Application]
+    ,[AccessToken] VARCHAR(MAX) NOT NULL
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL
     ,[Expires] DATETIMEOFFSET NULL
@@ -131,4 +132,5 @@ CREATE TABLE [dbo].[Inventory_History] (
 select * FROM [user]
 select * FROM [session]
 select * FROM [application]
+select * FROM [applicationinstance]
 select * FROM [accesstoken]
