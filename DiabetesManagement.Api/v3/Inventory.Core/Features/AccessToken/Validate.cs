@@ -1,4 +1,4 @@
-﻿using Inventory.Contracts;
+﻿using JwtFeature = Inventory.Features.Jwt;
 using Inventory.Features.AccessToken;
 using MediatR;
 
@@ -6,16 +6,15 @@ namespace Inventory.Core.Features.AccessToken;
 
 public class Validate : IRequestHandler<ValidateRequest, IDictionary<string, string>>
 {
-    private readonly IJwtProvider jwtProvider;
+    private readonly IMediator mediator;
 
-    public Validate(IJwtProvider jwtProvider)
+    public Validate(IMediator mediator)
     {
-        this.jwtProvider = jwtProvider;
+        this.mediator = mediator;
     }
 
     public async Task<IDictionary<string, string>> Handle(ValidateRequest request, CancellationToken cancellationToken)
     {
-        await Task.CompletedTask;
-        return jwtProvider.Extract(request.Token!, jwtProvider.DefaultTokenValidationParameters);
+        return await mediator.Send(new JwtFeature.DecodeRequest { Token = request.Token }, cancellationToken);
     }
 }

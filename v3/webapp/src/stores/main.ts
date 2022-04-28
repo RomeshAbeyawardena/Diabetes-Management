@@ -21,6 +21,13 @@ export const useStore = defineStore('main', {
     },
     actions: {
         init(): void {
+            let token = this.jWtWebService.encode({
+                apiKey: "test",
+                apiChallenge: "t23324",
+                apiIntent: "34234234",
+            });
+
+            console.log(token);
             this.client.interceptors.request.use(this.setupHeaders);
         },
         setupHeaders(config: AxiosRequestConfig): AxiosRequestConfig {
