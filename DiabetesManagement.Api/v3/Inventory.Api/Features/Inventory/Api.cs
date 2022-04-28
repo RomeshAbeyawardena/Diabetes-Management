@@ -12,7 +12,7 @@ namespace Inventory.Api.Features.Inventory;
 
 public class Api : ApiBase
 {
-    public const string BaseUrl = "inventory";
+    public const string ApiUrl = "inventory";
     private readonly IMapper mapper;
 
     public Api(IMediator mediator, IConvertorFactory convertorFactor, IMapper mapper) : base(convertorFactor, mediator)

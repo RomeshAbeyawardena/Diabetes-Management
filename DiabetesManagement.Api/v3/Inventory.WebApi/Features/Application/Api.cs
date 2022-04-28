@@ -13,7 +13,7 @@ public class Api : ApiBase
     }
     
     [HttpPost]
-    public async Task<IActionResult> Post(PostCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Post([FromForm] PostCommand command, CancellationToken cancellationToken)
     {
         return await Handle(command, cancellationToken);
     }

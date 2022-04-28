@@ -18,13 +18,13 @@ public class Api : ApiBase
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get(GetRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Get([FromQuery] GetRequest request, CancellationToken cancellationToken)
     {
         return await Handle(request, cancellationToken);
     }
 
     [HttpGet, Route("list")]
-    public async Task<IActionResult> List(GetRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> List([FromQuery] GetRequest request, CancellationToken cancellationToken)
     {
         return await Handle(async(ct) =>
         {
@@ -34,7 +34,7 @@ public class Api : ApiBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Save(PostCommand command, CancellationToken cancellationToken)
+    public async Task<IActionResult> Save([FromForm] PostCommand command, CancellationToken cancellationToken)
     {
         return await Handle(command, cancellationToken);
     }
