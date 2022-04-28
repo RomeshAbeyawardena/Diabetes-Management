@@ -6,6 +6,7 @@ using SessionFeature = Inventory.Features.Session;
 
 namespace Inventory.WebApi.Features.User;
 
+[Route(ApiUrl)]
 public class Api : ApiBase
 {
     public const string ApiUrl = $"{BaseUrl}/user";

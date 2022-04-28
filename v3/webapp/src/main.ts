@@ -7,7 +7,7 @@ const pinia = createPinia();
 
 const appServices = function() {
     return useAppServices({
-        baseURL: "http://localhost:7071/api",
+        baseURL: "http://localhost:5265/api",
         headers: {
             "x-api-acc-token": ""
         }

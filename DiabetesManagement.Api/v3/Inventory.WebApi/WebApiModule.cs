@@ -17,7 +17,13 @@ public class WebApiModule : ModuleBase
 
     public override void RegisterServices(IServiceCollection services)
     {
-        services.AddHttpContextAccessor()
+        services
+            .AddCors(s => s.AddDefaultPolicy(c => c
+                .AllowCredentials()
+                .AllowAnyHeader()
+                .WithOrigins("http://localhost:3000")
+                .AllowAnyMethod()))
+            .AddHttpContextAccessor()
             .AddControllers();
     }
 }

@@ -9,8 +9,14 @@ export const baseUrl = "util";
 export class JwtService extends ApiClient implements IJwtService {
     
     async encode(payload: any) : Promise<string> {
-        const form = this.processForm(payload);
-        const response = await this.client.post(baseUrl + "/encode?requireExpirationTime=false", form);
+        const response = await this.client.request({
+            headers: {
+                "Content-Type": "application/json"
+            },
+            url: baseUrl + "/encode",
+            method: "POST",
+            data: JSON.stringify(payload)
+        });
         return JSON.parse(response.data).data;
     }
 

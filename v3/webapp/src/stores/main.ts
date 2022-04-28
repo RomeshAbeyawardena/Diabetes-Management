@@ -22,9 +22,14 @@ export const useStore = defineStore('main', {
     actions: {
         async init(): Promise<void> {
             let token = await this.jWtWebService.encode({
-                apiKey: "test",
-                apiChallenge: "t23324",
-                apiIntent: "34234234",
+                parameters: {
+                    requireExpirationTime: true,
+                },
+                dictionary: {
+                    apiKey: "test",
+                    apiChallenge: "t23324",
+                    apiIntent: "34234234",
+                }
             });
 
             console.log(token);

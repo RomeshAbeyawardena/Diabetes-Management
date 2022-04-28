@@ -14,8 +14,12 @@ export abstract class ApiClient implements IApiClient {
         const formData = new FormData();
 
         for(let r in request){
-            const value = request[r];
+            let value = request[r];
             if(value) {
+                if(typeof(value) == "object"){
+                    value = JSON.stringify(value);
+                }
+
                 formData.append(r, value);
             }
         }
