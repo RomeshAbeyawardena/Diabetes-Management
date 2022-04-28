@@ -5,11 +5,14 @@ using System.ComponentModel.DataAnnotations;
 namespace Inventory.WebApi.Base;
 
 [ApiController, Route(BaseUrl)]
-public class ApiBase : ControllerBase
+public abstract class ApiBase : ControllerBase
 {
     private readonly IMediator mediator;
     protected const string BaseUrl = "/api"; 
-    protected async Task<IActionResult> Handle<TRequest>(TRequest request, CancellationToken cancellationToken)
+
+    protected IMediator Mediator => mediator;
+
+    protected async Task<IActionResult> Handle<TResult>(Func<CancellationToken, Task<TResult>> action, CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
         {
@@ -18,8 +21,7 @@ public class ApiBase : ControllerBase
 
         try
         {
-            var result = await mediator.Send(request!, cancellationToken);
-
+            var result = await action(cancellationToken);
             return Ok(new Models.Response(result));
         }
         catch (InvalidOperationException exception)
@@ -42,6 +44,11 @@ public class ApiBase : ControllerBase
         {
             return UnprocessableEntity(new Models.Response(StatusCodes.Status500InternalServerError, exception.Message));
         }
+    }
+
+    protected async Task<IActionResult> Handle<TRequest>(TRequest request, CancellationToken cancellationToken)
+    {
+        return await Handle(async (ct) => await mediator.Send(request!, ct), cancellationToken);
     }
 
     public ApiBase(IMediator mediator)

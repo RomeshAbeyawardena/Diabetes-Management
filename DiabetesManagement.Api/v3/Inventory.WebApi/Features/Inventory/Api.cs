@@ -1,0 +1,41 @@
+﻿using AutoMapper;
+using Inventory.Features.InventoryHistory;
+using Inventory.WebApi.Base;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Inventory.WebApi.Features.Inventory;
+
+[Route(ApiUrl)]
+public class Api : ApiBase
+{
+    public const string ApiUrl = $"{BaseUrl}/inventory";
+    private readonly IMapper mapper;
+
+    public Api(IMapper mapper, IMediator mediator) : base(mediator)
+    {
+        this.mapper = mapper;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Get(GetRequest request, CancellationToken cancellationToken)
+    {
+        return await Handle(request, cancellationToken);
+    }
+
+    [HttpGet, Route("list")]
+    public async Task<IActionResult> List(GetRequest request, CancellationToken cancellationToken)
+    {
+        return await Handle(async(ct) =>
+        {
+            var result = await Mediator.Send(request, cancellationToken);
+            return mapper.Map<IEnumerable<Models.Version>>(result);
+        }, cancellationToken);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Save(PostCommand command, CancellationToken cancellationToken)
+    {
+        return await Handle(command, cancellationToken);
+    }
+}
