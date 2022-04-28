@@ -1,0 +1,8 @@
+{
+	"Modules": [
+		"Inventory",
+		"Inventory.WebApi",
+		"Inventory.Core",
+		"Inventory.Persistence"
+	]
+}

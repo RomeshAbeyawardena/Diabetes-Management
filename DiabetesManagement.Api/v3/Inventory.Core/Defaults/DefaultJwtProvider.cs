@@ -1,10 +1,7 @@
 ﻿using Inventory.Attributes;
-using Inventory;
 using Inventory.Contracts;
-using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Inventory.Core.Defaults
 {
@@ -42,15 +39,28 @@ namespace Inventory.Core.Defaults
 
         public TokenValidationParameters DefaultTokenValidationParameters { get; }
 
-        public string BuildToken(IDictionary<string, object> tokenValues, TokenValidationParameters validationParameters)
+        public string BuildToken(IDictionary<string, object> tokenValues, TokenValidationParameters validationParameters, bool enforceStandardSettings)
         {
+            if (enforceStandardSettings)
+            {
+                validationParameters.ValidIssuer = applicationSettings.Issuer;
+                validationParameters.ValidAudience = applicationSettings.Audience;
+                validationParameters.TokenDecryptionKey = key1;
+                validationParameters.IssuerSigningKey = key2;
+                validationParameters.ValidateIssuerSigningKey = true;
+            }
+
             var token = handler.CreateToken(new SecurityTokenDescriptor
             {
                 Audience = validationParameters.ValidAudience,
                 Claims = tokenValues,
                 Issuer = validationParameters.ValidIssuer,
-                Expires = clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4)).DateTime,
-                NotBefore = clockProvider.Clock.UtcNow.DateTime,
+                Expires = validationParameters.RequireExpirationTime 
+                    ? clockProvider.Clock.UtcNow.Add(applicationSettings.DefaultApplicationExpiry ?? TimeSpan.FromHours(4)).DateTime 
+                    : null,
+                NotBefore = validationParameters.RequireExpirationTime 
+                    ? clockProvider.Clock.UtcNow.DateTime 
+                    : null,
                 EncryptingCredentials = new EncryptingCredentials(key1, SecurityAlgorithms.Aes256KeyWrap, SecurityAlgorithms.Aes256CbcHmacSha512),
                 SigningCredentials = new SigningCredentials(key2, SecurityAlgorithms.HmacSha512Signature),
                 IssuedAt = clockProvider.Clock.UtcNow.DateTime,
@@ -59,8 +69,17 @@ namespace Inventory.Core.Defaults
             return handler.WriteToken(token);
         }
 
-        public IDictionary<string, string> Extract(string token, TokenValidationParameters validationParameters)
+        public IDictionary<string, string> Extract(string token, TokenValidationParameters validationParameters, bool enforceStandardSettings)
         {
+            if (enforceStandardSettings)
+            {
+                validationParameters.ValidIssuer = applicationSettings.Issuer;
+                validationParameters.ValidAudience = applicationSettings.Audience;
+                validationParameters.TokenDecryptionKey = key1;
+                validationParameters.IssuerSigningKey = key2;
+                validationParameters.ValidateIssuerSigningKey = true;
+            }
+
             var s = handler.ValidateToken(token, validationParameters, out var securityToken);
             return s.Claims.ToDictionary(c => c.Type, c => c.Value);
 

@@ -10,13 +10,14 @@ export class JwtService extends ApiClient implements IJwtService {
     
     async encode(payload: any) : Promise<string> {
         const form = this.processForm(payload);
-        const response = await this.client.post(baseUrl + "/encode", form);
-        return response.data;
+        const response = await this.client.post(baseUrl + "/encode?requireExpirationTime=false", form);
+        return JSON.parse(response.data).data;
     }
 
     async decode(token: string): Promise<any> {
-        const form = this.processForm({ token: token });
+        const form = this.processForm({ token: token, 
+            parameters: { "requireExpirationTime": false } });
         const response = await this.client.post(baseUrl + "/decode", form);
-        return response.data;
+        return JSON.parse(response.data).data;
     }
 }

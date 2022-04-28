@@ -20,14 +20,17 @@ export const useStore = defineStore('main', {
         }
     },
     actions: {
-        init(): void {
-            let token = this.jWtWebService.encode({
+        async init(): Promise<void> {
+            let token = await this.jWtWebService.encode({
                 apiKey: "test",
                 apiChallenge: "t23324",
                 apiIntent: "34234234",
             });
 
             console.log(token);
+
+            let response = await this.jWtWebService.decode(token);
+            console.log(response);
             this.client.interceptors.request.use(this.setupHeaders);
         },
         setupHeaders(config: AxiosRequestConfig): AxiosRequestConfig {
@@ -41,7 +44,6 @@ export const useStore = defineStore('main', {
                 password: "e138llRA1787!"
             });
 
-            console.log(response);
         },
         async authenticate() : Promise<void> {
             let response = await this.accessTokenService.generate({
