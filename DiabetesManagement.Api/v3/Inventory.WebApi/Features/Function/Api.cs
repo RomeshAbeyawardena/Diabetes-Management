@@ -5,8 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Inventory.WebApi.Features.Function;
 
+[Route(ApiUrl)]
 public class Api : ApiBase
 {
+    public const string ApiUrl = $"{BaseUrl}/function";
     public Api(IMediator mediator) : base(mediator)
     {
     }

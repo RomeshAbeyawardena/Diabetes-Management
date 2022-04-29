@@ -4,6 +4,7 @@ using Inventory.Extensions;
 using Inventory.Features.Function;
 using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Inventory.Persistence.Repositories;
 
@@ -49,9 +50,30 @@ public class FunctionRepository : InventoryDbRepositoryBase<Models.Function>, IF
 
         Encrypt(requestFunction);
 
-        return await Query.Where(f => f.Name == requestFunction.Name
-            && f.Enabled
-            && f.Path == requestFunction.Path).ToArrayAsync(cancellationToken);
+        var query = Expression;
+
+        if (!request.DisplayAll.HasValue || !request.DisplayAll.Value)
+        {
+            query = Expression.Start(f => f.Enabled);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Name))
+        {
+            Expression<Func<Models.Function, bool>> exp = f => f.Name == request.Name;
+            query = Expression.IsStarted 
+                ? query.And(exp) 
+                : query.Start(exp);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Path))
+        {
+            Expression<Func<Models.Function, bool>> exp = f => f.Path == request.Path;
+            query = Expression.IsStarted
+                ? query.And(exp)
+                : query.Start(exp);
+        }
+
+        return await Query.Where(query).ToArrayAsync(cancellationToken);
     }
 
     public Task<Models.Function?> Get(GetRequest request, CancellationToken cancellationToken)

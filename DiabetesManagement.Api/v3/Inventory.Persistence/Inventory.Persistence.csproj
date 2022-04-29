@@ -10,5 +10,7 @@
     <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
     <ProjectReference Include="..\Inventory\Inventory.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="LinqKit" Version="1.2.2" />
+  </ItemGroup>
 </Project>

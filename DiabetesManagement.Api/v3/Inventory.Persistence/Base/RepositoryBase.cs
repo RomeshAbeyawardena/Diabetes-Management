@@ -1,6 +1,7 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
 using Inventory.Extensions;
+using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.ComponentModel.DataAnnotations;
@@ -33,7 +34,7 @@ public abstract class RepositoryBase<TDbContext, T> : IRepository<TDbContext, T>
 
     protected Task<bool> AcceptChanges => Task.FromResult(true);
     protected Task<bool> RejectChanges => Task.FromResult(false);
-
+    protected ExpressionStarter<T> Expression => PredicateBuilder.New<T>();
     protected virtual bool IsReadOnly { set => isReadonly = value; }
 
     protected async virtual Task<T> Save<TRequest>(TRequest request, CancellationToken cancellationToken)
