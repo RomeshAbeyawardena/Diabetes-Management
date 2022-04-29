@@ -25,20 +25,4 @@ public class Api : ApiBase
     {
         return await Task.FromResult(hello);
     }
-
-    [FunctionName("encode")]
-    public async Task<IActionResult> Encode([HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/encode")]
-        HttpRequest request, CancellationToken cancellationToken)
-    {
-        var dict = request.Form.ToDictionary(k => k.Key, v => (object)v.Value);
-        var parameters = request.Query.Bind<TokenValidationParameters>(ConvertorFactory);
-        return new OkObjectResult(new Response(await Mediator.Send(new SignRequest { Dictionary = dict, Parameters = parameters }, cancellationToken)));
-    }
-
-    [FunctionName("decode")]
-    public async Task<IActionResult> Decode([HttpTrigger(AuthorizationLevel.Function, "POST", Route = $"{BaseUrl}/decode")]
-        HttpRequest request, CancellationToken cancellationToken)
-    {
-        return await TryHandler<DecodeRequest, IDictionary<string, string>>(request, (r, ct) => Mediator.Send(r, ct), cancellationToken, r => r.Form);
-    }
 }

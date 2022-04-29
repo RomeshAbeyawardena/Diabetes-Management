@@ -1,4 +1,5 @@
 ﻿
+using Inventory.Contracts;
 using Inventory.Features.Jwt;
 using Inventory.WebApi.Base;
 using MediatR;
@@ -10,14 +11,18 @@ namespace Inventory.WebApi.Features.Util;
 public class Api : ApiBase
 {
     public const string ApiUrl = $"{BaseUrl}/util";
+    private readonly IConvertorFactory convertorFactory;
 
-    public Api(IMediator mediator) : base(mediator)
+    public Api(IMediator mediator, IConvertorFactory convertorFactory) : base(mediator)
     {
+        this.convertorFactory = convertorFactory;
     }
 
     [HttpPost, Route("encode")]
     public async Task<IActionResult> Encode([FromBody] SignRequest request, CancellationToken cancellationToken)
     {
+        request.Dictionary = request.Values.ToDictionary(k => k.Key, v => convertorFactory.GetConvertor(v.Value).Convert());
+
         return await Handle(request, cancellationToken);
     }
 

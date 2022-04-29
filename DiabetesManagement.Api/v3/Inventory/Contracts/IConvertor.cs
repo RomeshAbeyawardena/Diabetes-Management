@@ -1,7 +1,10 @@
-﻿namespace Inventory.Contracts;
+﻿using System.Text.Json;
+
+namespace Inventory.Contracts;
 
 public interface IConvertor
 {
-    bool CanConvert(Type type, object value);
+    int OrderIndex { get; }
+    bool CanConvert(JsonElement element);
     object? Convert();
 }

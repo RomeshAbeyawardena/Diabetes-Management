@@ -1,5 +1,7 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Inventory.Core.Defaults
 {
@@ -7,20 +9,21 @@ namespace Inventory.Core.Defaults
     public class DefaultConvertorFactory : IConvertorFactory
     {
         private readonly IEnumerable<IConvertor> convertors;
+        private readonly ILogger<IConvertorFactory> logger;
 
-        public DefaultConvertorFactory(IEnumerable<IConvertor> convertors)
+        public DefaultConvertorFactory(ILogger<IConvertorFactory> logger, IEnumerable<IConvertor> convertors)
         {
-            this.convertors = convertors;
+            this.convertors = convertors.OrderBy(c => c.OrderIndex);
+            this.logger = logger;
         }
 
-        public IConvertor? GetConvertor(Type type, object value)
+        public IConvertor? GetConvertor(JsonElement element)
         {
-            return convertors.SingleOrDefault(c => c.CanConvert(type, value));
-        }
-
-        public IConvertor? GetConvertor<T>(T value)
-        {
-            return GetConvertor(typeof(T), value!);
+            var convertor = convertors.FirstOrDefault(c => c.CanConvert(element));
+            var convertorType = convertor.GetType();
+            var rawValue = element.GetRawText();
+            logger.LogInformation("Using {convertorType}({OrderIndex}) for {rawValue}", convertor.OrderIndex, convertorType, rawValue);
+            return convertor;
         }
     }
 }

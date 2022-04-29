@@ -1,7 +1,8 @@
-﻿namespace Inventory.Contracts;
+﻿using System.Text.Json;
+
+namespace Inventory.Contracts;
 
 public interface IConvertorFactory
 {
-    IConvertor? GetConvertor(Type type, object value);
-    IConvertor? GetConvertor<T>(T value);
+    IConvertor? GetConvertor(JsonElement element);
 }

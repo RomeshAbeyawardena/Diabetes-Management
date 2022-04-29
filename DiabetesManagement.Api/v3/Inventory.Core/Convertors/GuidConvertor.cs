@@ -1,26 +1,23 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
+using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class GuidConvertor : IConvertor
 {
-    private Guid? value;
-    public bool CanConvert(Type type, object value)
+    private Guid value;
+    public int OrderIndex => 0;
+    public bool CanConvert(JsonElement element)
     {
-        if (type != typeof(Guid) && type != typeof(Guid?))
+        if (!(element.ValueKind == JsonValueKind.String 
+            && Guid.TryParse(element.GetString(), out value)))
         {
             return false;
         }
 
-        if (Guid.TryParse(value.ToString(), out var result))
-        {
-            this.value = result;
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     public object? Convert()

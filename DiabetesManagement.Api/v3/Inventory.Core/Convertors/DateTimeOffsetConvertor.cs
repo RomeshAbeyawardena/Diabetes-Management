@@ -1,39 +1,22 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
 using System.Globalization;
+using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class DateTimeOffsetConvertor : IConvertor
 {
-    private DateTimeOffset? value;
-    private bool isDate;
-    public bool CanConvert(Type type, object value)
+    private DateTimeOffset date;
+    public int OrderIndex => 0;
+    public bool CanConvert(JsonElement element)
     {
-        isDate = type == typeof(DateTime) || type == typeof(DateTime?);
-
-        if (type != typeof(DateTimeOffset) && type != typeof(DateTimeOffset?) && !isDate)
-        {
-            return false;
-        }
-
-        //2022-04-12T20:14:43.8375256+00:00
-        if (DateTimeOffset.TryParseExact(value.ToString(), "yyyy-MM-ddTHH:mm:ss.fffffffzzz", CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
-        {
-            this.value = result;
-            return true;
-        }
-        return false;
+        return (element.ValueKind == JsonValueKind.String && DateTimeOffset.TryParseExact(element.GetString(), "yyyy-MM-ddTHH:mm:ss.fffZ", CultureInfo.InvariantCulture, DateTimeStyles.None, out date));
     }
 
     public object? Convert()
     {
-        if (isDate && value.HasValue)
-        {
-            return value.Value.DateTime;
-        }
-
-        return value;
+        return date;
     }
 }

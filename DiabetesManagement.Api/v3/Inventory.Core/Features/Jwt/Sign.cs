@@ -16,6 +16,6 @@ public class Sign : IRequestHandler<SignRequest, string>
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
     {
         await Task.CompletedTask;
-        return jwtProvider.BuildToken(request.Dictionary!, request.Parameters ?? jwtProvider.DefaultTokenValidationParameters);
+        return jwtProvider.BuildToken(request.Dictionary.ToDictionary(s => s.Key, s => s.Value)!, request.Parameters ?? jwtProvider.DefaultTokenValidationParameters);
     }
 }

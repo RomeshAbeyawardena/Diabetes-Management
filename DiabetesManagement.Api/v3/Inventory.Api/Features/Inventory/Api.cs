@@ -22,7 +22,7 @@ public class Api : ApiBase
 
     [FunctionName("get-inventory")]
     public async Task<IActionResult> GetInventory(
-        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = BaseUrl)]
+        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = ApiUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
         return await TryHandler<GetRequest, IEnumerable<Models.InventoryHistory>>(request, r => r.UserId!.Value, 
@@ -31,7 +31,7 @@ public class Api : ApiBase
 
     [FunctionName("list-inventory")]
     public async Task<IActionResult> ListInventory(
-        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{BaseUrl}/list")]
+        [HttpTrigger(AuthorizationLevel.Function, "GET", Route = $"{ApiUrl}/list")]
         HttpRequest request, CancellationToken cancellationToken)
     {
         return await TryHandler<GetRequest, IEnumerable<Models.Version>>(request, r => r.UserId!.Value, async (getRequest, ct) =>
@@ -43,7 +43,7 @@ public class Api : ApiBase
 
     [FunctionName("save-inventory")]
     public async Task<IActionResult> SaveInventory(
-        [HttpTrigger(AuthorizationLevel.Function, "POST", Route = BaseUrl)]
+        [HttpTrigger(AuthorizationLevel.Function, "POST", Route = ApiUrl)]
         HttpRequest request, CancellationToken cancellationToken)
     {
         return await TryHandler<PostCommand, Models.InventoryHistory>(request, c => c.UserId!.Value, async (postRequest, ct) => await Mediator

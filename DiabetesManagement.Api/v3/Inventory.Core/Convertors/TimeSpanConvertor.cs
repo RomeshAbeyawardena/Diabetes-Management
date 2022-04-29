@@ -1,26 +1,18 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
+using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class TimeSpanConvertor : IConvertor
 {
-    private TimeSpan? timeSpan;
-    public bool CanConvert(Type type, object value)
+    private TimeSpan timeSpan;
+    public int OrderIndex => 0;
+    public bool CanConvert(JsonElement element)
     {
-        if (type != typeof(TimeSpan) && type != typeof(TimeSpan?))
-        {
-            return false;
-        }
-
-        if (TimeSpan.TryParse(value.ToString(), out var timeSpan))
-        {
-            this.timeSpan = timeSpan;
-            return true;
-        }
-
-        return false;
+        return element.ValueKind == JsonValueKind.String 
+            && TimeSpan.TryParse(element.GetRawText(), out timeSpan);
     }
 
     public object? Convert()

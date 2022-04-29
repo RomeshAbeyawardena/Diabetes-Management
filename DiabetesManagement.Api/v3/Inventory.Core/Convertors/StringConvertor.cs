@@ -1,25 +1,22 @@
 ﻿using Inventory.Attributes;
 using Inventory.Contracts;
+using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
 [RegisterService]
 public class StringConvertor : IConvertor
 {
-    private string? value;
-    public bool CanConvert(Type type, object value)
+    private JsonElement element;
+    public int OrderIndex => int.MaxValue;
+    public bool CanConvert(JsonElement element)
     {
-        if (type != typeof(string))
-        {
-            return false;
-        }
-
-        this.value = value.ToString()!;
-        return true;
+        this.element = element;
+        return element.ValueKind == JsonValueKind.String;
     }
 
     public object? Convert()
     {
-        return value;
+        return element.GetString();
     }
 }

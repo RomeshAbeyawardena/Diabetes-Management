@@ -5,24 +5,24 @@ using System.Text.Json;
 namespace Inventory.Core.Convertors;
 
 [RegisterService]
-public class BooleanConvertor : IConvertor
+public class NumberConvertor : IConvertor
 {
-    private JsonElement? element;
+    private JsonElement element;
     public int OrderIndex => 0;
     public bool CanConvert(JsonElement element)
     {
         this.element = element;
-        return element.ValueKind == JsonValueKind.True ||
-            element.ValueKind == JsonValueKind.False;
+        return element.ValueKind == JsonValueKind.Number;
     }
 
     public object? Convert()
     {
-        if (element.HasValue)
+        var numberValue = this.element.GetRawText();
+        if (numberValue.Contains('.'))
         {
-            return element.Value.GetBoolean();
+            return element.GetDecimal();
         }
 
-        return false;
+        return element.GetUInt64();
     }
 }

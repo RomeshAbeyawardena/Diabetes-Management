@@ -25,7 +25,12 @@ export const useStore = defineStore('main', {
                 parameters: {
                     requireExpirationTime: true,
                 },
-                dictionary: {
+                values: {
+                    guid: "74d264abedd242ad91387b6c72d4297d",
+                    boolean: false,
+                    decimal: 3248.43,
+                    number: 1398348,
+                    date: new Date(),
                     apiKey: "test",
                     apiChallenge: "t23324",
                     apiIntent: "34234234",

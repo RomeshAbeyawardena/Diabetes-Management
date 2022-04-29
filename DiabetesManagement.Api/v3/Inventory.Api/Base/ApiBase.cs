@@ -107,9 +107,7 @@ public abstract class ApiBase
 
         try
         {
-            var value = keyValue(httpRequest).Bind<T>(ConvertorFactory);
-
-            return new ObjectResult(new Models.Response(await attempt(value, cancellationToken)));
+            return new ObjectResult(new object());
         }
         catch (InvalidOperationException exception)
         {
