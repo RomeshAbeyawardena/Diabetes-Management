@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
-[RegisterService]
+[RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient)]
 public class TimeSpanConvertor : IConvertor
 {
     private TimeSpan timeSpan;
@@ -12,7 +12,7 @@ public class TimeSpanConvertor : IConvertor
     public bool CanConvert(JsonElement element)
     {
         return element.ValueKind == JsonValueKind.String 
-            && TimeSpan.TryParse(element.GetRawText(), out timeSpan);
+            && TimeSpan.TryParse(element.GetString(), out timeSpan);
     }
 
     public object? Convert()

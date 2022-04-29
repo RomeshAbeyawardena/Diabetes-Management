@@ -26,6 +26,7 @@ export const useStore = defineStore('main', {
                     requireExpirationTime: true,
                 },
                 values: {
+                    timeSpan: "02:30:44",
                     guid: "74d264abedd242ad91387b6c72d4297d",
                     boolean: false,
                     decimal: 3248.43,

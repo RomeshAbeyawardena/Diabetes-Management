@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
-[RegisterService]
+[RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient)]
 public class StringConvertor : IConvertor
 {
     private JsonElement element;

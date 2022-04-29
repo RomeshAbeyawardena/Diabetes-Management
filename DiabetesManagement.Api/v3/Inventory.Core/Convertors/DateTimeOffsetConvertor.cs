@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace Inventory.Core.Convertors;
 
-[RegisterService]
+[RegisterService(Microsoft.Extensions.DependencyInjection.ServiceLifetime.Transient)]
 public class DateTimeOffsetConvertor : IConvertor
 {
     private DateTimeOffset date;
