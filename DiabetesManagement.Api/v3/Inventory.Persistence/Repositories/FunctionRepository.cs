@@ -43,6 +43,17 @@ public class FunctionRepository : InventoryDbRepositoryBase<Models.Function>, IF
         this.applicationSettings = applicationSettings;
     }
 
+    public async Task<IEnumerable<Models.Function?>> Get(ListRequest request, CancellationToken cancellationToken)
+    {
+        var requestFunction = mapper.Map<Models.Function>(request);
+
+        Encrypt(requestFunction);
+
+        return await Query.Where(f => f.Name == requestFunction.Name
+            && f.Enabled
+            && f.Path == requestFunction.Path).ToArrayAsync(cancellationToken);
+    }
+
     public Task<Models.Function?> Get(GetRequest request, CancellationToken cancellationToken)
     {
         var requestFunction = mapper.Map<Models.Function>(request);

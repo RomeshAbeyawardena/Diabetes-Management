@@ -151,3 +151,4 @@ select * FROM [application]
 select * FROM [applicationinstance]
 select * FROM [accesstoken]
 select * FROM [function]
+

@@ -1,7 +1,9 @@
-﻿using MediatR;
+﻿using Inventory.Attributes;
+using MediatR;
 
 namespace Inventory.Features.Function;
 
+[RequiresClaims(Permissions.Anonymous_Access, Permissions.Function_Edit)]
 public class PostCommand : IRequest<Models.Function>
 {
     public string? Name { get; set; }
