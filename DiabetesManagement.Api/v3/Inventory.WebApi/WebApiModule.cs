@@ -30,6 +30,7 @@ public class WebApiModule : ModuleBase
                 var filters = options.Filters;
                 filters.Add<CheckSessionFilter>();
                 filters.Add<CheckFunctionFilter>();
+                filters.Add<HandledExceptionFilter>();
             })
             .AddJsonOptions(opt => opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
     }

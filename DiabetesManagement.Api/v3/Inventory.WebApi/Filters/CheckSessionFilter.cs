@@ -18,22 +18,22 @@ public class CheckSessionFilter : IAsyncActionFilter
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        var controllerType = context.Controller.GetType();
-        var attribute = controllerType.GetCustomAttribute<ValidateSessionAttribute>();
-
-        if (attribute == null || !attribute.ValidateSession)
+        if (!context.HttpContext.Items.TryGetValue(ValidateSessionAttribute.ValidateSessionKey, out var value) || (bool)value! == false)
         {
             await next();
             return;
         }
 
         var headers = context.HttpContext.Request.Headers;
-        if (headers.TryGetValue(Keys.SessionTokenKey, out var sessionTokenKey) && Guid.TryParse(sessionTokenKey, out var sessionTokenId))
+        if (headers.TryGetValue(Keys.SessionTokenKey, out var sessionTokenKey) 
+            && Guid.TryParse(sessionTokenKey, out var sessionTokenId))
         {
             if (context.ModelState.TryGetValue("userId", out var entry) 
                 && Guid.TryParse(entry.RawValue!.ToString(), out var userId))
             {
-                var session = await mediator.Send(new GetRequest { SessionId = sessionTokenId, UserId = userId }, CancellationToken.None);
+                var session = await mediator.Send(new GetRequest { 
+                    SessionId = sessionTokenId, 
+                    UserId = userId }, CancellationToken.None);
 
                 if(session != null)
                 {
