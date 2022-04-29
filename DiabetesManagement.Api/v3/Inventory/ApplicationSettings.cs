@@ -1,16 +1,17 @@
 ﻿using Inventory.Contracts;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace Inventory;
 public class ApplicationSettings
 {
     private string? systemAdministratorUser;
-    public ApplicationSettings(IConfiguration configuration)
+    public ApplicationSettings(IConfiguration configuration, ILogger<ApplicationSettings> logger)
     {
         configuration.Bind(this);
         DefaultConnectionString = configuration.GetConnectionString("default");
-        Debug.WriteLine(SystemAdministratorUser);
+        logger.LogInformation(SystemAdministratorUser);
     }
     public string SystemAdministratorUser => systemAdministratorUser ??= Guid.NewGuid().ToString("D");
     public TimeSpan? DefaultApplicationExpiry { get; set; }

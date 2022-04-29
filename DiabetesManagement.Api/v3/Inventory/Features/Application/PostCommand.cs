@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Inventory.Features.Application;
 
 [RequiresClaims(Permissions.Application_Edit)]
-public class PostCommand : IRequest<Models.Application>
+public class PostCommand : IRequest<PostResponse>
 {
     public string? AccessToken { get; set; }
     public string? Claims { get; set; }

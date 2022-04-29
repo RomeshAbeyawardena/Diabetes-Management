@@ -1,18 +1,18 @@
 ﻿using AccessTokenFeature = Inventory.Features.AccessToken;
-using Inventory.Features.Application;
+using ApplicationFeature = Inventory.Features.Application;
 using MediatR;
-using System.Collections.ObjectModel;
 using Inventory.Contracts;
+
 
 namespace Inventory.Core.Features.Application;
 
-public class Post : IRequestHandler<PostCommand, Models.Application>
+public class Post : IRequestHandler<ApplicationFeature.PostCommand, ApplicationFeature.PostResponse>
 {
     private readonly IClockProvider clockProvider;
-    private readonly IApplicationRepository applicationRepository;
+    private readonly ApplicationFeature.IApplicationRepository applicationRepository;
     private readonly IMediator mediator;
     
-    public Post(IClockProvider clockProvider, IApplicationRepository applicationRepository,
+    public Post(IClockProvider clockProvider, ApplicationFeature.IApplicationRepository applicationRepository,
         IMediator mediator)
     {
         this.clockProvider = clockProvider;
@@ -20,13 +20,13 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
         this.mediator = mediator;
     }
 
-    public async Task<Models.Application> Handle(PostCommand request, CancellationToken cancellationToken)
+    public async Task<ApplicationFeature.PostResponse> Handle(ApplicationFeature.PostCommand request, CancellationToken cancellationToken)
     {
         var claims = request.Claims!.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
         var hasClaims = claims.Any();
 
-        var application = await applicationRepository.Save(new SaveCommand
+        var application = await applicationRepository.Save(new ApplicationFeature.SaveCommand
         {
             Application = new Models.Application
             {
@@ -41,9 +41,11 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
             CommitChanges = !claims.Any()
         }, cancellationToken);
 
+        Models.AccessToken? accessToken = null;
+
         if (hasClaims)
         {
-            await mediator.Send(new AccessTokenFeature.PostCommand
+            accessToken = await mediator.Send(new AccessTokenFeature.PostCommand
             {
                 Claims = claims,
                 Key = request.Intent,
@@ -56,6 +58,9 @@ public class Post : IRequestHandler<PostCommand, Models.Application>
         }
         applicationRepository.Decrypt(application);
 
-        return application;
+        return new ApplicationFeature.PostResponse { 
+            AccessToken = accessToken,
+            Application = application 
+        };
     }
 }

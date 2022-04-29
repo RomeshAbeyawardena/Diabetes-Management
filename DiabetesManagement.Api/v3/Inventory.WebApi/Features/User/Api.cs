@@ -33,10 +33,10 @@ public class Api : ApiBase
 
             var session = await Mediator.Send(new SessionFeature.GetRequest { UserId = loginResult.UserId }, ct);
 
-            return await Handle(new SessionFeature.PostCommand
+            return await Mediator.Send(new SessionFeature.PostCommand
             {
                 SessionId = session?.SessionId,
                 UserId = loginResult.UserId,
-            }, ct); }, cancellationToken);
+            }, ct); }, cancellationToken); 
     }
 }
