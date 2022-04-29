@@ -9,5 +9,4 @@ var app = builder
 
 app.MapControllers();
 app.UseCors();
-
 app.Run();

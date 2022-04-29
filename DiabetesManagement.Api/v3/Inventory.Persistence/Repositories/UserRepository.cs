@@ -1,15 +1,16 @@
-﻿using Inventory;
+﻿using AutoMapper;
+using Inventory;
 using Inventory.Contracts;
 using Inventory.Extensions;
 using Inventory.Features.User;
 using Inventory.Persistence.Base;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Inventory.Persistence.Repositories
 {
     public class UserRepository : InventoryDbRepositoryBase<Models.User>, IUserRepository
     {
+        private readonly IMapper mapper;
         private readonly IClockProvider clockProvider;
         private readonly ApplicationSettings applicationSettings;
         private bool prepareEncryptedFields = false;
@@ -40,8 +41,9 @@ namespace Inventory.Persistence.Repositories
             return AcceptChanges;
         }
 
-        public UserRepository(IDbContextProvider context, IClockProvider clockProvider, ApplicationSettings applicationSettings) : base(context)
+        public UserRepository(IDbContextProvider context, IMapper mapper, IClockProvider clockProvider, ApplicationSettings applicationSettings) : base(context)
         {
+            this.mapper = mapper;
             this.clockProvider = clockProvider;
             this.applicationSettings = applicationSettings;
         }
@@ -53,21 +55,20 @@ namespace Inventory.Persistence.Repositories
                 return await FindAsync(s => s.UserId == request.UserId.Value, cancellationToken);
             }
 
-            var emailAddress = request.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
+            var requestUser = mapper.Map<Models.User>(request);
+            
+            Encrypt(requestUser);
 
             Models.User? foundUser = default;
 
             if (request.AuthenticateUser)
             {
-                var password = request.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
-
-                foundUser = await Query.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress && u.Password == password, cancellationToken);
+                foundUser = await Query.FirstOrDefaultAsync(u => u.EmailAddress == requestUser.EmailAddress && u.Password == requestUser.Password, cancellationToken);
             }
             else
             {
-                foundUser = await Query.AsNoTracking().FirstOrDefaultAsync(u => u.EmailAddress == emailAddress, cancellationToken);
+                foundUser = await Query.FirstOrDefaultAsync(u => u.EmailAddress == requestUser.EmailAddress, cancellationToken);
             }
-
 
             if (foundUser != null)
             {

@@ -13,7 +13,7 @@ public class Api : ApiBase
     {
     }
 
-    [HttpPost]
+    [HttpPost, ActionName("Sign-AccessToken")]
     public async Task<IActionResult> Post([FromForm] SignRequest request, CancellationToken cancellationToken)
     {
         return await Handle(request, cancellationToken);

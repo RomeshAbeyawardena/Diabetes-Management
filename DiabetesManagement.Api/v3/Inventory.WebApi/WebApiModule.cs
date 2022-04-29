@@ -1,4 +1,5 @@
 ﻿using Inventory.Base;
+using Inventory.WebApi.Filters;
 
 namespace Inventory.WebApi;
 
@@ -24,6 +25,7 @@ public class WebApiModule : ModuleBase
                 .WithOrigins("http://localhost:3000")
                 .AllowAnyMethod()))
             .AddHttpContextAccessor()
-            .AddControllers();
+            .AddResponseCaching()
+            .AddControllers(options => options.Filters.Add<CheckFunctionFilter>());
     }
 }

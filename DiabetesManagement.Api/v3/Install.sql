@@ -135,6 +135,7 @@ CREATE TABLE [dbo].[Function] (
     ,[Name] VARCHAR(200) NOT NULL
     ,[Name_CS] VARCHAR(200) NOT NULL
     ,[Path] VARCHAR(512) NOT NULL
+    ,[Path_CS] VARCHAR(512) NOT NULL
     ,[AccessToken] VARCHAR(MAX) NOT NULL
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL
@@ -149,3 +150,4 @@ select * FROM [session]
 select * FROM [application]
 select * FROM [applicationinstance]
 select * FROM [accesstoken]
+select * FROM [function]

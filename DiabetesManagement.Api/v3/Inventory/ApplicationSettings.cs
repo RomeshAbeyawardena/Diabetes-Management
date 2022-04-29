@@ -14,6 +14,7 @@ public class ApplicationSettings
         logger.LogInformation(SystemAdministratorUser);
     }
     public string SystemAdministratorUser => systemAdministratorUser ??= Guid.NewGuid().ToString("D");
+    public bool DiscoveryMode { get; set; }
     public TimeSpan? DefaultApplicationExpiry { get; set; }
     public string DefaultConnectionString { get; }
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) ? Convert.FromBase64String(ConfidentialServerKey!) : Array.Empty<byte>();
