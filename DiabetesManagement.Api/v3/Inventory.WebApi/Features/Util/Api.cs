@@ -1,5 +1,6 @@
 ﻿
 using Inventory.Contracts;
+using Inventory.Extensions;
 using Inventory.Features.Jwt;
 using Inventory.WebApi.Base;
 using MediatR;
@@ -21,7 +22,7 @@ public class Api : ApiBase
     [HttpPost, Route("encode")]
     public async Task<IActionResult> Encode([FromBody] SignRequest request, CancellationToken cancellationToken)
     {
-        request.Dictionary = request.Values.ToDictionary(k => k.Key, v => convertorFactory.GetConvertor(v.Value).Convert());
+        request.Dictionary = request.Values.ToDictionary(k => k.Key, v => convertorFactory.Convert(v.Value));
 
         return await Handle(request, cancellationToken);
     }

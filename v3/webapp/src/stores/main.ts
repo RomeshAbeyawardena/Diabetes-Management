@@ -23,7 +23,7 @@ export const useStore = defineStore('main', {
         async init(): Promise<void> {
             let token = await this.jWtWebService.encode({
                 parameters: {
-                    requireExpirationTime: true,
+                    requireExpirationTime: false,
                 },
                 values: {
                     timeSpan: "02:30:44",
