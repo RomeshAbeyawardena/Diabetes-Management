@@ -86,17 +86,45 @@ namespace Inventory.Persistence.Repositories
 
         public void Encrypt(Models.User user)
         {
-            user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out string str);
-            user.DisplayNameCaseSignature = str;
-            user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out str);
-            user.EmailAddressCaseSignature = str;
-            user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+            if(user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.DisplayName))
+            {
+                user.DisplayName = user.DisplayName!.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out var caseSignature);
+                user.DisplayNameCaseSignature = caseSignature;
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.EmailAddress))
+            {
+                user.EmailAddress = user.EmailAddress!.Encrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out var caseSignature);
+                user.EmailAddressCaseSignature = caseSignature;
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.Password))
+            {
+                user.Password = user.Password!.Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!);
+            }
         }
 
         public void Decrypt(Models.User user)
         {
-            user.EmailAddress = user.EmailAddress!.Decrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.EmailAddressCaseSignature);
-            user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.DisplayName))
+            {
+                user.DisplayName = user.DisplayName!.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.DisplayNameCaseSignature);
+            }
+
+            if (!string.IsNullOrWhiteSpace(user.EmailAddress))
+            {
+                user.EmailAddress = user.EmailAddress!.Decrypt(applicationSettings.Algorithm!, applicationSettings.ConfidentialServerKeyBytes, applicationSettings.ServerInitialVectorBytes, user.EmailAddressCaseSignature);
+            }
         }
     }
 }
