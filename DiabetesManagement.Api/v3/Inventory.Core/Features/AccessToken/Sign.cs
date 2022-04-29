@@ -22,7 +22,7 @@ public class Sign : IRequestHandler<SignRequest, string>
     public async Task<string> Handle(SignRequest request, CancellationToken cancellationToken)
     {
         //build dictionary for jwt token
-        var jwtdict = new Dictionary<string, object> {
+        var jwtdict = new Dictionary<string, object?> {
             { Keys.ApiToken, request.ApiKey! },
             { Keys.ApiIntent, request.ApiIntent! },
             { Keys.ApiTokenChallenge, request.ApiChallenge! } };

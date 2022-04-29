@@ -129,6 +129,21 @@ CREATE TABLE [dbo].[Inventory_History] (
     ,INDEX IX_INVENTORY_HISTORY NONCLUSTERED ([InventoryId],[Intent],[Version])
 )
 
+CREATE TABLE [dbo].[Function] (
+     [FunctionId] UNIQUEIDENTIFIER NOT NULL
+        CONSTRAINT PK_Function PRIMARY KEY
+    ,[Name] VARCHAR(200) NOT NULL
+    ,[Name_CS] VARCHAR(200) NOT NULL
+    ,[Path] VARCHAR(512) NOT NULL
+    ,[AccessToken] VARCHAR(MAX) NOT NULL
+    ,[Enabled] BIT NOT NULL
+    ,[Created] DATETIMEOFFSET NOT NULL
+    ,[Modified] DATETIMEOFFSET NULL
+    ,CONSTRAINT UQ_Function UNIQUE ([Name], [Path])
+    ,INDEX IX_Function_Name NONCLUSTERED ([Name], [Path])
+    ,INDEX IX_Function_Name_Path NONCLUSTERED ([Name], [Path])
+)
+
 select * FROM [user]
 select * FROM [session]
 select * FROM [application]
