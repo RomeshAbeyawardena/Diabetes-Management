@@ -45,12 +45,14 @@ namespace Inventory.WebApi.Filters
                 }, CancellationToken.None);
 
                 await next();
+                return;
             }
             var headers = context.HttpContext.Request.Headers;
             if (function!= null && headers.TryGetValue(ApiFunctionKey, out var functionsKey)
                 && functionsKey == function.AccessToken)
             {
                 await next();
+                return;
             }
 
             context.Result = new UnauthorizedObjectResult(new Models.Response(StatusCodes.Status401Unauthorized, "Unauthorised function call"));

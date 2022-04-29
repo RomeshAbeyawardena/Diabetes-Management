@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Features.InventoryHistory;
+using Inventory.WebApi.Attributes;
 using Inventory.WebApi.Base;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -17,13 +18,13 @@ public class Api : ApiBase
         this.mapper = mapper;
     }
 
-    [HttpGet]
+    [HttpGet, ValidateSession]
     public async Task<IActionResult> Get([FromQuery] GetRequest request, CancellationToken cancellationToken)
     {
         return await Handle(request, cancellationToken);
     }
 
-    [HttpGet, Route("list")]
+    [HttpGet, Route("list"), ValidateSession]
     public async Task<IActionResult> List([FromQuery] GetRequest request, CancellationToken cancellationToken)
     {
         return await Handle(async(ct) =>
@@ -33,7 +34,7 @@ public class Api : ApiBase
         }, cancellationToken);
     }
 
-    [HttpPost]
+    [HttpPost, ValidateSession]
     public async Task<IActionResult> Save([FromForm] PostCommand command, CancellationToken cancellationToken)
     {
         return await Handle(command, cancellationToken);

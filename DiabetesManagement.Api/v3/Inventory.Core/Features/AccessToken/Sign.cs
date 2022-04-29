@@ -1,4 +1,5 @@
 ﻿using Inventory.Contracts;
+using Inventory.Features;
 using Inventory.Features.AccessToken;
 using ApplicationInstanceFeature = Inventory.Features.ApplicationInstance;
 using JwtFeature = Inventory.Features.Jwt;
