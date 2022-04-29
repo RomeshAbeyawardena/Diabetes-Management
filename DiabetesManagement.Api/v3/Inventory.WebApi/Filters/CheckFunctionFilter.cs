@@ -34,6 +34,8 @@ namespace Inventory.WebApi.Filters
 
             if(function == null && applicationSettings.DiscoveryMode)
             {
+                logger.LogWarning("Discovery mode enabled: Should be turned off in production mode once all endpoints have been populated");
+
                 await mediator.Send(new PostCommand
                 {
                     Name = functionName,

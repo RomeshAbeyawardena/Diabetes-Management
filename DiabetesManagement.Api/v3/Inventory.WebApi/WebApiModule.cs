@@ -26,6 +26,7 @@ public class WebApiModule : ModuleBase
                 .AllowAnyMethod()))
             .AddHttpContextAccessor()
             .AddResponseCaching()
-            .AddControllers(options => options.Filters.Add<CheckFunctionFilter>());
+            .AddControllers(options => options.Filters.Add<CheckFunctionFilter>())
+            .AddJsonOptions(opt => opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
     }
 }

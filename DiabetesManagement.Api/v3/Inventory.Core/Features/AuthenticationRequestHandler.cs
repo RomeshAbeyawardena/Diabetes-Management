@@ -22,7 +22,9 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
     private async Task<IEnumerable<string?>?> GetClaims(string accessTokenKey, string accessTokenIntent, 
         string accessTokenValue, string? applicationInstanceId, CancellationToken cancellationToken)
     {
-        if (accessTokenKey == Keys.SystemAdministrator && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
+        if (applicationSettings.EnableSystemAdmin 
+            && accessTokenKey == Keys.SystemAdministrator 
+            && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
             return Permissions.SysAdmin;
         }
