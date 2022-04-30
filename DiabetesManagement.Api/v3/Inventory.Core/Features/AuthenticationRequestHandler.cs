@@ -6,7 +6,6 @@ using Inventory.Features.AccessToken;
 using MediatR;
 using MediatR.Pipeline;
 using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
 using System.Reflection;
 
 namespace Inventory.Core.Features;
@@ -26,7 +25,7 @@ public class AuthenticationRequestHandler<TRequest> : IRequestPreProcessor<TRequ
             && accessTokenKey == Keys.SystemAdministrator 
             && accessTokenValue.Equals(applicationSettings.SystemAdministratorUser))
         {
-            return Permissions.SysAdmin;
+            return Permissions.SysAdmin.Union(Ledger.Features.Permissions.LedgerAdminPermissions);
         }
 
         if (!string.IsNullOrWhiteSpace(applicationInstanceId) && Guid.TryParse(applicationInstanceId, out var appInstanceId))
