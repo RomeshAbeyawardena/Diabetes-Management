@@ -1,5 +1,4 @@
-﻿using Inventory;
-using Inventory.Contracts;
+﻿using Inventory.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

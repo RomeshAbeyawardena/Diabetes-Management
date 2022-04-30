@@ -12,6 +12,8 @@ public class ApplicationSettings
         configuration.Bind(this);
         DefaultConnectionString = configuration.GetConnectionString("default");
 
+        LedgerConnectionString = configuration.GetConnectionString("ledger");
+
         if (EnableSystemAdmin)
         {
             logger
@@ -22,7 +24,7 @@ public class ApplicationSettings
     public bool DiscoveryMode { get; set; }
     public TimeSpan? DefaultApplicationExpiry { get; set; }
     public string DefaultConnectionString { get; }
-
+    public string LedgerConnectionString { get; }
     public byte[] PersonalDataServerKeyBytes => !string.IsNullOrWhiteSpace(ConfidentialServerKey) 
         ? Convert.FromBase64String(ConfidentialServerKey!) 
         : Array.Empty<byte>();

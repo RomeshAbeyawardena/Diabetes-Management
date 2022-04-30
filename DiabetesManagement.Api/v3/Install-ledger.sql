@@ -1,15 +1,24 @@
 ﻿USE master
 
-CREATE DATABASE [Ledger]
+ALTER DATABASE LedgerDb
+SET SINGLE_USER WITH ROLLBACK IMMEDIATE
 GO
 
-USE [Ledger]
+USE master
+DROP DATABASE LedgerDb
+GO
+
+CREATE DATABASE [LedgerDb]
+GO
+
+USE [LedgerDb]
 
 CREATE TABLE [dbo].[Account] (
 	 [AccountId] UNIQUEIDENTIFIER NOT NULL
 		CONSTRAINT PK_Account PRIMARY KEY
 	,[Reference] VARCHAR(200) NOT NULL
 		CONSTRAINT UQ_Account UNIQUE
+	,[Reference_CS] VARCHAR(200) NOT NULL
 	,[Created] DATETIMEOFFSET NOT NULL
 	,[Modified] DATETIMEOFFSET NOT NULL
 	INDEX IX_Account NONCLUSTERED ([Reference])
@@ -22,6 +31,7 @@ CREATE TABLE [dbo].[Transaction] (
 		CONSTRAINT FK_Transaction_Account 
 		REFERENCES [dbo].[Account]
 	,[Reference] VARCHAR(200) NOT NULL
+	,[Reference_CS] VARCHAR(200) NOT NULL
 	,[Amount] DECIMAL(38,6) NOT NULL
 	,[Balance] DECIMAL(38,6) NOT NULL
 	,[PreviousBalance] DECIMAL(38,6) NOT NULL
