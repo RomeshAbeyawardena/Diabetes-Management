@@ -3,37 +3,47 @@ using Inventory.Features.Session;
 using Inventory.WebApi.Attributes;
 using MediatR;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Reflection;
 
 namespace Inventory.WebApi.Filters;
 
-public class CheckSessionFilter : IAsyncActionFilter
+public class CheckSessionFilter : IAsyncActionFilter, IDisposable
 {
-    private readonly IMediator mediator;
+    void IDisposable.Dispose()
+    {
+        cancellationTokenSource.Dispose();
+        GC.SuppressFinalize(this);
+    }
 
+    private readonly IMediator mediator;
+    private readonly CancellationTokenSource cancellationTokenSource;
     public CheckSessionFilter(IMediator mediator)
     {
         this.mediator = mediator;
+        cancellationTokenSource = new();
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
-        if (!context.HttpContext.Items.TryGetValue(ValidateSessionAttribute.ValidateSessionKey, out var value) || (bool)value! == false)
+        var items = context.HttpContext.Items;
+
+        //Determine whether the action requires session validation
+        if (!items.TryGetValue(ValidateSessionAttribute.ValidateSessionKey, out var value) || (bool)value! == false)
         {
+            //We aren't validating this session
             await next();
             return;
         }
 
         var headers = context.HttpContext.Request.Headers;
-        if (headers.TryGetValue(Keys.SessionTokenKey, out var sessionTokenKey) 
-            && Guid.TryParse(sessionTokenKey, out var sessionTokenId))
+        //retrieve session key from headers
+        if (headers.TryGetValue(Keys.SessionTokenKey, out var sessionTokenKey))
         {
-            if (context.ModelState.TryGetValue("userId", out var entry) 
-                && Guid.TryParse(entry.RawValue!.ToString(), out var userId))
+            if (items.TryGetValue(ValidateSessionAttribute.UserIdValueKey, out var entry) )
             {
                 var session = await mediator.Send(new GetRequest { 
-                    SessionId = sessionTokenId, 
-                    UserId = userId }, CancellationToken.None);
+                    AccessToken = sessionTokenKey, 
+                    UserId = (Guid)entry!
+                }, cancellationTokenSource.Token);
 
                 if(session != null)
                 {

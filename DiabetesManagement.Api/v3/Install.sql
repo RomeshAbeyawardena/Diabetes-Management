@@ -94,9 +94,11 @@ CREATE TABLE [dbo].[Session] (
     ,[UserId] UNIQUEIDENTIFIER NOT NULL
         CONSTRAINT FK_Session_User
         REFERENCES [dbo].[User]
+    ,[AccessToken] VARCHAR(400) NOT NULL
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL
     ,[Expires] DATETIMEOFFSET NULL
+    ,CONSTRAINT UQ_Session UNIQUE ([UserId], [AccessToken])
 )
 
 CREATE TABLE [dbo].[Inventory] (

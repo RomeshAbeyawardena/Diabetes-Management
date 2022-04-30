@@ -10,6 +10,7 @@ namespace Inventory.Models
         [Key]
         public Guid SessionId { get; set; }
         public Guid UserId { get; set; }
+        public string? AccessToken { get; set; }
         public DateTimeOffset Created { get; set; }
         public DateTimeOffset? Expires { get; set; }
         public bool Enabled { get; set; }

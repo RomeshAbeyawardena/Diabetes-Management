@@ -57,7 +57,7 @@ namespace Inventory.Persistence.Repositories
             if (request.AuthenticateSession)
             {
                 return await Query.Include(s => s.User)
-                    .FirstOrDefaultAsync(s => s.SessionId == request.SessionId && s.UserId == request.UserId && s.Enabled
+                    .FirstOrDefaultAsync(s => s.AccessToken == request.AccessToken && s.UserId == request.UserId && s.Enabled
                     && s.Expires >= DateTimeOffset.UtcNow, cancellationToken);
             }
 

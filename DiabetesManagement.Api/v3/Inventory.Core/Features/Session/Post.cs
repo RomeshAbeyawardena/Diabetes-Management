@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Inventory.Contracts;
+using Inventory.Extensions;
 using Inventory.Features.Session;
 using MediatR;
 
@@ -7,12 +8,16 @@ namespace Inventory.Core.Features.Session;
 
 public class Post : IRequestHandler<PostCommand, Models.Session>
 {
+    private readonly ApplicationSettings applicationSettings;
     private readonly IMapper mapper;
     private readonly ISessionRepository sessionRepository;
     private readonly IDecryptor<Models.User> decryptor;
 
-    public Post(IMapper mapper, ISessionRepository sessionRepository, IDecryptor<Models.User> decryptor)
+    public Post(
+        ApplicationSettings applicationSettings,
+        IMapper mapper, ISessionRepository sessionRepository, IDecryptor<Models.User> decryptor)
     {
+        this.applicationSettings = applicationSettings;
         this.mapper = mapper;
         this.sessionRepository = sessionRepository;
         this.decryptor = decryptor;
@@ -26,6 +31,8 @@ public class Post : IRequestHandler<PostCommand, Models.Session>
         {
             session = new Models.Session
             {
+                AccessToken = $"$%{request.UserId:N}-{Guid.NewGuid:N}~#"
+                    .Hash(applicationSettings.HashAlgorithm!, applicationSettings.ServerInitialVector!),
                 SessionId = request.SessionId ?? default,
                 UserId = request.UserId!.Value,
                 Enabled = true
