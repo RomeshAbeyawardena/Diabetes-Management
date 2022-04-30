@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Ledger.Features.Ledger;
 
-namespace Ledger.Features.Ledger
+public interface ILedgerRepository
 {
-    public interface ILedgerRepository
-    {
-
-    }
+    Task<IEnumerable<Models.Ledger>> Get(GetRequest request, CancellationToken cancellationToken);
+    Task<Models.Ledger> SaveLedger(SaveCommand command, CancellationToken cancellationToken);
 }
