@@ -1,5 +1,5 @@
 ﻿namespace Ledger.Persistence;
-public class Class1
+public class LedgerPersistenceModule
 {
 
 }
