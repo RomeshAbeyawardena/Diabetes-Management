@@ -2,9 +2,11 @@ import { AxiosRequestConfig } from "axios";
 import { defineStore } from "pinia";
 
 export interface IMainState {
-    accessTokenId?: string
-    sessionId?: string
-    userId?: string
+    accessTokenId?: string;
+    challenge?: string;
+    intent?: string;
+    sessionId?: string;
+    userId?: string;
 }
 
 export interface IMainActions {
@@ -15,6 +17,8 @@ export const useStore = defineStore('main', {
     state: ():IMainState => {
         return {
             accessTokenId: undefined,
+            challenge: undefined,
+            intent: undefined,
             sessionId: undefined,
             userId: undefined
         }
@@ -49,10 +53,10 @@ export const useStore = defineStore('main', {
             headers["x-api-acc-token"] = this.accessTokenId; 
             return config;
         },
-        async login() : Promise<void> {
+        async login(emailAddress: string, password: string) : Promise<void> {
             const response = await this.sessionService.login({
-                emailAddress: "romesh.a@outlook.com",
-                password: "e138llRA1787!"
+                emailAddress: emailAddress,
+                password: password
             });
 
         },

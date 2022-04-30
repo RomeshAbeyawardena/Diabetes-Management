@@ -138,6 +138,7 @@ CREATE TABLE [dbo].[Function] (
     ,[Name_CS] VARCHAR(200) NOT NULL
     ,[Path] VARCHAR(512) NOT NULL
     ,[Path_CS] VARCHAR(512) NOT NULL
+    ,[Complexity] DECIMAL NULL
     ,[AccessToken] VARCHAR(MAX) NOT NULL
     ,[Enabled] BIT NOT NULL
     ,[Created] DATETIMEOFFSET NOT NULL

@@ -13,12 +13,21 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Tests", "Inventor
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{A0B405AA-519D-4208-8EC4-C112086E847B}"
 	ProjectSection(SolutionItems) = preProject
+		Install-ledger.sql = Install-ledger.sql
 		Install.sql = Install.sql
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.Persistence", "Inventory.Persistence\Inventory.Persistence.csproj", "{D1A98B26-AAB9-4D9F-B363-ABEA7C03C388}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Inventory.WebApi", "Inventory.WebApi\Inventory.WebApi.csproj", "{1509E8FA-537B-42C2-A0E6-32057D3AE366}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ledger", "Ledger", "{F69A6431-3DA6-4B10-A0B1-B3F6A9A1E8DD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ledger", "Ledger\Ledger\Ledger.csproj", "{301CEBA1-239D-45F2-8B40-84D29A046B05}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ledger.Core", "Ledger\Ledger.Core\Ledger.Core.csproj", "{3B64E084-9278-4BCF-9005-561C25BD3A89}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ledger.Persistence", "Ledger\Ledger.Persistence\Ledger.Persistence.csproj", "{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,9 +59,26 @@ Global
 		{1509E8FA-537B-42C2-A0E6-32057D3AE366}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1509E8FA-537B-42C2-A0E6-32057D3AE366}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1509E8FA-537B-42C2-A0E6-32057D3AE366}.Release|Any CPU.Build.0 = Release|Any CPU
+		{301CEBA1-239D-45F2-8B40-84D29A046B05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{301CEBA1-239D-45F2-8B40-84D29A046B05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{301CEBA1-239D-45F2-8B40-84D29A046B05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{301CEBA1-239D-45F2-8B40-84D29A046B05}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B64E084-9278-4BCF-9005-561C25BD3A89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B64E084-9278-4BCF-9005-561C25BD3A89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B64E084-9278-4BCF-9005-561C25BD3A89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B64E084-9278-4BCF-9005-561C25BD3A89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{301CEBA1-239D-45F2-8B40-84D29A046B05} = {F69A6431-3DA6-4B10-A0B1-B3F6A9A1E8DD}
+		{3B64E084-9278-4BCF-9005-561C25BD3A89} = {F69A6431-3DA6-4B10-A0B1-B3F6A9A1E8DD}
+		{0D257BFF-302B-4C8B-BC38-BD330CEFB0BC} = {F69A6431-3DA6-4B10-A0B1-B3F6A9A1E8DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {660724AA-459B-4B76-A7B7-F3445BAD5A14}

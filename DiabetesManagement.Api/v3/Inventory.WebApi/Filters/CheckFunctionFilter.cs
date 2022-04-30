@@ -46,10 +46,11 @@ namespace Inventory.WebApi.Filters
 
                 await mediator.Send(new PostCommand
                 {
+                    AccessToken = $"{functionName}|{path}|{Guid.NewGuid():N}"
+                        .Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!),
+                    Complexity = 0.0055M,
                     Name = functionName,
                     Path = path,
-                    AccessToken = $"{functionName}|{path}|{Guid.NewGuid():N}"
-                        .Hash(applicationSettings.HashAlgorithm!, applicationSettings.ConfidentialServerKey!)
                 }, cancellationTokenSource.Token);
 
                 await next();

@@ -18,6 +18,7 @@ public class Post : IRequestHandler<PostCommand, Models.Function>
             Function = new Models.Function
             {
                 AccessToken = request.AccessToken,
+                Complexity = request.Complexity,
                 Name = request.Name,
                 Path = request.Path
             },

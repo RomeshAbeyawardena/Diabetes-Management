@@ -1,0 +1,30 @@
+﻿USE master
+
+CREATE DATABASE [Ledger]
+GO
+
+USE [Ledger]
+
+CREATE TABLE [dbo].[Account] (
+	 [AccountId] UNIQUEIDENTIFIER NOT NULL
+		CONSTRAINT PK_Account PRIMARY KEY
+	,[Reference] VARCHAR(200) NOT NULL
+		CONSTRAINT UQ_Account UNIQUE
+	,[Created] DATETIMEOFFSET NOT NULL
+	,[Modified] DATETIMEOFFSET NOT NULL
+	INDEX IX_Account NONCLUSTERED ([Reference])
+)
+
+CREATE TABLE [dbo].[Transaction] (
+	 [TransactionId] UNIQUEIDENTIFIER NOT NULL
+		CONSTRAINT PK_Transaction PRIMARY KEY
+	,[AccountId] UNIQUEIDENTIFIER NOT NULL
+		CONSTRAINT FK_Transaction_Account 
+		REFERENCES [dbo].[Account]
+	,[Reference] VARCHAR(200) NOT NULL
+	,[Amount] DECIMAL(38,6) NOT NULL
+	,[Balance] DECIMAL(38,6) NOT NULL
+	,[PreviousBalance] DECIMAL(38,6) NOT NULL
+	,[Created] DATETIMEOFFSET NOT NULL
+	,[Modified] DATETIMEOFFSET NOT NULL
+)

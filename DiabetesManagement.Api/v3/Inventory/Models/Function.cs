@@ -14,6 +14,7 @@ public class Function
     public string? Path { get; set; }
     [Column("Path_CS")]
     public string? PathCaseSignature { get; set; }
+    public decimal Complexity { get; set; }
     public bool Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset? Modified { get; set; }
