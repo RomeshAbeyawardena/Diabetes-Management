@@ -18,4 +18,6 @@ public class Ledger
     public decimal PreviousBalance { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset Modified { get; set; }
+
+    public virtual Account? Account { get; set; }
 }

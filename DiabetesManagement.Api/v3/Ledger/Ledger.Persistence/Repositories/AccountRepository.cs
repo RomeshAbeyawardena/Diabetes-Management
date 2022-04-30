@@ -1,4 +1,5 @@
-﻿using Inventory;
+﻿using AutoMapper;
+using Inventory;
 using Inventory.Contracts;
 using Inventory.Extensions;
 using Ledger.Features.Account;
@@ -7,10 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ledger.Persistence.Repositories;
 
-public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountRepository, IEncryptor<Models.Account>, IDecryptor<Models.Account>
+public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountRepository
 {
     private readonly IClockProvider clockProvider;
     private readonly ApplicationSettings applicationSettings;
+    private readonly IMapper mapper;
 
     protected override Task<bool> Add(Models.Account model, CancellationToken cancellationToken)
     {
@@ -33,10 +35,12 @@ public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountR
             : Query.AnyAsync(a => a.Id != model.Id && a.Reference == model.Reference, cancellationToken);
     }
 
-    public AccountRepository(IDbContextProvider dbContextProvider, IClockProvider clockProvider, ApplicationSettings applicationSettings) : base(dbContextProvider)
+    public AccountRepository(IDbContextProvider dbContextProvider, IClockProvider clockProvider, 
+        ApplicationSettings applicationSettings, IMapper mapper) : base(dbContextProvider)
     {
         this.clockProvider = clockProvider;
         this.applicationSettings = applicationSettings;
+        this.mapper = mapper;
     }
 
     public Task<Models.Account?> Get(GetRequest request, CancellationToken cancellationToken)
@@ -46,7 +50,9 @@ public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountR
             return FindAsync(s => s.Id == request.AccountId, cancellationToken);
         }
 
-        return FindAsync(s => s.Reference == request.Reference, cancellationToken);
+        var accountRequest = mapper.Map<Models.Account>(request);
+        Encrypt(accountRequest);
+        return FindAsync(s => s.Reference == accountRequest.Reference, cancellationToken);
     }
 
     public Task<Models.Account> SaveAccount(SaveCommand command, CancellationToken cancellationToken)
@@ -63,7 +69,7 @@ public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountR
 
         if (!string.IsNullOrWhiteSpace(model.Reference))
         {
-            model.Reference = model.Reference.Encrypt(applicationSettings.Algorithm, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out var caseSignature);
+            model.Reference = model.Reference.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out var caseSignature);
 
             model.ReferenceCaseSignature = caseSignature;
         }
@@ -78,7 +84,7 @@ public class AccountRepository : LedgerRepositoryBase<Models.Account>, IAccountR
 
         if (!string.IsNullOrWhiteSpace(model.Reference) && !string.IsNullOrWhiteSpace(model.ReferenceCaseSignature))
         {
-            model.Reference = model.Reference.Decrypt(applicationSettings.Algorithm, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, model.ReferenceCaseSignature);
+            model.Reference = model.Reference.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, model.ReferenceCaseSignature);
         }
     }
 }

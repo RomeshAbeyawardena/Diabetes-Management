@@ -19,6 +19,7 @@ CREATE TABLE [dbo].[Account] (
 	,[Reference] VARCHAR(200) NOT NULL
 		CONSTRAINT UQ_Account UNIQUE
 	,[Reference_CS] VARCHAR(200) NOT NULL
+	,[Enabled] BIT NOT NULL
 	,[Created] DATETIMEOFFSET NOT NULL
 	,[Modified] DATETIMEOFFSET NOT NULL
 	INDEX IX_Account NONCLUSTERED ([Reference])
