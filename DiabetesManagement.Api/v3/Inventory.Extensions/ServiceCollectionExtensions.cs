@@ -34,8 +34,8 @@ public static class ServiceCollectionExtensions
         var assemblies = new List<Assembly>();
         foreach(var module in modules)
         {
-            module.RegisterServices(services);
             assemblies.AddRange(module.Assemblies);
+            module.RegisterServices(services, assemblies);
         }
 
         return RegisterCoreServices(services, assemblies.ToArray());

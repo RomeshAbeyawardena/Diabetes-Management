@@ -2,6 +2,7 @@
 using Inventory.Defaults;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -18,7 +19,7 @@ public class MyModule : ModuleBase
         return true;
     }
 
-    public override void RegisterServices(IServiceCollection services)
+    public override void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         throw new System.NotImplementedException();
     }

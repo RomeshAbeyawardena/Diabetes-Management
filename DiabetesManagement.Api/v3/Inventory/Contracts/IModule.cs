@@ -8,5 +8,5 @@ public interface IModule
     public bool CanRun();
     public string Name { get; }
     IEnumerable<Assembly> Assemblies { get; }
-    void RegisterServices(IServiceCollection services);
+    void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies);
 }

@@ -1,5 +1,6 @@
 ﻿using Inventory.Base;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace Ledger;
 public class LedgerModule : ModuleBase
@@ -15,7 +16,7 @@ public class LedgerModule : ModuleBase
         return true;
     }
 
-    public override void RegisterServices(IServiceCollection services)
+    public override void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         
     }

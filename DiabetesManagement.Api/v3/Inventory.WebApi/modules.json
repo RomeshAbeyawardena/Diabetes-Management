@@ -1,11 +1,11 @@
 {
 	"Modules": [
 		"Inventory",
-		"Inventory.WebApi",
 		"Inventory.Core",
 		"Inventory.Persistence",
 		"Ledger",
 		"Ledger.Core",
-		"Ledger.Persistence"
+		"Ledger.Persistence",
+		"Inventory.WebApi"
 	]
 }

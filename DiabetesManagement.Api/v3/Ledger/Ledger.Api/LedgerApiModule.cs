@@ -3,11 +3,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System.Reflection;
 
-namespace Ledger.Core;
-public class LedgerCoreModule : ModuleBase
+namespace Ledger.Api;
+public class LedgerApiModule : ModuleBase
 {
-    public LedgerCoreModule(ILogger logger) 
-        : base(logger, nameof(LedgerCoreModule), GetAssembly<LedgerCoreModule>())
+    public LedgerApiModule(ILogger logger) : base(logger, nameof(LedgerApiModule), GetAssembly<LedgerApiModule>())
     {
     }
 

@@ -1,6 +1,8 @@
 ﻿using Inventory.Base;
 using Inventory.WebApi.Filters;
+using LinqKit;
 using Serilog;
+using System.Reflection;
 
 namespace Inventory.WebApi;
 
@@ -17,9 +19,9 @@ public class WebApiModule : ModuleBase
         return true;
     }
 
-    public override void RegisterServices(IServiceCollection services)
+    public override void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
-        services
+        var mvc = services
             .AddCors(s => s.AddDefaultPolicy(c => c
                 .AllowCredentials()
                 .AllowAnyHeader()
@@ -27,12 +29,16 @@ public class WebApiModule : ModuleBase
                 .AllowAnyMethod()))
             .AddHttpContextAccessor()
             .AddResponseCaching()
-            .AddControllers(options => {
+            .AddControllers(options =>
+            {
                 var filters = options.Filters;
                 filters.Add<CheckSessionFilter>();
                 filters.Add<CheckFunctionFilter>();
                 filters.Add<HandledExceptionFilter>();
-            })
-            .AddJsonOptions(opt => opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
+            });
+
+        assemblies.ForEach(a => mvc.AddApplicationPart(a));
+
+        mvc.AddJsonOptions(opt => opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
     }
 }

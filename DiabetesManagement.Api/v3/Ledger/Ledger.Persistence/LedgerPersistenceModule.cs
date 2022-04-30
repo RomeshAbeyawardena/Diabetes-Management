@@ -4,6 +4,7 @@ using Ledger.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System.Reflection;
 
 namespace Ledger.Persistence;
 public class LedgerPersistenceModule : ModuleBase
@@ -18,7 +19,7 @@ public class LedgerPersistenceModule : ModuleBase
         return true;
     }
 
-    public override void RegisterServices(IServiceCollection services)
+    public override void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services
             .AddDbContext<LedgerDbContext>(ConfigureDbContext)

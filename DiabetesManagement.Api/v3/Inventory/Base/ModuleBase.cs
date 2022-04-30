@@ -25,5 +25,5 @@ public abstract class ModuleBase : IModule
     public IEnumerable<Assembly> Assemblies { get; }
 
     public abstract bool CanRun();
-    public abstract void RegisterServices(IServiceCollection services);
+    public abstract void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies);
 }

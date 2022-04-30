@@ -3,6 +3,7 @@ using Inventory.Core.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Internal;
 using Serilog;
+using System.Reflection;
 
 namespace Inventory.Core;
 public class CoreModule : ModuleBase
@@ -17,7 +18,7 @@ public class CoreModule : ModuleBase
         return true;
     }
 
-    public override void RegisterServices(IServiceCollection services)
+    public override void RegisterServices(IServiceCollection services, IEnumerable<Assembly> assemblies)
     {
         services
             .AddSingleton<ISystemClock, SystemClock>()
