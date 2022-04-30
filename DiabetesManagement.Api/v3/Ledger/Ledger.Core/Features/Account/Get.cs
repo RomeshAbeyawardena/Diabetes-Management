@@ -3,7 +3,7 @@ using Ledger.Features.Account;
 
 namespace Ledger.Core.Features.Account;
 
-public class Get : IRequestHandler<GetRequest, Models.Account>
+public class Get : IRequestHandler<GetRequest, Models.Account?>
 {
     private readonly IAccountRepository accountRepository;
 
@@ -12,7 +12,7 @@ public class Get : IRequestHandler<GetRequest, Models.Account>
         this.accountRepository = accountRepository;
     }
 
-    public Task<Models.Account> Handle(GetRequest request, CancellationToken cancellationToken)
+    public Task<Models.Account?> Handle(GetRequest request, CancellationToken cancellationToken)
     {
         return accountRepository.Get(request, cancellationToken);
     }

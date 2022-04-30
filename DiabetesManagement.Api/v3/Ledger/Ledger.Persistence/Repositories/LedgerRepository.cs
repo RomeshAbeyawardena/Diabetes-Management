@@ -86,7 +86,8 @@ public class LedgerRepository : LedgerRepositoryBase<Models.Ledger>, ILedgerRepo
 
         if (!string.IsNullOrWhiteSpace(model.Reference))
         {
-            model.Reference = model.Reference.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, out var caseSignature);
+            model.Reference = model.Reference.Encrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, 
+                applicationSettings.ServerInitialVectorBytes, out var caseSignature);
 
             model.ReferenceCaseSignature = caseSignature;
         }
@@ -101,7 +102,15 @@ public class LedgerRepository : LedgerRepositoryBase<Models.Ledger>, ILedgerRepo
 
         if (!string.IsNullOrWhiteSpace(model.Reference) && !string.IsNullOrWhiteSpace(model.ReferenceCaseSignature))
         {
-            model.Reference = model.Reference.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, applicationSettings.ServerInitialVectorBytes, model.ReferenceCaseSignature);
+            model.Reference = model.Reference.Decrypt(applicationSettings.Algorithm!, applicationSettings.PersonalDataServerKeyBytes, 
+                applicationSettings.ServerInitialVectorBytes, model.ReferenceCaseSignature);
         }
+    }
+
+    public async Task<Models.Ledger?> GetPreviousLedger(GetRequest request, CancellationToken cancellationToken)
+    {
+        return await Query.Where(l => l.AccountId == request.AccountId)
+            .OrderByDescending(l => l.Created)
+            .FirstOrDefaultAsync(cancellationToken);
     }
 }

@@ -5,8 +5,15 @@ namespace Ledger.Core.Features.Ledger;
 
 public class Get : IRequestHandler<GetRequest, IEnumerable<Models.Ledger>>
 {
+    private readonly ILedgerRepository ledgerRepository;
+
+    public Get(ILedgerRepository ledgerRepository)
+    {
+        this.ledgerRepository = ledgerRepository;
+    }
+
     public Task<IEnumerable<Models.Ledger>> Handle(GetRequest request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        return ledgerRepository.Get(request, cancellationToken);
     }
 }
