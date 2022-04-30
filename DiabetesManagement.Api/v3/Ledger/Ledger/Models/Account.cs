@@ -11,6 +11,7 @@ public class Account
     public string? Reference { get; set; }
     [Column("Reference_CS")]
     public string? ReferenceCaseSignature { get; set; }
+    public bool Enabled { get; set; }
     public DateTimeOffset Created { get; set; }
     public DateTimeOffset? Modified { get; set; }
 }
