@@ -10,4 +10,7 @@ public class LedgerDbContext : DbContext, ILedgerDbContext
     {
 
     }
+
+    public DbSet<Models.Account>? Accounts { get; set; }
+    public DbSet<Models.Ledger>? Ledgers { get; set; }
 }

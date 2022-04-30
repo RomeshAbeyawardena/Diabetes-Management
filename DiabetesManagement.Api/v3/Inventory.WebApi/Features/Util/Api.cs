@@ -22,7 +22,7 @@ public class Api : ApiBase
     [HttpPost, Route("encode")]
     public async Task<IActionResult> Encode([FromBody] SignRequest request, CancellationToken cancellationToken)
     {
-        request.Dictionary = request.Values.ToDictionary(k => k.Key, v => convertorFactory.Convert(v.Value));
+        request.Dictionary = request.Values!.ToDictionary(k => k.Key, v => convertorFactory.Convert(v.Value));
 
         return await Handle(request, cancellationToken);
     }

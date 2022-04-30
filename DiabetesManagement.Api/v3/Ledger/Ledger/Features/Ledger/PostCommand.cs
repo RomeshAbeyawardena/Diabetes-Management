@@ -1,7 +1,8 @@
-﻿using MediatR;
+﻿using Inventory.Attributes;
+using MediatR;
 
 namespace Ledger.Features.Ledger;
-
+[RequiresClaims(Permissions.Ledger_Edit)]
 public class PostCommand : IRequest<Models.Ledger>
 {
     public Guid AccountId { get; set; }
