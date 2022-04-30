@@ -7,9 +7,9 @@ namespace Inventory.Persistence;
 public class PersistenceModule : ModuleBase
 {
     public PersistenceModule(ILogger logger)
-        : base(nameof(PersistenceModule), GetAssembly<PersistenceModule>())
+        : base(logger, nameof(PersistenceModule), GetAssembly<PersistenceModule>())
     {
-        logger.Information("Configuring persistence module...", this);
+        
     }
 
     public override bool CanRun()

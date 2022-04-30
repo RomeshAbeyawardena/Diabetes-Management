@@ -9,7 +9,7 @@ namespace Inventory.Tests;
 
 public class MyModule : ModuleBase
 {
-    public MyModule() : base(nameof(MyModule))
+    public MyModule() : base(null, nameof(MyModule))
     {
     }
 

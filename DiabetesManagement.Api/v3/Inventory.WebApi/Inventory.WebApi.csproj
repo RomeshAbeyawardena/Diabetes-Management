@@ -12,5 +12,8 @@
     <ProjectReference Include="..\Inventory.Extensions\Inventory.Extensions.csproj" />
     <ProjectReference Include="..\Inventory.Persistence\Inventory.Persistence.csproj" />
     <ProjectReference Include="..\Inventory\Inventory.csproj" />
+    <ProjectReference Include="..\Ledger\Ledger.Core\Ledger.Core.csproj" />
+    <ProjectReference Include="..\Ledger\Ledger.Persistence\Ledger.Persistence.csproj" />
+    <ProjectReference Include="..\Ledger\Ledger\Ledger.csproj" />
   </ItemGroup>
 </Project>

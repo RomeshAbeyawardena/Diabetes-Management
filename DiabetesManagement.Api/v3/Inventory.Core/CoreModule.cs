@@ -8,9 +8,8 @@ namespace Inventory.Core;
 public class CoreModule : ModuleBase
 {
     public CoreModule(ILogger logger)
-        : base(nameof(CoreModule), GetAssembly<CoreModule>())
+        : base(logger, nameof(CoreModule), GetAssembly<CoreModule>())
     {
-        logger.Information("Configuring core module...", this);
     }
 
     public override bool CanRun()

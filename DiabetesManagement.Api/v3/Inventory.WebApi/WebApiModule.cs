@@ -1,12 +1,13 @@
 ﻿using Inventory.Base;
 using Inventory.WebApi.Filters;
+using Serilog;
 
 namespace Inventory.WebApi;
 
 public class WebApiModule : ModuleBase
 {
-    public WebApiModule()
-        : base(nameof(WebApiModule), GetAssembly<WebApiModule>())
+    public WebApiModule(Serilog.ILogger logger)
+        : base(logger, nameof(WebApiModule), GetAssembly<WebApiModule>())
     {
 
     }

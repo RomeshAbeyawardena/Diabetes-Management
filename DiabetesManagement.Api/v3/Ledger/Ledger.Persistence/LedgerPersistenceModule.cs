@@ -3,12 +3,13 @@ using Inventory.Base;
 using Ledger.Contracts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Serilog;
 
 namespace Ledger.Persistence;
 public class LedgerPersistenceModule : ModuleBase
 {
-    public LedgerPersistenceModule()
-        : base(nameof(LedgerPersistenceModule), GetAssembly<LedgerPersistenceModule>())
+    public LedgerPersistenceModule(ILogger logger)
+        : base(logger, nameof(LedgerPersistenceModule), GetAssembly<LedgerPersistenceModule>())
     {
     }
 

@@ -3,6 +3,9 @@
 		"Inventory",
 		"Inventory.WebApi",
 		"Inventory.Core",
-		"Inventory.Persistence"
+		"Inventory.Persistence",
+		"Ledger",
+		"Ledger.Core",
+		"Ledger.Persistence"
 	]
 }
